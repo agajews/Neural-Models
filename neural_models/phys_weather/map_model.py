@@ -152,7 +152,7 @@ class MapModel(Model):
                 map_train_X, map_val_X,
                 stat_train_X, stat_val_X,
                 train_y, val_y
-        ] = split_val(min_train_X, min_train_y)
+        ] = split_val(min_map_train_X, min_stat_train_X, min_train_y)
 
         train_Xs = [map_train_X, stat_train_X]
         val_Xs = [map_val_X, stat_val_X]
