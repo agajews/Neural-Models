@@ -1,7 +1,5 @@
 from os.path import isfile
 
-from cv2 import imread, resize, cvtColor, COLOR_BGR2HSV
-
 import pickle
 
 import numpy as np
@@ -9,8 +7,8 @@ import numpy as np
 from neural_models.lib import split_test
 
 
-def get_days_list(filename, map_exists=False):
-    with open(filename) as file:
+def get_days_list(fnm, map_exists=False):
+    with open(fnm) as file:
         text = file.read()
 
     lines = text.split('\n')[:-1]
@@ -79,9 +77,9 @@ def get_days_list(filename, map_exists=False):
 
 
 def gen_station_data(timesteps=10, verbose=False):
-    filename = 'saved_data/phys_weather/station_data_' + str(timesteps) + '.p'
-    if isfile(filename):
-        station_data = pickle.load(open(filename, 'rb'))
+    fnm = 'saved_data/phys_weather/station_data_' + str(timesteps) + '.p'
+    if isfile(fnm):
+        station_data = pickle.load(open(fnm, 'rb'))
     else:
         days_list = get_days_list('raw_data/phys_weather/chicago_summaries.dly')
         num_days = len(days_list)
@@ -135,6 +133,6 @@ def gen_station_data(timesteps=10, verbose=False):
         station_data = [min_train_X, min_train_y, min_test_X, min_test_y,
                         max_train_X, max_train_y, max_test_X, max_test_y]
 
-        pickle.dump(station_data, open(filename, 'wb'))
+        pickle.dump(station_data, open(fnm, 'wb'))
 
     return station_data

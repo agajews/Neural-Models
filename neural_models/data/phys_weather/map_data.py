@@ -11,14 +11,14 @@ from .station_data import get_days_list
 
 
 def gen_map_data(width=100, height=50, timesteps=10, verbose=False, color='hsv'):
-    filename = 'saved_data/phys_weather/map_data_' + \
+    fnm = 'saved_data/phys_weather/map_data_' + \
         str(width) + ',' + \
         str(height) + ',' + \
         str(timesteps) + ',' + \
         color + \
         '.p'
-    if isfile(filename):
-        map_data = pickle.load(open(filename, 'rb'))
+    if isfile(fnm):
+        map_data = pickle.load(open(fnm, 'rb'))
     else:
         days_list = get_days_list('raw_data/phys_weather/chicago_summaries.dly', map_exists=True)
         num_days = len(days_list)
@@ -95,6 +95,6 @@ def gen_map_data(width=100, height=50, timesteps=10, verbose=False, color='hsv')
                     max_map_train_X, max_map_train_y, max_map_test_X, max_map_test_y,
                     temp_map_train_X, temp_map_test_X]
 
-        pickle.dump(map_data, open(filename, 'wb'))
+        pickle.dump(map_data, open(fnm, 'wb'))
 
     return map_data
