@@ -120,13 +120,19 @@ def grid_hyper_optim_station():
     optim.optimize()
 
 
+def train_default():
+
+    model = StationModel()
+    model.train_with_data()
+
+
 def main():
 
-    # train_default_station()
+    train_default()
 
     # bayes_hyper_optim_station()
 
-    grid_hyper_optim_station()
+    # grid_hyper_optim_station()
 
 
 if __name__ == '__main__':
