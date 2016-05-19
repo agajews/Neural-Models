@@ -7,7 +7,7 @@ import pickle
 import numpy as np
 
 from neural_models.lib import split_test
-from .station_model import get_days_list
+from .station_data import get_days_list
 
 
 def gen_map_data(width=100, height=50, timesteps=10, verbose=False, color='hsv'):
