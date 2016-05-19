@@ -53,8 +53,8 @@ class MapModel(Model):
         self.learning_rate = 0.01
         self.l2_reg_weight = 0.0007
 
-        self.width = 160
-        self.height = 70
+        self.width = 80
+        self.height = 35
         self.timesteps = 10
         self.num_channels = 1
 
