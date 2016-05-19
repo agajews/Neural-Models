@@ -1,6 +1,9 @@
 from lasagne import init
-from lasagne.layers import InputLayer, LSTMLayer, DropoutLayer, SliceLayer, DenseLayer
-from lasagne.nonlinearities import tanh, softmax
+from lasagne.layers import InputLayer, LSTMLayer, DropoutLayer
+from lasagne.layers import SliceLayer, DenseLayer
+from lasagne.layers import Conv2DLayer, MaxPool2DLayer
+from lasagne.layers import CustomRecurrentLayer, ConcatLayer
+from lasagne.nonlinearities import tanh, softmax, rectify
 
 from neural_models.data.phys_weather.map_data import gen_map_data
 
@@ -55,9 +58,10 @@ class MapModel(Model):
         self.timesteps = 10
         self.num_channels = 1
 
-    def create_cnn():
+    def create_cnn(self):
 
-        net = InputLayer(shape=(None, self.num_channels, self.width, self.height))
+        net = InputLayer(
+                shape=(None, self.num_channels, self.width, self.height))
 
         net = Conv2DLayer(
                 net,
@@ -89,7 +93,9 @@ class MapModel(Model):
 
     def create_model(self, input_spread, output_spread):
 
-        l_map_in = InputLayer(shape=(None, self.timesteps, self.num_channels, self.width, self.height))
+        l_map_in = InputLayer(shape=(
+            None, self.timesteps, self.num_channels,
+            self.width, self.height))
 
         l_in_hid = self.create_cnn()
 
@@ -126,7 +132,7 @@ class MapModel(Model):
                 W=init.Normal(),
                 nonlinearity=softmax)
 
-        net = l_out
+        return net
 
     def get_supp_model_params(self, train_Xs, train_y, val_Xs, val_y):
 
@@ -162,7 +168,7 @@ class MapModel(Model):
 
 def bayes_hyper_optim_station():
 
-    model = StationModel()
+    model = MapModel()
 
     hp_ranges = {
             'num_hidden': (100, 1024),
@@ -180,7 +186,7 @@ def bayes_hyper_optim_station():
 
 def grid_hyper_optim_station():
 
-    model = StationModel()
+    model = MapModel()
 
     hp_choices = {
             'num_hidden': (128, 256, 512),
