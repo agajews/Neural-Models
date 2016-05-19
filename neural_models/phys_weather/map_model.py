@@ -140,11 +140,22 @@ class MapModel(Model):
 
     def get_data(self):
 
-        [min_stat_train_X, min_train_y,
-         _, _, _, _, _, _,
-         min_map_train_X, _] = gen_map_data(
-                 width=self.width, height=self.height,
-                 timesteps=self.timesteps, color='hsv')
+        [
+                min_stat_train_X, min_train_y,
+                _, _, _, _, _, _,
+                min_map_train_X, _
+        ] = gen_map_data(
+                width=self.width, height=self.height,
+                timesteps=self.timesteps, color='hsv')
+
+        [
+                map_train_X, map_val_X,
+                stat_train_X, stat_val_X,
+                train_y, val_y
+        ] = split_val(min_train_X, min_train_y)
+
+         train_Xs = [map_train_X, stat_train_X]
+         val_Xs = [map_val_X, stat_val_X]
 
         return train_Xs, val_Xs, train_y, val_y
 
