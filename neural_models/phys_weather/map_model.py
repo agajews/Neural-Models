@@ -106,7 +106,7 @@ class MapModel(Model):
         l_pre = CustomRecurrentLayer(
                 l_map_in, l_in_hid, l_hid_hid)
 
-        l_stat_in = InputLayer(shape=(None, self.timesteps, self.input_spread))
+        l_stat_in = InputLayer(shape=(None, self.timesteps, input_spread))
 
         net = ConcatLayer([l_stat_in, l_pre], axis=2)
 
