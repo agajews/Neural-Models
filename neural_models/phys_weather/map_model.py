@@ -18,7 +18,7 @@ class MapModel(Model):
 
     def get_default_param_filename(self):
 
-        return 'params/map_model.p'
+        return 'params/phys_weather/map_model.p'
 
     def load_hyperparams(self, hyperparams):
 

@@ -15,7 +15,7 @@ class StationModel(Model):
 
     def get_default_param_filename(self):
 
-        return 'params/station_model.p'
+        return 'params/phys_weather/station_model.p'
 
     def load_hyperparams(self, hyperparams):
 
