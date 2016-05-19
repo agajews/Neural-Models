@@ -91,7 +91,7 @@ class MapModel(Model):
 
         l_map_in = InputLayer(shape=(None, self.timesteps, self.num_channels, self.width, self.height))
 
-        l_in_hid = create_cnn()
+        l_in_hid = self.create_cnn()
 
         l_hid_hid = DenseLayer(
                 InputLayer(l_in_hid.output_shape),
