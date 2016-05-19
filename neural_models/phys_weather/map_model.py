@@ -108,7 +108,7 @@ class MapModel(Model):
 
         l_stat_in = InputLayer(shape=(None, self.timesteps, input_spread))
 
-        net = ConcatLayer([l_stat_in, l_pre], axis=2)
+        net = ConcatLayer([l_pre, l_stat_in], axis=2)
 
         net = LSTMLayer(
                 net, self.num_hidden,
