@@ -161,7 +161,7 @@ def gen_audio_dataset(num_truncated_songs=10000, num_mels=24):
                     'wav': wav,
                     'rate': rate}
         else:
-            raise Exception('No such song!')
+            raise Exception('No such song %s at %s!' % (song, fnm))
 
     wav_data_list = []
     print('Generating data')
