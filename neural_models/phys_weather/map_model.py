@@ -121,7 +121,7 @@ class MapModel(WeatherModel):
 
     def create_model(self, input_spread, output_spread):
 
-        l_map_in = InputLayer(shape=(
+        i_map = InputLayer(shape=(
             None, self.timesteps, self.num_channels,
             self.width, self.height))
 
@@ -132,11 +132,11 @@ class MapModel(WeatherModel):
                 num_units=self.embedding)
 
         l_pre = CustomRecurrentLayer(
-                l_map_in, l_in_hid, l_hid_hid)
+                i_map, l_in_hid, l_hid_hid)
 
-        l_stat_in = InputLayer(shape=(None, self.timesteps, input_spread))
+        i_stat = InputLayer(shape=(None, self.timesteps, input_spread))
 
-        net = ConcatLayer([l_pre, l_stat_in], axis=2)
+        net = ConcatLayer([l_pre, i_stat], axis=2)
 
         net = LSTMLayer(
                 net, self.num_hidden,
@@ -160,7 +160,7 @@ class MapModel(WeatherModel):
                 W=init.Normal(),
                 nonlinearity=softmax)
 
-        return net
+        return net, [i_map, i_stat]
 
     def get_supp_model_params(self, train_Xs, train_y, val_Xs, val_y):
 

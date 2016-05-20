@@ -143,10 +143,10 @@ class StationModel(WeatherModel):
 
     def create_model(self, input_spread, output_spread):
 
-        net = InputLayer(shape=(None, None, input_spread))
+        i_stat = InputLayer(shape=(None, None, input_spread))
 
         for _ in range(2):
-            net = self.create_lstm_stack(net)
+            net = self.create_lstm_stack(i_stat)
 
         net = SliceLayer(net, -1, 1)
 
@@ -156,7 +156,7 @@ class StationModel(WeatherModel):
                 W=init.Normal(),
                 nonlinearity=softmax)
 
-        return net
+        return net, [i_stat]
 
     def get_supp_model_params(self, train_Xs, train_y, val_Xs, val_y):
 
