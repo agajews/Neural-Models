@@ -166,7 +166,8 @@ def gen_audio_dataset(num_truncated_songs=10000, num_mels=24):
 
     wavfiles = {}
     print('Reading songs')
-    for song in truncated_songs:
+    for i, song in enumerate(truncated_songs):
+        print(i)
         fnm = 'raw_data/music_recommendator/audio/' + song + '.mp3.wav'
         if isfile(fnm):
             rate, wav = wavfile.read(fnm)
