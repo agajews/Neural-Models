@@ -30,7 +30,9 @@ def split_data(*inputs, split=0.25):
 
     for input in inputs:
         if not len(input) == length:
-            raise Exception('Inputs of different length! (%d and %d)' % (length, len(input)))
+            raise Exception(
+                    'Inputs of different length! (%d and %d)'
+                    % (length, len(input)))
 
         outputs.append(input[:split_index])
         outputs.append(input[split_index:])
@@ -46,7 +48,7 @@ def split_val(*inputs, split=0.25):
     return split_data(*inputs, split=split)
 
 
-def iterate_minibatches(*inputs, batchsize=128, shuffle=True):
+def iterate_minibatches(*inputs, batch_size=128, shuffle=True):
     length = len(inputs[0])
     for input in inputs:
         assert len(input) == length
@@ -55,11 +57,11 @@ def iterate_minibatches(*inputs, batchsize=128, shuffle=True):
         indices = np.arange(length)
         np.random.shuffle(indices)
 
-    for start_index in range(0, length - batchsize + 1, batchsize):
+    for start_index in range(0, length - batch_size + 1, batch_size):
         if shuffle:
-            excerpt = indices[start_index:start_index + batchsize]
+            excerpt = indices[start_index:start_index + batch_size]
         else:
-            excerpt = slice(start_index, start_index + batchsize)
+            excerpt = slice(start_index, start_index + batch_size)
 
         batch = []
         for input in inputs:

@@ -39,16 +39,22 @@ class WeatherModel(Model):
 
     def compute_val_metrics(self, test_fn, val_Xs, val_y):
 
-        num_examples, output_spread = val_y.shape
+        _, output_spread = val_y.shape
 
         val_loss = 0
         acc_distribution = np.zeros(shape=(output_spread - 1,))
         val_batches = 0
 
-        for batch in iterate_minibatches(*val_Xs, val_y):
+        for batch in iterate_minibatches(
+                *val_Xs, val_y, batchsize=self.batch_size):
+
+            num_examples, _ = batch[len(val_Xs)].shape
+
             [loss, acc_distance] = test_fn(*batch)
+
             acc_distribution = self.update_acc_dist(
                     acc_distribution, acc_distance, num_examples)
+
             val_loss += loss
             val_batches += 1
 

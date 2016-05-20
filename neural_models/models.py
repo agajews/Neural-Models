@@ -133,7 +133,8 @@ class Model():
         train_loss = 0
         train_batches = 0
 
-        for batch in iterate_minibatches(*train_Xs, train_y):
+        for batch in iterate_minibatches(
+                *train_Xs, train_y, batch_size=self.batch_size):
             train_loss += train_fn(*batch)
             train_batches += 1
 
@@ -147,7 +148,8 @@ class Model():
         val_acc = 0
         val_batches = 0
 
-        for batch in iterate_minibatches(*val_Xs, val_y):
+        for batch in iterate_minibatches(
+                *val_Xs, val_y, batch_size=self.batch_size):
             [loss, acc] = test_fn(*batch)
             val_loss += loss
             val_acc += acc
