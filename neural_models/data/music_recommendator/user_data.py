@@ -201,4 +201,5 @@ def gen_audio_dataset(num_truncated_songs=10000, num_mels=24):
                 raise Exception('Too few songs!')
         except Exception:
             pass
+    print(len(wav_data_list))
     return wav_data_list
