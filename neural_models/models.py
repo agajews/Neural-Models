@@ -7,6 +7,8 @@ from lasagne.layers.helper import get_all_layers
 import theano
 import theano.tensor as T
 
+import numpy as np
+
 import pickle
 
 from neural_models.lib import iterate_minibatches
@@ -18,6 +20,8 @@ class Model():
         self.set_hyperparams(hyperparams)
 
         self.set_param_filename(param_filename)
+
+        np.random.seed(42)
 
     def set_param_filename(self, param_filename):
 
