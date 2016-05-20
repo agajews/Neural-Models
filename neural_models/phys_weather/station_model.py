@@ -98,7 +98,7 @@ class StationModel(WeatherModel):
     def load_default_hyperparams(self):
 
         self.num_hidden = 250
-        self.num_epochs = 31
+        self.num_epochs = 54
         self.batch_size = 365
         self.dropout_val = 0.0
         self.learning_rate = 0.055
