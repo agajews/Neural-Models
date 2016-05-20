@@ -1,6 +1,7 @@
 import pickle
 
 from scipy.io import wavfile
+from scipy import signal
 
 import numpy as np
 
@@ -169,6 +170,7 @@ def gen_audio_dataset(num_truncated_songs=10000, num_mels=24):
         fnm = 'raw_data/music_recommendator/audio/' + song + '.mp3.wav'
         if isfile(fnm):
             rate, wav = wavfile.read(fnm)
+            wav = signal.resample(wav, int(len(wav) * 0.25))
             if len(wav.shape) == 2:
                 # print(song)
                 # print(wav)
@@ -205,9 +207,11 @@ def gen_audio_dataset(num_truncated_songs=10000, num_mels=24):
     num_examples = len(wav_data_list)
     nums_of_songs = [len(example['user_songs_X']) for example in wav_data_list]
     max_num_songs = max(nums_of_songs)
+    print('Max songs: ' + str(max_num_songs))
     all_wavs = [wavfiles[song]['wav'] for song in wavfiles.keys()]
     lengths_of_songs = [len(wav[:, 0]) for wav in all_wavs]
     max_song_length = max(lengths_of_songs)
+    print('Max song length: ' + str(max_song_length))
 
     user_songs_X = np.zeros((num_examples, max_num_songs, max_song_length, 3))
     song_X = np.zeros((num_examples, max_song_length, 3))
