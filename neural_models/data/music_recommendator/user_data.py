@@ -171,7 +171,7 @@ def gen_audio_dataset(num_truncated_songs=10000, num_mels=24):
         if isfile(fnm):
             rate, wav = wavfile.read(fnm)
             if len(wav.shape) == 2 and wav.shape[0] > 5:
-                downsampled_size = int(wav.shape[0] * 0.10)
+                downsampled_size = int(wav.shape[0] * 0.05)
                 wav = signal.resample(wav, downsampled_size)
                 wavfiles[song] = {
                         'wav': wav,
