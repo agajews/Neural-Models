@@ -164,7 +164,7 @@ class AudioModel(RegressionModel):
     def create_model(self):
 
         # shape=(num_users, embedding)
-        l_user_prefs = self.create_song_prefs()
+        l_user_prefs = self.create_user_pref_encoder()
 
         # shape=(num_users, embedding)
         l_input_song_encoder = self.create_input_song_encoder()
