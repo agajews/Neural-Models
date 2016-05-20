@@ -189,7 +189,7 @@ class AudioModel(RegressionModel):
         [
                 train_user_songs_X, train_song_X, train_y,
                 _, _, _
-        ] = gen_audio_dataset(num_truncated_songs=1000)
+        ] = gen_audio_dataset(num_truncated_songs=500)
         [
                 train_user_songs_X, val_user_songs_X,
                 train_song_X, val_song_X,
