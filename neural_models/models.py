@@ -104,6 +104,8 @@ class Model():
 
     def build_train_fn(self, net, layers, input_vars):
 
+        print(len(input_vars))
+
         target_values = T.ivector('target_output')
 
         train_output = get_output(net)
@@ -224,11 +226,9 @@ class Model():
         if verbose:
             print("Compiling functions ...")
 
-        net = self.create_model_with_supp(supp_model_params)
+        net, input_vars = self.create_model_with_supp(supp_model_params)
 
         layers = get_all_layers(net)
-
-        input_vars = self.get_input_vars(layers)
 
         train_fn = self.build_train_fn(net, layers, input_vars)
 

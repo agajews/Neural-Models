@@ -105,7 +105,7 @@ class AudioModel(RegressionModel):
     def create_song_encoder(self):
 
         # shape=(num_users, num_songs, song_length, bitwidth)
-        l_songs_in = InputLayer(shape=(
+        i_user_songs = InputLayer(shape=(
             None, None, None, self.bitwidth))
 
         l_in_hid = self.create_song_embedding()
@@ -115,10 +115,10 @@ class AudioModel(RegressionModel):
                 num_units=self.embedding)
 
         l_song_encoder = CustomRecurrentLayer(
-                l_songs_in, l_in_hid, l_hid_hid)
+                i_user_songs, l_in_hid, l_hid_hid)
         # output_shape=(num_users, num_songs, embedding)
 
-        return l_song_encoder
+        return l_song_encoder, i_user_songs
 
     def create_pref_embedding(self, l_song_vals):
 
@@ -141,27 +141,28 @@ class AudioModel(RegressionModel):
     def create_user_pref_encoder(self):
 
         # shape=(num_users, num_songs, embedding)
-        l_song_encoder = self.create_song_encoder()
+        l_song_encoder, i_user_songs = self.create_song_encoder()
 
         # shape=(num_users, num_songs, 1 (value is play_count))
-        l_song_counts_in = InputLayer(shape=(
+        i_user_counts = InputLayer(shape=(
             None, None, 1))
 
         # shape=(num_users, num_songs, embedding + 1 (value is play_count))
-        l_song_vals = ConcatLayer([l_song_counts_in, l_song_encoder], axis=2)
+        l_song_vals = ConcatLayer([i_user_counts, l_song_encoder], axis=2)
 
         # output_shape=(num_users, embedding)
         l_user_prefs = self.create_pref_embedding(l_song_vals)
 
-        return l_user_prefs
+        return l_user_prefs, i_user_songs, i_user_counts
 
     def create_model(self):
 
         # shape=(num_users, embedding)
-        l_user_prefs = self.create_user_pref_encoder()
+        l_user_prefs, i_user_songs, i_user_counts = \
+            self.create_user_pref_encoder()
 
         # shape=(num_users, embedding)
-        l_input_song_encoder = self.create_input_song_encoder()
+        l_input_song_encoder, i_input_song = self.create_input_song_encoder()
 
         # shape=(num_users, 2*embedding)
         net = ConcatLayer([l_user_prefs, l_input_song_encoder], axis=1)
@@ -178,7 +179,7 @@ class AudioModel(RegressionModel):
                 W=init.Normal(),
                 nonlinearity=softmax)
 
-        return net
+        return net, [i_user_prefs, i_input_song]
 
     def get_supp_model_params(self, train_Xs, train_y, val_Xs, val_y):
 
