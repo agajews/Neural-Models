@@ -2,10 +2,7 @@ from lasagne import init
 from lasagne.layers import InputLayer, LSTMLayer
 from lasagne.layers import DropoutLayer, SliceLayer, DenseLayer
 from lasagne.layers import CustomRecurrentLayer, ConcatLayer
-from lasagne.regularization import regularize_layer_params, l2
 from lasagne.nonlinearities import tanh, softmax
-
-import theano.tensor as T
 
 from neural_models.data.music_recommendator.user_data import gen_audio_dataset
 
@@ -164,7 +161,7 @@ class AudioModel(RegressionModel):
 
         return l_user_prefs
 
-    def create_model(self, **kwargs):
+    def create_model(self):
 
         # shape=(num_users, embedding)
         l_user_prefs = self.create_song_prefs()

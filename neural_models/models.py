@@ -197,6 +197,15 @@ class Model():
 
         return train_metrics, val_metrics
 
+    def create_model_with_supp(self, supp_model_params):
+
+        if supp_model_params is not None:
+            net = self.create_model(**supp_model_params)
+        else:
+            net = self.create_model()
+
+        return net
+
     def train_model(self, train_Xs, val_Xs, train_y, val_y,
             val=True,
             save=False,
@@ -208,7 +217,7 @@ class Model():
         if verbose:
             print("Compiling functions ...")
 
-        net = self.create_model(**supp_model_params)
+        net = self.create_model_with_supp(supp_model_params)
 
         layers = get_all_layers(net)
 
