@@ -168,7 +168,7 @@ class AudioModel(RegressionModel):
 
         net = DenseLayer(
                 net,
-                num_units=self.num_hidden_units,
+                num_units=self.num_hidden,
                 W=init.Normal(),
                 nonlinearity=softmax)
 
