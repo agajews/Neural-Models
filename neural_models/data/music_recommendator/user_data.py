@@ -205,7 +205,7 @@ def gen_audio_dataset(num_truncated_songs=10000, num_mels=24):
     num_examples = len(wav_data_list)
     nums_of_songs = [len(example['user_songs_X']) for example in wav_data_list]
     max_num_songs = max(nums_of_songs)
-    lengths_of_songs = [len(song['wav'][:, 0]) for song in wavfiles]
+    lengths_of_songs = [len(song['wav'][:, 0]) for song in list(wavfiles)]
     max_song_length = max(lengths_of_songs)
 
     user_songs_X = np.zeros((num_examples, max_num_songs, max_song_length, 3))
