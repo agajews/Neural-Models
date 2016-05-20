@@ -103,19 +103,23 @@ def load_data(num_truncated_songs=10000):
         truncated_hist = []
         for user in filtered_hist:
             user_data = []
+            song_filename = 'raw_data/music_recommendator/audio/' + \
+                song['song_id'] + '.mp3'
             for song in user:
-                if isfile('raw_data/music_recommendator/audio/' + song['song_id'] + '.mp3') and song['song_id'] in songs_set:
+                if isfile(song_filename) and song['song_id'] in songs_set:
                     user_data.append(song)
             if len(user_data) > 5:
                 truncated_hist.append(user_data)
         pickle.dump(truncated_hist, open(truncated_hist_fnm))
         pickle.dump(truncated_songs, open(truncated_songs_fnm, 'wb'))
 
-    return song_meta, user_hist, users_ordered, filtered_hist, truncated_songs, truncated_hist
+    return [song_meta, user_hist, users_ordered,
+            filtered_hist, truncated_songs, truncated_hist]
 
 
 def gen_audio_dataset(num_truncated_songs=10000, num_mels=24):
-    _, _, _, _, truncated_songs, truncated_hist = load_data(num_truncated_songs=num_truncated_songs)
+    _, _, _, _, truncated_songs, truncated_hist = load_data(
+            num_truncated_songs=num_truncated_songs)
     data_list = []
     for user in truncated_hist:
         for i, song in enumerate(user):
