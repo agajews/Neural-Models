@@ -92,11 +92,11 @@ class Model():
 
         return updates
 
-    def get_input_vars(self, layers):
+    def get_input_vars(self, input_layers):
 
         input_vars = []
 
-        for layer in layers:
+        for layer in input_layers:
             if isinstance(layer, InputLayer):
                 input_vars.append(layer.input_var)
 
@@ -226,7 +226,9 @@ class Model():
         if verbose:
             print("Compiling functions ...")
 
-        net, input_vars = self.create_model_with_supp(supp_model_params)
+        net, input_layers = self.create_model_with_supp(supp_model_params)
+
+        input_vars = self.get_input_vars(input_layers)
 
         layers = get_all_layers(net)
 
