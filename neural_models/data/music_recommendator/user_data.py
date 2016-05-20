@@ -171,12 +171,8 @@ def gen_audio_dataset(num_truncated_songs=10000, num_mels=24):
         if isfile(fnm):
             rate, wav = wavfile.read(fnm)
             if len(wav.shape) == 2 and wav.shape[0] > 5:
-                print(wav.shape)
-                downsampled_size = int(wav.shape[0] * 0.25)
-                print(downsampled_size)
+                downsampled_size = int(wav.shape[0] * 0.10)
                 wav = signal.resample(wav, downsampled_size)
-                # print(song)
-                # print(wav)
                 wavfiles[song] = {
                         'wav': wav,
                         'rate': rate}
@@ -208,6 +204,7 @@ def gen_audio_dataset(num_truncated_songs=10000, num_mels=24):
         except Exception:
             pass
     num_examples = len(wav_data_list)
+    print('Num examples: ' + str(num_examples))
     nums_of_songs = [len(example['user_songs_X']) for example in wav_data_list]
     max_num_songs = max(nums_of_songs)
     print('Max songs: ' + str(max_num_songs))
