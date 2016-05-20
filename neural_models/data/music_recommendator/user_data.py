@@ -3,7 +3,6 @@ import pickle
 from scipy.io import wavfile
 # import scipy.signal
 
-from os import listdir
 from os.path import isfile
 
 from neural_models.lib import cd
@@ -107,8 +106,7 @@ def load_data(num_truncated_songs=10000):
     else:
         print('Generating filtered_songs')
         filtered_songs = []
-        for song in song_meta.keys():
-            song_id = song_meta[song]['song_id']
+        for song_id in song_meta.keys():
             song_fnm = 'raw_data/music_recommendator/audio/' + \
                 song_id + '.mp3.wav'
             if isfile(song_fnm):
