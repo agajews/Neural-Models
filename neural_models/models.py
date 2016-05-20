@@ -111,7 +111,7 @@ class Model():
         loss = self.build_train_loss(layers, train_output, target_values)
         updates = self.build_train_updates(net, loss)
 
-        train_fn = theano.fn(
+        train_fn = theano.function(
                 input_vars + [target_values],
                 loss, updates=updates, allow_input_downcast=True)
 
@@ -127,7 +127,7 @@ class Model():
 
         test_acc = self.build_test_acc(test_output, target_values)
 
-        test_fn = theano.fn(
+        test_fn = theano.function(
                 input_vars + [target_values],
                 [test_loss, test_acc], allow_input_downcast=True)
 
