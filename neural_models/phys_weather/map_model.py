@@ -22,10 +22,7 @@ class MapModel(WeatherModel):
         self.num_hidden = int(hyperparams['num_hidden'])
         self.num_epochs = int(hyperparams['num_epochs'])
         self.batch_size = int(hyperparams['batch_size'])
-        self.dropout_val = float(hyperparams['dropout_val'])
-        self.learning_rate = float(hyperparams['learning_rate'])
-        self.grad_clip = float(hyperparams['grad_clip'])
-        self.l2_reg_weight = float(hyperparams['l2_reg_weight'])
+
         self.num_filters = int(hyperparams['num_filters'])
         self.filter_size = int(hyperparams['filter_size'])
         self.pool_size = int(hyperparams['pool_size'])
@@ -34,6 +31,12 @@ class MapModel(WeatherModel):
         self.width = int(hyperparams['width'])
         self.height = int(hyperparams['height'])
         self.timesteps = int(hyperparams['timesteps'])
+
+        self.dropout_val = float(hyperparams['dropout_val'])
+        self.learning_rate = float(hyperparams['learning_rate'])
+        self.grad_clip = float(hyperparams['grad_clip'])
+        self.l2_reg_weight = float(hyperparams['l2_reg_weight'])
+
         self.num_channels = 1
 
     def load_default_hyperparams(self):

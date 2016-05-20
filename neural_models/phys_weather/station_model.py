@@ -88,6 +88,8 @@ class StationModel(WeatherModel):
         self.num_hidden = int(hyperparams['num_hidden'])
         self.num_epochs = int(hyperparams['num_epochs'])
         self.batch_size = int(hyperparams['batch_size'])
+        self.timesteps = int(hyperparams['timesteps'])
+
         self.dropout_val = float(hyperparams['dropout_val'])
         self.learning_rate = float(hyperparams['learning_rate'])
         self.grad_clip = float(hyperparams['grad_clip'])
@@ -102,6 +104,7 @@ class StationModel(WeatherModel):
         self.learning_rate = 0.055
         self.grad_clip = 927
         self.l2_reg_weight = 0.0007
+        self.timesteps = 10
 
     def create_lstm_stack(self, net):
 
@@ -147,7 +150,7 @@ class StationModel(WeatherModel):
                 min_train_X, min_train_y,
                 min_test_X, min_test_y,
                 _, _, _, _
-        ] = gen_station_data()
+        ] = gen_station_data(timesteps=self.timesteps)
         train_X, val_X, train_y, val_y = split_val(min_train_X, min_train_y)
         train_Xs, val_Xs = [train_X], [val_X]
 
@@ -161,6 +164,7 @@ def bayes_hyper_optim_station():
     hp_ranges = {
             'num_hidden': (100, 1024),
             'num_epochs': (5, 100),
+            'timesteps': (5, 30),
             'batch_size': (64, 512),
             'dropout_val': (0, 0.9),
             'learning_rate': (1e-5, 1e-1),
@@ -179,6 +183,7 @@ def grid_hyper_optim_station():
     hp_choices = {
             'num_hidden': (128, 256, 512),
             'num_epochs': (128,),
+            'timesteps': (10, 30),
             'batch_size': (256,),
             'dropout_val': (0.4, 0.5, 0.6),
             'learning_rate': (1e-5, 1e-3, 1e-2, 1e-1),
