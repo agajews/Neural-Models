@@ -12,6 +12,7 @@ import youtube_dl
 
 
 def download(song_name, artist, song_id):
+
     with cd('audio'):
         ydl_opts = {
             'format': 'worstaudio',
@@ -21,6 +22,7 @@ def download(song_name, artist, song_id):
                 'preferredcodec': 'mp3',
             }],
         }
+
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             try:
                 ydl.download(['gvsearch1:youtube ' + song_name + ' ' + artist])
@@ -30,10 +32,13 @@ def download(song_name, artist, song_id):
 
 
 def load_data(num_truncated_songs=10000):
+
     song_meta_fnm = 'saved_data/music_recommendator/song_meta.p'
     if isfile(song_meta_fnm):
+        print('Loading song_meta from file')
         song_meta = pickle.load(open(song_meta_fnm, 'rb'))
     else:
+        print('Generating song_meta')
         with open('raw_data/music_recommendator/unique_tracks.txt', 'r') as f:
             txt = f.read()
         song_meta = {}
@@ -52,9 +57,11 @@ def load_data(num_truncated_songs=10000):
     users_ordered_fnm = 'saved_data/music_recommendator/users_ordered.p'
     if isfile(user_hist_fnm) and \
             isfile(users_ordered_fnm):
+        print('Loading user_hist and users_ordered from file')
         user_hist = pickle.load(open(user_hist_fnm, 'rb'))
         users_ordered = pickle.load(open(users_ordered_fnm, 'rb'))
     else:
+        print('Generating user_hist and users_ordered')
         with open('raw_data/music_recommendator/train_triplets.txt', 'r') as f:
             txt = f.read()
         user_hist = {}
@@ -66,17 +73,21 @@ def load_data(num_truncated_songs=10000):
                         user_hist[user_id]
                     except:
                         user_hist[user_id] = []
-                    user_hist[user_id].append({'song_id': song_id, 'play_count': play_count})
+                    user_hist[user_id].append(
+                            {'song_id': song_id, 'play_count': play_count})
                 except Exception as e:
                     print(e)
                     print(line)
         users_ordered = list(user_hist.keys())
         pickle.dump(user_hist, open(user_hist_fnm, 'wb'))
         pickle.dump(users_ordered, open(users_ordered_fnm, 'wb'))
+
     filtered_hist_fnm = 'saved_data/music_recommendator/filtered_hist.p'
     if isfile(filtered_hist_fnm):
+        print('Loading filtered_hist from file')
         filtered_hist = pickle.load(open(filtered_hist_fnm, 'rb'))
     else:
+        print('Generating filtered_hist')
         filtered_hist = []
         for user in users_ordered:
             user_data = []
@@ -86,15 +97,18 @@ def load_data(num_truncated_songs=10000):
             if len(user_data) > 5:
                 filtered_hist.append(user_data)
         pickle.dump(filtered_hist, open(filtered_hist_fnm, 'wb'))
+
     truncated_hist_fnm = 'saved_data/music_recommendator/truncated_hist_' + \
         str(num_truncated_songs) + '.p'
     truncated_songs_fnm = 'saved_data/music_recommendator/truncated_songs_' + \
         str(num_truncated_songs) + '.p'
     if isfile(truncated_hist_fnm) and \
             isfile(truncated_songs_fnm):
+        print('Loading truncated_hist and truncated_songs from file')
         truncated_hist = pickle.load(open(truncated_hist_fnm, 'rb'))
         truncated_songs = pickle.load(open(truncated_songs_fnm, 'rb'))
     else:
+        print('Generating truncated_hist and truncated_songs')
         truncated_songs = listdir(
                 'raw_data/music_recommendator/audio')[:num_truncated_songs]
         for i, song in enumerate(truncated_songs):
@@ -121,8 +135,10 @@ def load_data(num_truncated_songs=10000):
 
 
 def gen_audio_dataset(num_truncated_songs=10000, num_mels=24):
+
     _, _, _, _, truncated_songs, truncated_hist = load_data(
             num_truncated_songs=num_truncated_songs)
+
     data_list = []
     for user in truncated_hist:
         for i, song in enumerate(user):
