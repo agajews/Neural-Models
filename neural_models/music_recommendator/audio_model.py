@@ -58,6 +58,7 @@ class AudioModel(RegressionModel):
         self.dropout_val = 0.0
         self.grad_clip = 927
         self.l2_reg_weight = 0.0007
+        self.embedding = 50
 
     def load_default_train_hyperparams(self):
 
