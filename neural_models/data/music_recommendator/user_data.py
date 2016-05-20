@@ -192,10 +192,13 @@ def gen_audio_dataset(num_truncated_songs=10000, num_mels=24):
                 pass
         wav_entry = {}
         try:
-            wav_entry['user_songs_X'] = user_songs_X
-            wav_entry['song_X'] = wavfiles[entry['song_X']]
-            wav_entry['song_y'] = entry['song_y']
-            wav_data_list.append(wav_entry)
-        except KeyError:
+            if len(user_songs_X) > 4:
+                wav_entry['user_songs_X'] = user_songs_X
+                wav_entry['song_X'] = wavfiles[entry['song_X']]
+                wav_entry['song_y'] = entry['song_y']
+                wav_data_list.append(wav_entry)
+            else:
+                raise Exception('Too few songs!')
+        except Exception:
             pass
     return wav_data_list
