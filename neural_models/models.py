@@ -135,6 +135,8 @@ class Model():
 
     def compute_train_metrics(self, train_fn, train_Xs, train_y):
 
+        print(train_Xs)
+
         train_loss = 0
         train_batches = 0
 
@@ -216,7 +218,7 @@ class Model():
             save=False,
             verbose=False):
 
-        # self.print_shapes(train_Xs)
+        self.print_shapes(train_Xs)
 
         supp_model_params = self.get_supp_model_params(
                 train_Xs, train_y, val_Xs, val_y)
