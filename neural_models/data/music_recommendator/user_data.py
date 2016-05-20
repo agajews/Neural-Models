@@ -86,9 +86,9 @@ def load_data(num_truncated_songs=10000):
             if len(user_data) > 5:
                 filtered_hist.append(user_data)
         pickle.dump(filtered_hist, open(filtered_hist_fnm, 'wb'))
-    truncated_hist_fnm = 'saved_data/truncated_hist_' + \
+    truncated_hist_fnm = 'saved_data/music_recommendator/truncated_hist_' + \
         str(num_truncated_songs) + '.p'
-    truncated_songs_fnm = 'saved_data/truncated_songs_' + \
+    truncated_songs_fnm = 'saved_data/music_recommendator/truncated_songs_' + \
         str(num_truncated_songs) + '.p'
     if isfile(truncated_hist_fnm) and \
             isfile(truncated_songs_fnm):
