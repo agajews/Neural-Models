@@ -2,18 +2,21 @@ from lasagne import init
 from lasagne.layers import InputLayer, LSTMLayer
 from lasagne.layers import DropoutLayer, SliceLayer, DenseLayer
 from lasagne.layers import CustomRecurrentLayer, ConcatLayer
+from lasagne.regularization import regularize_layer_params, l2
 from lasagne.nonlinearities import tanh, softmax
+
+import theano.tensor as T
 
 from neural_models.data.music_recommendator.user_data import gen_audio_dataset
 
 from neural_models.lib import split_val
 
-from neural_models.models import Model
+from neural_models.models import RegressionModel
 
 from neural_models.hyper_optim import BayesHyperOptim, GridHyperOptim
 
 
-class AudioModel(Model):
+class AudioModel(RegressionModel):
 
     def get_default_param_filename(self):
 

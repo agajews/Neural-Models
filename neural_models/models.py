@@ -1,6 +1,7 @@
 from lasagne.updates import adagrad
 from lasagne.layers import InputLayer
 from lasagne.layers import get_output, get_all_params, get_all_param_values
+from lasagne.objectives import squared_error, aggregate
 from lasagne.regularization import regularize_layer_params, l2
 from lasagne.layers.helper import get_all_layers
 
@@ -251,3 +252,33 @@ class Model():
                 save=False, verbose=False, val=True)
 
         return val_acc
+
+
+class RegressionModel(Model):
+
+    def build_train_loss(self, layers, train_output, target_values):
+
+        l2_penalty = regularize_layer_params(layers, l2) * self.l2_reg_weight
+        loss = self.msq_err(train_output, target_values)
+        loss += l2_penalty
+
+        return loss
+
+    def msq_err(self, train_output, target_values):
+
+        loss = squared_error(train_output, target_values)
+        loss = aggregate(loss, mode='mean')
+
+        return loss
+
+    def build_test_loss(self, layers, test_output, target_values):
+
+        test_loss = self.msq_err(test_output, target_values)
+
+        return test_loss
+
+    def build_test_acc(self, test_output, target_values):
+
+        test_acc = T.mean(abs(test_output - target_values))
+
+        return test_acc
