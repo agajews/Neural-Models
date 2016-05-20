@@ -107,11 +107,12 @@ def load_data(num_truncated_songs=10000):
     else:
         print('Generating filtered_songs')
         filtered_songs = []
-        for song in song_meta:
+        for song in song_meta.keys():
+            song_id = song_meta[song]['song_id']
             song_fnm = 'raw_data/music_recommendator/audio/' + \
-                song['song_id'] + '.mp3.wav'
+                song_id + '.mp3.wav'
             if isfile(song_fnm):
-                filtered_songs.append(song['song_id'])
+                filtered_songs.append(song_id)
         pickle.dump(filtered_songs, open(filtered_songs_fnm, 'wb'))
 
     truncated_hist_fnm = 'saved_data/music_recommendator/truncated_hist_' + \
