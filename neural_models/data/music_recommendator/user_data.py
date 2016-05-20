@@ -86,14 +86,17 @@ def load_data(num_truncated_songs=10000):
             if len(user_data) > 5:
                 filtered_hist.append(user_data)
         pickle.dump(filtered_hist, open(filtered_hist_fnm, 'wb'))
-    truncated_hist_fnm = 'data/truncated_hist_' + str(num_truncated_songs) + '.p'
-    truncated_songs_fnm = 'data/truncated_songs_' + str(num_truncated_songs) + '.p'
+    truncated_hist_fnm = 'saved_data/truncated_hist_' + \
+        str(num_truncated_songs) + '.p'
+    truncated_songs_fnm = 'saved_data/truncated_songs_' + \
+        str(num_truncated_songs) + '.p'
     if isfile(truncated_hist_fnm) and \
             isfile(truncated_songs_fnm):
         truncated_hist = pickle.load(open(truncated_hist_fnm, 'rb'))
         truncated_songs = pickle.load(open(truncated_songs_fnm, 'rb'))
     else:
-        truncated_songs = listdir('raw_data/music_recommendator/audio')[:num_truncated_songs]
+        truncated_songs = listdir(
+                'raw_data/music_recommendator/audio')[:num_truncated_songs]
         for i, song in enumerate(truncated_songs):
             truncated_songs[i] = song[:18]
         songs_set = set()
@@ -128,6 +131,7 @@ def gen_audio_dataset(num_truncated_songs=10000, num_mels=24):
             data_entry['song_X'] = song['song_id']
             data_entry['song_y'] = song['play_count']
             data_list.append(data_entry)
+
     wavfiles = {}
     print('Reading songs')
     for song in truncated_songs:
@@ -142,6 +146,7 @@ def gen_audio_dataset(num_truncated_songs=10000, num_mels=24):
                     'rate': rate}
         else:
             raise Exception('No such song!')
+
     wav_data_list = []
     print('Generating data')
     for i, entry in enumerate(data_list):
