@@ -27,13 +27,13 @@ class WeatherModel(Model):
 
         return distance
 
-    def update_acc_dist(self, acc_distribution, acc_distance):
+    def update_acc_dist(self, acc_distribution, acc_distance, num_examples):
 
         unique_vals, unique_counts = np.unique(
                 acc_distance, return_counts=True)
 
         for val, count in zip(unique_vals, unique_counts):
-            acc_distribution[val] += count
+            acc_distribution[val] += count / num_examples
 
         return acc_distribution
 
@@ -48,7 +48,7 @@ class WeatherModel(Model):
         for batch in iterate_minibatches(*val_Xs, val_y):
             [loss, acc_distance] = test_fn(*batch)
             acc_distribution = self.update_acc_dist(
-                    acc_distribution, acc_distance)
+                    acc_distribution, acc_distance, num_examples)
             val_loss += loss
             val_batches += 1
 
