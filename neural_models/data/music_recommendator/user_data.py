@@ -154,6 +154,7 @@ def gen_audio_dataset(num_truncated_songs=10000, num_mels=24):
         fnm = 'raw_data/music_recommendator/audio/' + song + '.mp3.wav'
         if isfile(fnm):
             rate, wav = wavfile.read(fnm)
+            print(song)
             print(wav)
             wavfiles[song] = {
                     'wav': wav,
