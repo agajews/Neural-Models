@@ -49,10 +49,8 @@ def split_val(*inputs, split=0.25):
 
 
 def iterate_minibatches(*inputs, batch_size=128, shuffle=True):
-    print(len(inputs))
     length = len(inputs[0])
     for input in inputs:
-        print(input.shape)
         assert len(input) == length
 
     if shuffle:

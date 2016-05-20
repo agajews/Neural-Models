@@ -199,8 +199,10 @@ class AudioModel(RegressionModel):
         print(train_song_X.shape)
         print(val_user_songs_X.shape)
         print(val_song_X.shape)
-        train_Xs = [train_user_songs_X, train_song_X].reverse()
-        val_Xs = [val_user_songs_X, val_song_X].reverse()
+        train_Xs = [train_user_songs_X, train_song_X]
+        train_Xs.reverse()
+        val_Xs = [val_user_songs_X, val_song_X]
+        val_Xs.reverse()
 
         return train_Xs, val_Xs, train_y, val_y
 
