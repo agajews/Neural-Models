@@ -63,7 +63,7 @@ class AudioModel(RegressionModel):
     def load_default_train_hyperparams(self):
 
         self.num_epochs = 54
-        self.batch_size = 365
+        self.batch_size = 128
         self.learning_rate = 0.055
 
     def create_lstm_stack(self, net):
