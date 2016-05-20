@@ -1,7 +1,8 @@
 import pickle
 
 from scipy.io import wavfile
-# import scipy.signal
+
+import numpy as np
 
 from os.path import isfile
 
@@ -201,9 +202,22 @@ def gen_audio_dataset(num_truncated_songs=10000, num_mels=24):
                 raise Exception('Too few songs!')
         except Exception:
             pass
-    user_songs_X = [entry['user_songs_X'] for entry in wav_data_list]
-    song_X = [entry['song_X'] for entry in wav_data_list]
-    song_y = [entry['song_y'] for entry in wav_data_list]
+    num_examples = len(wav_data_list)
+    nums_of_songs = [len(example['user_songs_X']) for example in wav_data_list]
+    max_num_songs = max(nums_of_songs)
+    lengths_of_songs = [len(song['wav'][:, 0]) for song in wavfiles]
+    max_song_length = max(lengths_of_songs)
+
+    user_songs_X = np.zeros((num_examples, max_num_songs, max_song_length, 3))
+    song_X = np.zeros((num_examples, max_song_length, 3))
+    song_y = np.zeros((num_examples))
+
+    for i, entry in enumerate(wav_data_list):
+        for j, song_entry in entry['user_songs_X']:
+            user_songs_X[i, j, :, :] = song_entry['wav']
+        song_X[i, :, :] = entry['song_X']['wav']
+        song_y[i] = entry['song_y']
+
     [
             train_user_songs_X, test_user_songs_X,
             train_song_X, test_song_X,
