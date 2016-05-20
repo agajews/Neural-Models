@@ -168,11 +168,12 @@ def gen_audio_dataset(num_truncated_songs=10000, num_mels=24):
         fnm = 'raw_data/music_recommendator/audio/' + song + '.mp3.wav'
         if isfile(fnm):
             rate, wav = wavfile.read(fnm)
-            print(song)
-            print(wav)
-            wavfiles[song] = {
-                    'wav': wav,
-                    'rate': rate}
+            if len(wav.shape) == 2:
+                print(song)
+                print(wav)
+                wavfiles[song] = {
+                        'wav': wav,
+                        'rate': rate}
         else:
             raise Exception('No such song %s at %s!' % (song, fnm))
 
@@ -183,12 +184,18 @@ def gen_audio_dataset(num_truncated_songs=10000, num_mels=24):
         user_songs_X = []
         for song in entry['user_songs_X']:
             song_entry = {}
-            song_entry['wav'] = wavfiles[song['song_id']]['wav']
-            song_entry['play_count'] = song['play_count']
-            user_songs_X.append(song_entry)
+            try:
+                song_entry['wav'] = wavfiles[song['song_id']]['wav']
+                song_entry['play_count'] = song['play_count']
+                user_songs_X.append(song_entry)
+            except KeyError:
+                pass
         wav_entry = {}
-        wav_entry['user_songs_X'] = user_songs_X
-        wav_entry['song_X'] = wavfiles[entry['song_X']]
-        wav_entry['song_y'] = entry['song_y']
-        wav_data_list.append(wav_entry)
+        try:
+            wav_entry['user_songs_X'] = user_songs_X
+            wav_entry['song_X'] = wavfiles[entry['song_X']]
+            wav_entry['song_y'] = entry['song_y']
+            wav_data_list.append(wav_entry)
+        except KeyError:
+            pass
     return wav_data_list
