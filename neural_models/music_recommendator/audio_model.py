@@ -195,7 +195,7 @@ class AudioModel(Model):
         [
                 train_user_songs_X, train_song_X, train_y,
                 _, _, _
-        ] = gen_audio_dataset(timesteps=self.timesteps)
+        ] = gen_audio_dataset(num_truncated_songs=1000)
         [
                 train_user_songs_X, val_user_songs_X,
                 train_song_X, val_song_X,
@@ -251,9 +251,15 @@ def train_default():
     model.train_with_data()
 
 
+def test_data():
+    gen_audio_dataset(num_truncated_songs=1000)
+
+
 def main():
 
-    train_default()
+    test_data()
+
+    # train_default()
 
     # bayes_hyper_optim_station()
 
