@@ -219,8 +219,8 @@ def gen_audio_dataset(num_truncated_songs=10000, num_mels=24):
 
     for i, entry in enumerate(wav_data_list):
         for j, song_entry in enumerate(entry['user_songs_X']):
-            print(song_entry)
-            user_songs_X[i, j, :, :] = song_entry['wav']
+            wav = song_entry['wav']
+            user_songs_X[i, j, :len(wav), :] = wav
         song_X[i, :, :] = entry['song_X']['wav']
         song_y[i] = entry['song_y']
 
