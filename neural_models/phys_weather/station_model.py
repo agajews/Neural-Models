@@ -23,37 +23,39 @@ class WeatherModel(Model):
         y_hat = T.argmax(test_output, axis=1)
         y = T.argmax(target_values, axis=1)
 
-        dist = abs(y_hat - y)
-        unique_vals, unique_counts = T.extra_ops.Unique(
-                dist, return_counts=True)
+        distance = abs(y_hat - y)
 
-        return unique_vals, unique_counts
+        return distance
 
-    def update_acc_dist(self, acc_dist, unique_vals, unique_counts):
+    def update_acc_dist(self, acc_distribution, acc_distance):
+
+        unique_vals, unique_counts = np.unique(
+                acc_distance, return_counts=True)
 
         for val, count in zip(unique_vals, unique_counts):
-            acc_dist[val] += count
+            acc_distribution[val] += count
 
-        return acc_dist
+        return acc_distribution
 
     def compute_val_metrics(self, test_fn, val_Xs, val_y):
 
         num_examples, output_spread = val_y.shape
 
         val_loss = 0
-        acc_dist = np.zeros(num_examples, output_spread)
+        acc_distribution = np.zeros(num_examples, output_spread)
         val_batches = 0
 
         for batch in iterate_minibatches(*val_Xs, val_y):
-            [loss, acc] = test_fn(*batch)
-            acc_dist = self.update_acc_dist(acc_dist, *acc)
+            [loss, acc_distance] = test_fn(*batch)
+            acc_distribution = self.update_acc_dist(
+                    acc_distribution, acc_distance)
             val_loss += loss
             val_batches += 1
 
         val_loss /= val_batches
-        acc_dist /= val_batches
+        acc_distribution /= val_batches
 
-        return val_loss, acc_dist
+        return val_loss, acc_distribution
 
     def display_val_metrics(self, val_metrics):
 
