@@ -19,44 +19,72 @@ class MapModel(WeatherModel):
 
     def load_hyperparams(self, hyperparams):
 
-        self.num_hidden = int(hyperparams['num_hidden'])
+        self.load_train_hyperparams(hyperparams)
+        self.load_cnn_hyperparams(hyperparams)
+        self.load_data_hyperparams(hyperparams)
+        self.load_net_hyperparams(hyperparams)
+
+    def load_train_hyperparams(self, hyperparams):
+
         self.num_epochs = int(hyperparams['num_epochs'])
         self.batch_size = int(hyperparams['batch_size'])
+        self.learning_rate = float(hyperparams['learning_rate'])
+
+    def load_cnn_hyperparams(self, hyperparams):
 
         self.num_filters = int(hyperparams['num_filters'])
         self.filter_size = int(hyperparams['filter_size'])
         self.pool_size = int(hyperparams['pool_size'])
         self.embedding = int(hyperparams['embedding'])
 
+    def load_data_hyperparams(self, hyperparams):
+
         self.width = int(hyperparams['width'])
         self.height = int(hyperparams['height'])
         self.timesteps = int(hyperparams['timesteps'])
 
-        self.dropout_val = float(hyperparams['dropout_val'])
-        self.learning_rate = float(hyperparams['learning_rate'])
-        self.grad_clip = float(hyperparams['grad_clip'])
-        self.l2_reg_weight = float(hyperparams['l2_reg_weight'])
-
         self.num_channels = 1
 
-    def load_default_hyperparams(self):
+    def load_net_hyperparams(self, hyperparams):
 
-        self.dropout_val = 0.0
-        self.num_hidden = 512
-        self.grad_clip = 100
+        self.dropout_val = float(hyperparams['dropout_val'])
+        self.grad_clip = float(hyperparams['grad_clip'])
+        self.l2_reg_weight = float(hyperparams['l2_reg_weight'])
+        self.num_hidden = int(hyperparams['num_hidden'])
+
+    def load_default_train_hyperparams(self):
+
+        self.num_epochs = 50
+        self.batch_size = 128
+        self.learning_rate = 0.01
+
+    def load_default_cnn_hyperparams(self):
+
         self.num_filters = 32
         self.filter_size = 3
         self.pool_size = 3
         self.embedding = 50
-        self.num_epochs = 50
-        self.batch_size = 128
-        self.learning_rate = 0.01
-        self.l2_reg_weight = 0.0007
+
+    def load_default_data_hyperparams(self):
 
         self.width = 80
         self.height = 35
         self.timesteps = 10
         self.num_channels = 1
+
+    def load_default_net_hyperparams(self):
+
+        self.dropout_val = 0.0
+        self.grad_clip = 100
+        self.num_hidden = 512
+        self.l2_reg_weight = 0.0007
+
+    def load_default_hyperparams(self):
+
+        self.load_default_train_hyperparams()
+        self.load_default_cnn_hyperparams()
+        self.load_default_data_hyperparams()
+        self.load_default_net_hyperparams()
 
     def create_cnn(self):
 

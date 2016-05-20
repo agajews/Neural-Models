@@ -86,26 +86,49 @@ class StationModel(WeatherModel):
 
     def load_hyperparams(self, hyperparams):
 
-        self.num_hidden = int(hyperparams['num_hidden'])
-        self.num_epochs = int(hyperparams['num_epochs'])
-        self.batch_size = int(hyperparams['batch_size'])
-        self.timesteps = int(hyperparams['timesteps'])
+        self.load_data_hyperparams(hyperparams)
+        self.load_train_hyperparams(hyperparams)
+        self.load_net_hyperparams(hyperparams)
 
+    def load_net_hyperparams(self, hyperparams):
+
+        self.num_hidden = int(hyperparams['num_hidden'])
         self.dropout_val = float(hyperparams['dropout_val'])
-        self.learning_rate = float(hyperparams['learning_rate'])
         self.grad_clip = float(hyperparams['grad_clip'])
         self.l2_reg_weight = float(hyperparams['l2_reg_weight'])
 
+    def load_data_hyperparams(self, hyperparams):
+
+        self.timesteps = int(hyperparams['timesteps'])
+
+    def load_train_hyperparams(self, hyperparams):
+
+        self.num_epochs = int(hyperparams['num_epochs'])
+        self.learning_rate = float(hyperparams['learning_rate'])
+        self.batch_size = int(hyperparams['batch_size'])
+
     def load_default_hyperparams(self):
 
+        self.load_default_data_hyperparams()
+        self.load_default_train_hyperparams()
+        self.load_default_net_hyperparams()
+
+    def load_default_data_hyperparams(self):
+
+        self.timesteps = 30
+
+    def load_default_net_hyperparams(self):
+
         self.num_hidden = 250
-        self.num_epochs = 54
-        self.batch_size = 365
         self.dropout_val = 0.0
-        self.learning_rate = 0.055
         self.grad_clip = 927
         self.l2_reg_weight = 0.0007
-        self.timesteps = 30
+
+    def load_default_train_hyperparams(self):
+
+        self.num_epochs = 54
+        self.batch_size = 365
+        self.learning_rate = 0.055
 
     def create_lstm_stack(self, net):
 
