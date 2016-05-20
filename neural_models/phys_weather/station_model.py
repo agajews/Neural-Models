@@ -75,6 +75,7 @@ class WeatherModel(Model):
 
         print('Val Loss: ' + str(val_loss))
         print('Val Acc Dist: ' + str(acc_dist))
+        print('3-Acc: ' + str(sum(acc_dist[:4])))
 
 
 class StationModel(WeatherModel):
