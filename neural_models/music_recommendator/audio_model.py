@@ -120,10 +120,10 @@ class AudioModel(RegressionModel):
 
         return l_song_encoder
 
-    def create_pref_embedding(self):
+    def create_pref_embedding(self, l_song_vals):
 
+        net = l_song_vals
         # shape=(num_users, num_songs, embedding + 1 (value is play_count))
-        net = InputLayer(shape=(None, None, self.embedding + 1))
 
         for _ in range(2):
             net = self.create_lstm_stack(net)
@@ -150,15 +150,8 @@ class AudioModel(RegressionModel):
         # shape=(num_users, num_songs, embedding + 1 (value is play_count))
         l_song_vals = ConcatLayer([l_song_counts_in, l_song_encoder], axis=2)
 
-        l_in_hid = self.create_pref_encoder()
-
-        l_hid_hid = DenseLayer(
-                InputLayer(l_in_hid.output_shape),
-                num_units=self.embedding)
-
-        l_user_prefs = CustomRecurrentLayer(
-                l_song_vals, l_in_hid, l_hid_hid)
         # output_shape=(num_users, embedding)
+        l_user_prefs = self.create_pref_embedding(l_song_vals)
 
         return l_user_prefs
 
