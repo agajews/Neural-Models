@@ -42,7 +42,7 @@ class WeatherModel(Model):
         num_examples, output_spread = val_y.shape
 
         val_loss = 0
-        acc_distribution = np.zeros(num_examples, output_spread)
+        acc_distribution = np.zeros(shape=(num_examples, output_spread))
         val_batches = 0
 
         for batch in iterate_minibatches(*val_Xs, val_y):
