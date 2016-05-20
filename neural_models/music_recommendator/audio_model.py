@@ -257,9 +257,9 @@ def test_data():
 
 def main():
 
-    test_data()
+    # test_data()
 
-    # train_default()
+    train_default()
 
     # bayes_hyper_optim_station()
 

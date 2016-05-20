@@ -169,8 +169,8 @@ def gen_audio_dataset(num_truncated_songs=10000, num_mels=24):
         if isfile(fnm):
             rate, wav = wavfile.read(fnm)
             if len(wav.shape) == 2:
-                print(song)
-                print(wav)
+                # print(song)
+                # print(wav)
                 wavfiles[song] = {
                         'wav': wav,
                         'rate': rate}
