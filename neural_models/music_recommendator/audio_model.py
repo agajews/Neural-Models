@@ -80,7 +80,8 @@ class AudioModel(RegressionModel):
     def create_song_embedding(self):
 
         # shape=(num_songs, song_length, bitwidth)
-        net = InputLayer(shape=(None, None, self.bitwidth))
+        i_song = InputLayer(shape=(None, None, self.bitwidth))
+        net = i_song
 
         for _ in range(2):
             net = self.create_lstm_stack(net)
@@ -93,14 +94,14 @@ class AudioModel(RegressionModel):
                 W=init.Normal(),
                 nonlinearity=softmax)
 
-        return net
+        return net, i_song
 
     def create_input_song_encoder(self):
 
         # shape=(num_users, song_length, bitwidth)
-        net = self.create_song_embedding()
+        net, i_song = self.create_song_embedding()
 
-        return net
+        return net, i_song
 
     def create_song_encoder(self):
 
@@ -108,7 +109,7 @@ class AudioModel(RegressionModel):
         i_user_songs = InputLayer(shape=(
             None, None, None, self.bitwidth))
 
-        l_in_hid = self.create_song_embedding()
+        l_in_hid, _ = self.create_song_embedding()
 
         l_hid_hid = DenseLayer(
                 InputLayer(l_in_hid.output_shape),

@@ -144,6 +144,7 @@ class StationModel(WeatherModel):
     def create_model(self, input_spread, output_spread):
 
         i_stat = InputLayer(shape=(None, None, input_spread))
+        net = i_stat
 
         for _ in range(2):
             net = self.create_lstm_stack(i_stat)
