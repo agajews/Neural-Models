@@ -107,7 +107,7 @@ def load_data(num_truncated_songs=10000):
     else:
         print('Generating filtered_songs')
         filtered_songs = []
-        for song in song_meta.keys():
+        for song in song_meta:
             song_fnm = 'raw_data/music_recommendator/audio/' + \
                 song['song_id'] + '.mp3.wav'
             if isfile(song_fnm):
