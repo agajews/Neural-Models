@@ -129,11 +129,15 @@ def gen_station_data(timesteps=10, verbose=False):
                 max_X_pos = days_list[example_num + j][2] - max_min
                 max_X[example_num, j, max_X_pos] = 1
 
-        [min_train_X, min_test_X,
-         min_train_y, min_test_y] = split_test(min_X, min_y, split=0.25)
+        [
+                min_train_X, min_test_X,
+                min_train_y, min_test_y
+        ] = split_test(min_X, min_y, split=0.25)
 
-        [max_train_X, max_test_X,
-         max_train_y, max_test_y] = split_test(max_X, max_y, split=0.25)
+        [
+                max_train_X, max_test_X,
+                max_train_y, max_test_y
+        ] = split_test(max_X, max_y, split=0.25)
 
         station_data = [min_train_X, min_train_y, min_test_X, min_test_y,
                         max_train_X, max_train_y, max_test_X, max_test_y]

@@ -5,7 +5,7 @@ from scipy.io import wavfile
 
 from os.path import isfile
 
-from neural_models.lib import cd
+from neural_models.lib import cd, split_test
 
 import youtube_dl
 
@@ -201,6 +201,16 @@ def gen_audio_dataset(num_truncated_songs=10000, num_mels=24):
                 raise Exception('Too few songs!')
         except Exception:
             pass
-    print(len(wav_data_list))
-    print(len(data_list))
-    return wav_data_list
+    user_songs_X = [entry['user_songs_X'] for entry in wav_data_list]
+    song_X = [entry['songs_X'] for entry in wav_data_list]
+    song_y = [entry['songs_y'] for entry in wav_data_list]
+    [
+            train_user_songs_X, test_user_songs_X,
+            train_song_X, test_song_X,
+            train_song_y, test_song_y
+    ] = split_test(user_songs_X, song_X, song_y, split=0.25)
+
+    audio_dataset = [
+            train_user_songs_X, train_song_X, train_song_y,
+            test_user_songs_X, test_song_X, test_song_y]
+    return audio_dataset
