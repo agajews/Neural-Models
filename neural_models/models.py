@@ -206,10 +206,17 @@ class Model():
 
         return net
 
+    def print_shapes(self, arrays):
+
+        for array in arrays:
+            print(array.shape)
+
     def train_model(self, train_Xs, val_Xs, train_y, val_y,
             val=True,
             save=False,
             verbose=False):
+
+        self.print_shapes(train_Xs)
 
         supp_model_params = self.get_supp_model_params(
                 train_Xs, train_y, val_Xs, val_y)
