@@ -252,7 +252,7 @@ def train_default():
 
 
 def test_data():
-    gen_audio_dataset(num_truncated_songs=1000)
+    gen_audio_dataset(num_truncated_songs=10000)
 
 
 def main():

@@ -202,8 +202,8 @@ def gen_audio_dataset(num_truncated_songs=10000, num_mels=24):
         except Exception:
             pass
     user_songs_X = [entry['user_songs_X'] for entry in wav_data_list]
-    song_X = [entry['songs_X'] for entry in wav_data_list]
-    song_y = [entry['songs_y'] for entry in wav_data_list]
+    song_X = [entry['song_X'] for entry in wav_data_list]
+    song_y = [entry['song_y'] for entry in wav_data_list]
     [
             train_user_songs_X, test_user_songs_X,
             train_song_X, test_song_X,
