@@ -127,7 +127,7 @@ def load_data(num_truncated_songs=10000):
                     user_data.append(song)
             if len(user_data) > 5:
                 truncated_hist.append(user_data)
-        pickle.dump(truncated_hist, open(truncated_hist_fnm))
+        pickle.dump(truncated_hist, open(truncated_hist_fnm, 'wb'))
         pickle.dump(truncated_songs, open(truncated_songs_fnm, 'wb'))
 
     return [song_meta, user_hist, users_ordered,
