@@ -104,7 +104,7 @@ class Model():
 
     def build_train_function(self, net, layers, input_vars):
 
-        target_values = T.imatrix('target_output')
+        target_values = T.vector('target_output')
 
         train_output = get_output(net)
 
@@ -119,7 +119,7 @@ class Model():
 
     def build_test_function(self, net, layers, input_vars):
 
-        target_values = T.imatrix('target_output')
+        target_values = T.vector('target_output')
 
         test_output = get_output(net, deterministic=True)
 
@@ -134,8 +134,6 @@ class Model():
         return test_fn
 
     def compute_train_metrics(self, train_fn, train_Xs, train_y):
-
-        print(train_Xs)
 
         train_loss = 0
         train_batches = 0

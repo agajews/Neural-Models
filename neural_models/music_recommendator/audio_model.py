@@ -190,17 +190,16 @@ class AudioModel(RegressionModel):
                 train_user_songs_X, train_song_X, train_y,
                 _, _, _
         ] = gen_audio_dataset(num_truncated_songs=1000)
+
         [
                 train_user_songs_X, val_user_songs_X,
                 train_song_X, val_song_X,
                 train_y, val_y
         ] = split_val(train_user_songs_X, train_song_X, train_y)
-        print(train_user_songs_X.shape)
-        print(train_song_X.shape)
-        print(val_user_songs_X.shape)
-        print(val_song_X.shape)
+
         train_Xs = [train_user_songs_X, train_song_X]
         train_Xs.reverse()
+
         val_Xs = [val_user_songs_X, val_song_X]
         val_Xs.reverse()
 
