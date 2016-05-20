@@ -69,7 +69,9 @@ def get_days_list(fnm, map_exists=False):
     f_days_list = []
     for day in days_list:
         if map_exists:
-            if isfile('raw_data/phys_weather/temp_maps/colormaxmin_' + str(day[0]) + '.jpg'):
+            map_fnm = 'raw_data/phys_weather/temp_maps/colormaxmin_' + \
+                str(day[0]) + '.jpg'
+            if isfile(map_fnm):
                 f_days_list.append((day[0], round(day[1]), round(day[2])))
         else:
             f_days_list.append((day[0], round(day[1]), round(day[2])))
@@ -79,9 +81,12 @@ def get_days_list(fnm, map_exists=False):
 def gen_station_data(timesteps=10, verbose=False):
     fnm = 'saved_data/phys_weather/station_data_' + str(timesteps) + '.p'
     if isfile(fnm):
+        print('Loading station_data from file')
         station_data = pickle.load(open(fnm, 'rb'))
     else:
-        days_list = get_days_list('raw_data/phys_weather/chicago_summaries.dly')
+        print('Generating station_data')
+        dly_fnm = 'raw_data/phys_weather/chicago_summaries.dly'
+        days_list = get_days_list(dly_fnm)
         num_days = len(days_list)
         mins = [day[1] for day in days_list]
         maxs = [day[2] for day in days_list]

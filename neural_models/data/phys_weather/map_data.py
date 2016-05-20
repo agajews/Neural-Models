@@ -10,7 +10,8 @@ from neural_models.lib import split_test
 from .station_data import get_days_list
 
 
-def gen_map_data(width=100, height=50, timesteps=10, verbose=False, color='hsv'):
+def gen_map_data(width=100, height=50, timesteps=10,
+        verbose=False, color='hsv'):
     fnm = 'saved_data/phys_weather/map_data_' + \
         str(width) + ',' + \
         str(height) + ',' + \
@@ -18,9 +19,12 @@ def gen_map_data(width=100, height=50, timesteps=10, verbose=False, color='hsv')
         color + \
         '.p'
     if isfile(fnm):
+        print('Loading map_data from file')
         map_data = pickle.load(open(fnm, 'rb'))
     else:
-        days_list = get_days_list('raw_data/phys_weather/chicago_summaries.dly', map_exists=True)
+        print('Generating map_data')
+        dly_fnm = 'raw_data/phys_weather/chicago_summaries.dly'
+        days_list = get_days_list(dly_fnm, map_exists=True)
         num_days = len(days_list)
         if color == 'rgb':
             channels = 3
@@ -31,11 +35,14 @@ def gen_map_data(width=100, height=50, timesteps=10, verbose=False, color='hsv')
 
         temp_maps = np.zeros((num_days, channels, width, height))
         for i, (day, minimum, maximum) in enumerate(days_list):
-            image = imread('raw_data/phys_weather/temp_maps/colormaxmin_' + str(day) + '.jpg')
+            map_fnm = 'raw_data/phys_weather/temp_maps/colormaxmin_' + \
+                str(day) + '.jpg'
+            image = imread(map_fnm)
             if color == 'rgb':
                 image = np.transpose(image, (2, 0, 1))
                 for channel in range(image.shape[0]):
-                    temp_maps[i, channel, :, :] = resize(image[channel, :, :], (height, width))
+                    temp_maps[i, channel, :, :] = resize(
+                           image[channel, :, :], (height, width))
             elif color == 'hsv':
                 image = cvtColor(image, COLOR_BGR2HSV)
                 temp_maps[i, 0, :, :] = resize(image[:, :, 0], (height, width))
@@ -63,7 +70,8 @@ def gen_map_data(width=100, height=50, timesteps=10, verbose=False, color='hsv')
         min_map_y = np.zeros((num_days - timesteps, min_spread))
         max_map_X = np.zeros((num_days - timesteps, timesteps, min_spread))
         max_map_y = np.zeros((num_days - timesteps, max_spread))
-        temp_map_X = np.zeros((num_days - timesteps, timesteps, channels, width, height))
+        temp_map_X = np.zeros(
+                (num_days - timesteps, timesteps, channels, width, height))
         for i in range(timesteps, num_days):
             day = days_list[i]
             example_num = i - timesteps
@@ -81,19 +89,28 @@ def gen_map_data(width=100, height=50, timesteps=10, verbose=False, color='hsv')
                 max_map_X[example_num, j, max_map_X_pos] = 1
 
             for j in range(timesteps):
-                temp_map_X[example_num, j, :, :, :] = temp_maps[example_num + j, :, :, :]
+                temp_map_X[example_num, j, :, :, :] = \
+                    temp_maps[example_num + j, :, :, :]
 
-        [min_map_train_X, min_map_test_X,
-         temp_map_train_X, temp_map_test_X,
-         min_map_train_y, min_map_test_y] = split_test(min_map_X, temp_map_X, min_map_y, split=0.25)
+        [
+                min_map_train_X, min_map_test_X,
+                temp_map_train_X, temp_map_test_X,
+                min_map_train_y, min_map_test_y
+        ] = split_test(
+                min_map_X, temp_map_X, min_map_y, split=0.25)
 
-        [max_map_train_X, max_map_test_X,
-         temp_map_train_X, temp_map_test_X,
-         max_map_train_y, max_map_test_y] = split_test(max_map_X, temp_map_X, max_map_y, split=0.25)
+        [
+                max_map_train_X, max_map_test_X,
+                temp_map_train_X, temp_map_test_X,
+                max_map_train_y, max_map_test_y
+        ] = split_test(
+                 max_map_X, temp_map_X, max_map_y, split=0.25)
 
-        map_data = [min_map_train_X, min_map_train_y, min_map_test_X, min_map_test_y,
-                    max_map_train_X, max_map_train_y, max_map_test_X, max_map_test_y,
-                    temp_map_train_X, temp_map_test_X]
+        map_data = [min_map_train_X, min_map_train_y,
+                min_map_test_X, min_map_test_y,
+                max_map_train_X, max_map_train_y,
+                max_map_test_X, max_map_test_y,
+                temp_map_train_X, temp_map_test_X]
 
         pickle.dump(map_data, open(fnm, 'wb'))
 
