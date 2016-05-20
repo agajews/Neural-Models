@@ -104,7 +104,7 @@ class StationModel(WeatherModel):
         self.learning_rate = 0.055
         self.grad_clip = 927
         self.l2_reg_weight = 0.0007
-        self.timesteps = 10
+        self.timesteps = 30
 
     def create_lstm_stack(self, net):
 
