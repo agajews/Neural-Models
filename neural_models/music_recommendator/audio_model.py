@@ -180,7 +180,7 @@ class AudioModel(RegressionModel):
                 W=init.Normal(),
                 nonlinearity=softmax)
 
-        return net, [i_user_prefs, i_input_song]
+        return net, [i_user_songs, i_user_counts, i_input_song]
 
     def get_supp_model_params(self, train_Xs, train_y, val_Xs, val_y):
 
