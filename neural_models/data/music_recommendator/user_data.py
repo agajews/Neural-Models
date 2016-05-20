@@ -92,7 +92,7 @@ def load_data(num_truncated_songs=10000):
         for user in users_ordered:
             user_data = []
             for song in user_hist[user]:
-                if isfile('audio/' + song['song_id'] + '.mp3'):
+                if isfile('audio/' + song['song_id'] + '.mp3.wav'):
                     user_data.append(song)
             if len(user_data) > 5:
                 filtered_hist.append(user_data)
