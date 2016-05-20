@@ -92,11 +92,27 @@ def load_data(num_truncated_songs=10000):
         for user in users_ordered:
             user_data = []
             for song in user_hist[user]:
-                if isfile('audio/' + song['song_id'] + '.mp3.wav'):
+                song_fnm = 'raw_data/music_recommendator/audio/' + \
+                    song['song_id'] + '.mp3.wav'
+                if isfile(song_fnm):
                     user_data.append(song)
             if len(user_data) > 5:
                 filtered_hist.append(user_data)
         pickle.dump(filtered_hist, open(filtered_hist_fnm, 'wb'))
+
+    filtered_songs_fnm = 'saved_data/music_recommendator/filtered_songs.p'
+    if isfile(filtered_songs_fnm):
+        print('Loading filtered_songs from file')
+        filtered_songs = pickle.load(open(filtered_songs_fnm, 'rb'))
+    else:
+        print('Generating filtered_songs')
+        filtered_songs = []
+        for song in song_meta.keys():
+            song_fnm = 'raw_data/music_recommendator/audio/' + \
+                song['song_id'] + '.mp3.wav'
+            if isfile(song_fnm):
+                filtered_songs.append(song['song_id'])
+        pickle.dump(filtered_songs, open(filtered_songs_fnm, 'wb'))
 
     truncated_hist_fnm = 'saved_data/music_recommendator/truncated_hist_' + \
         str(num_truncated_songs) + '.p'
@@ -109,8 +125,7 @@ def load_data(num_truncated_songs=10000):
         truncated_songs = pickle.load(open(truncated_songs_fnm, 'rb'))
     else:
         print('Generating truncated_hist and truncated_songs')
-        truncated_songs = listdir(
-                'raw_data/music_recommendator/audio')[:num_truncated_songs]
+        truncated_songs = filtered_songs[:num_truncated_songs]
         for i, song in enumerate(truncated_songs):
             truncated_songs[i] = song[:18]
         songs_set = set()
