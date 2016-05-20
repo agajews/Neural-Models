@@ -1,5 +1,6 @@
 from lasagne import init
-from lasagne.layers import InputLayer, LSTMLayer, DropoutLayer, SliceLayer, DenseLayer
+from lasagne.layers import InputLayer, LSTMLayer
+from lasagne.layers import DropoutLayer, SliceLayer, DenseLayer
 from lasagne.nonlinearities import tanh, softmax
 
 from neural_models.data.phys_weather.station_data import gen_station_data
@@ -77,7 +78,11 @@ class StationModel(Model):
 
     def get_data(self):
 
-        min_train_X, min_train_y, min_test_X, min_test_y, _, _, _, _ = gen_station_data()
+        [
+                min_train_X, min_train_y,
+                min_test_X, min_test_y,
+                _, _, _, _
+        ] = gen_station_data()
         train_X, val_X, train_y, val_y = split_val(min_train_X, min_train_y)
         train_Xs, val_Xs = [train_X], [val_X]
 
