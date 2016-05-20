@@ -102,24 +102,24 @@ class Model():
 
         return input_vars
 
-    def build_train_function(self, net, layers, input_vars):
+    def build_train_fn(self, net, layers, input_vars):
 
-        target_values = T.vector('target_output')
+        target_values = T.ivector('target_output')
 
         train_output = get_output(net)
 
         loss = self.build_train_loss(layers, train_output, target_values)
         updates = self.build_train_updates(net, loss)
 
-        train_fn = theano.function(
+        train_fn = theano.fn(
                 input_vars + [target_values],
                 loss, updates=updates, allow_input_downcast=True)
 
         return train_fn
 
-    def build_test_function(self, net, layers, input_vars):
+    def build_test_fn(self, net, layers, input_vars):
 
-        target_values = T.vector('target_output')
+        target_values = T.ivector('target_output')
 
         test_output = get_output(net, deterministic=True)
 
@@ -127,7 +127,7 @@ class Model():
 
         test_acc = self.build_test_acc(test_output, target_values)
 
-        test_fn = theano.function(
+        test_fn = theano.fn(
                 input_vars + [target_values],
                 [test_loss, test_acc], allow_input_downcast=True)
 
@@ -230,9 +230,9 @@ class Model():
 
         input_vars = self.get_input_vars(layers)
 
-        train_fn = self.build_train_function(net, layers, input_vars)
+        train_fn = self.build_train_fn(net, layers, input_vars)
 
-        test_fn = self.build_test_function(net, layers, input_vars)
+        test_fn = self.build_test_fn(net, layers, input_vars)
 
         for epoch in range(self.num_epochs):
             train_metrics, val_metrics = self.perform_epoch(
