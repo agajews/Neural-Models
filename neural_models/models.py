@@ -58,14 +58,16 @@ class Model():
     def build_train_loss(self, layers, train_output, target_values):
 
         l2_penalty = regularize_layer_params(layers, l2) * self.l2_reg_weight
-        loss = T.nnet.categorical_crossentropy(train_output, target_values).mean()
+        loss = T.nnet.categorical_crossentropy(
+                train_output, target_values).mean()
         loss += l2_penalty
 
         return loss
 
     def build_test_loss(self, layers, test_output, target_values):
 
-        test_loss = T.nnet.categorical_crossentropy(test_output, target_values).mean()
+        test_loss = T.nnet.categorical_crossentropy(
+                test_output, target_values).mean()
 
         return test_loss
 
@@ -193,7 +195,8 @@ class Model():
             save=False,
             verbose=False):
 
-        supp_model_params = self.get_supp_model_params(train_Xs, train_y, val_Xs, val_y)
+        supp_model_params = self.get_supp_model_params(
+                train_Xs, train_y, val_Xs, val_y)
 
         if verbose:
             print("Compiling functions ...")

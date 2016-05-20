@@ -3,16 +3,67 @@ from lasagne.layers import InputLayer, LSTMLayer
 from lasagne.layers import DropoutLayer, SliceLayer, DenseLayer
 from lasagne.nonlinearities import tanh, softmax
 
+import theano.tensor as T
+
+import numpy as np
+
 from neural_models.data.phys_weather.station_data import gen_station_data
 
-from neural_models.lib import split_val
+from neural_models.lib import split_val, iterate_minibatches
 
 from neural_models.models import Model
 
 from neural_models.hyper_optim import BayesHyperOptim, GridHyperOptim
 
 
-class StationModel(Model):
+class WeatherModel(Model):
+
+    def build_test_acc(self, test_output, target_values):
+
+        y_hat = T.argmax(test_output, axis=1)
+        y = T.argmax(target_values, axis=1)
+
+        dist = abs(y_hat - y)
+        unique_vals, unique_counts = T.extra_ops.Unique(
+                dist, return_counts=True)
+
+        return unique_vals, unique_counts
+
+    def update_acc_dist(self, acc_dist, unique_vals, unique_counts):
+
+        for val, count in zip(unique_vals, unique_counts):
+            acc_dist[val] += count
+
+        return acc_dist
+
+    def compute_val_metrics(self, test_fn, val_Xs, val_y):
+
+        num_examples, output_spread = val_y.shape
+
+        val_loss = 0
+        acc_dist = np.zeros(num_examples, output_spread)
+        val_batches = 0
+
+        for batch in iterate_minibatches(*val_Xs, val_y):
+            [loss, acc] = test_fn(*batch)
+            acc_dist = self.update_acc_dist(acc_dist, *acc)
+            val_loss += loss
+            val_batches += 1
+
+        val_loss /= val_batches
+        acc_dist /= val_batches
+
+        return val_loss, acc_dist
+
+    def display_val_metrics(self, val_metrics):
+
+        val_loss, acc_dist = val_metrics
+
+        print('Val Loss: ' + str(val_loss))
+        print('Val Acc Dist: ' + str(acc_dist))
+
+
+class StationModel(WeatherModel):
 
     def get_default_param_filename(self):
 

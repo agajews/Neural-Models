@@ -6,15 +6,12 @@ from lasagne.layers import CustomRecurrentLayer, ConcatLayer
 from lasagne.nonlinearities import tanh, softmax, rectify
 
 from neural_models.data.phys_weather.map_data import gen_map_data
-
 from neural_models.lib import split_val
-
-from neural_models.models import Model
-
 from neural_models.hyper_optim import BayesHyperOptim, GridHyperOptim
+from .station_model import WeatherModel
 
 
-class MapModel(Model):
+class MapModel(WeatherModel):
 
     def get_default_param_filename(self):
 
