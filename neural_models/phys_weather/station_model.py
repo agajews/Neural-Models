@@ -46,7 +46,7 @@ class WeatherModel(Model):
         val_batches = 0
 
         for batch in iterate_minibatches(
-                *val_Xs, val_y, batchsize=self.batch_size):
+                *val_Xs, val_y, batch_size=self.batch_size):
 
             num_examples, _ = batch[len(val_Xs)].shape
 
