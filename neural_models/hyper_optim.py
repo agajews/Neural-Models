@@ -3,7 +3,7 @@ import itertools
 from bayes_opt import BayesianOptimization
 
 
-class HyperOptim():
+class HyperOptim(object):
 
     def __init__(self):
 

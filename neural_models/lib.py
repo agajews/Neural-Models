@@ -6,6 +6,9 @@ import numpy as np
 
 import theano
 
+from lasagne.layers import DenseLayer, InputLayer, CustomRecurrentLayer
+from lasagne.layers.shape import FlattenLayer
+
 
 class cd:
     """Context manager for changing the current working directory"""
@@ -78,3 +81,24 @@ def shared_zeros(shape):
     zeros = theano.shared(zeros)
 
     return zeros
+
+
+def net_on_seq(net, input_layer):
+
+    net = FlattenLayer(net)
+
+    hidden_shape = net.output_shape
+    units = hidden_shape[1]
+
+    l_hid_hid = DenseLayer(
+            InputLayer(hidden_shape),
+            num_units=units,
+            W=shared_zeros((units, units)),
+            b=shared_zeros((units,)))
+    l_hid_hid.params[l_hid_hid.W].remove('trainable')
+    l_hid_hid.params[l_hid_hid.b].remove('trainable')
+
+    net = CustomRecurrentLayer(
+            input_layer, net, l_hid_hid)
+
+    return net

@@ -1,12 +1,12 @@
 from lasagne import init
 from lasagne.layers import InputLayer, LSTMLayer
 from lasagne.layers import DropoutLayer, SliceLayer, DenseLayer
-from lasagne.layers import CustomRecurrentLayer, ConcatLayer
+from lasagne.layers import ConcatLayer
 from lasagne.nonlinearities import tanh, softmax
 
 from neural_models.data.music_recommendator.user_data import gen_audio_dataset
 
-from neural_models.lib import split_val, shared_zeros
+from neural_models.lib import split_val, net_on_seq
 
 from neural_models.models import RegressionModel
 
@@ -58,12 +58,12 @@ class AudioModel(RegressionModel):
         self.dropout_val = 0.0
         self.grad_clip = 927
         self.l2_reg_weight = 0.0007
-        self.embedding = 10
+        self.embedding = 50
 
     def load_default_train_hyperparams(self):
 
         self.num_epochs = 54
-        self.batch_size = 24
+        self.batch_size = 12
         self.learning_rate = 0.055
 
     def create_lstm_stack(self, net):
@@ -83,7 +83,7 @@ class AudioModel(RegressionModel):
         i_song = InputLayer(shape=(None, None, self.bitwidth))
         net = i_song
 
-        for _ in range(2):
+        for _ in range(1):
             net = self.create_lstm_stack(net)
 
         # output_shape=(num_songs, embedding)
@@ -96,28 +96,13 @@ class AudioModel(RegressionModel):
 
         return net, i_song
 
-    def create_input_song_encoder(self):
-
-        # shape=(num_users, song_length, bitwidth)
-        net, i_song = self.create_song_embedding()
-
-        return net, i_song
-
-    def create_song_encoder(self):
+    def create_song_encoder(self, l_song_embedding):
 
         # shape=(num_users, num_songs, song_length, bitwidth)
         i_user_songs = InputLayer(shape=(
             None, None, None, self.bitwidth))
 
-        l_in_hid, _ = self.create_song_embedding()
-
-        l_hid_hid = DenseLayer(
-                InputLayer(l_in_hid.output_shape),
-                num_units=self.embedding,
-                W=shared_zeros((self.embedding, self.embedding)))
-
-        l_song_encoder = CustomRecurrentLayer(
-                i_user_songs, l_in_hid, l_hid_hid)
+        l_song_encoder = net_on_seq(l_song_embedding, i_user_songs)
         # output_shape=(num_users, num_songs, embedding)
 
         return l_song_encoder, i_user_songs
@@ -127,7 +112,7 @@ class AudioModel(RegressionModel):
         net = l_song_vals
         # shape=(num_users, num_songs, embedding + 1 (value is play_count))
 
-        for _ in range(2):
+        for _ in range(1):
             net = self.create_lstm_stack(net)
 
         # output_shape=(num_users, embedding)
@@ -140,10 +125,10 @@ class AudioModel(RegressionModel):
 
         return net
 
-    def create_user_pref_encoder(self):
+    def create_user_pref_encoder(self, l_song_embedding):
 
         # shape=(num_users, num_songs, embedding)
-        l_song_encoder, i_user_songs = self.create_song_encoder()
+        l_song_encoder, i_user_songs = self.create_song_encoder(l_song_embedding)
 
         # shape=(num_users, num_songs, 1 (value is play_count))
         i_user_counts = InputLayer(shape=(
@@ -160,11 +145,12 @@ class AudioModel(RegressionModel):
     def create_model(self):
 
         # shape=(num_users, embedding)
-        l_user_prefs, i_user_songs, i_user_counts = \
-            self.create_user_pref_encoder()
+        l_song_embedding, i_input_song = self.create_song_embedding()
+        l_input_song_encoder = l_song_embedding
 
         # shape=(num_users, embedding)
-        l_input_song_encoder, i_input_song = self.create_input_song_encoder()
+        l_user_prefs, i_user_songs, i_user_counts = \
+            self.create_user_pref_encoder(l_song_embedding)
 
         # shape=(num_users, 2*embedding)
         net = ConcatLayer([l_user_prefs, l_input_song_encoder], axis=1)
@@ -203,7 +189,7 @@ class AudioModel(RegressionModel):
                 train_user_songs_X, train_user_count_X,
                 train_song_X, train_y,
                 _, _, _, _
-        ] = gen_audio_dataset(num_truncated_songs=4000)
+        ] = gen_audio_dataset(num_truncated_songs=3500)
 
         [
                 train_user_songs_X, val_user_songs_X,

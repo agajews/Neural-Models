@@ -2,11 +2,11 @@ from lasagne import init
 from lasagne.layers import InputLayer, LSTMLayer, DropoutLayer
 from lasagne.layers import SliceLayer, DenseLayer
 from lasagne.layers import Conv2DLayer, MaxPool2DLayer
-from lasagne.layers import CustomRecurrentLayer, ConcatLayer
+from lasagne.layers import ConcatLayer
 from lasagne.nonlinearities import tanh, softmax, rectify
 
 from neural_models.data.phys_weather.map_data import gen_map_data
-from neural_models.lib import split_val
+from neural_models.lib import split_val, net_on_seq
 from neural_models.hyper_optim import BayesHyperOptim, GridHyperOptim
 from .station_model import WeatherModel
 
@@ -54,8 +54,8 @@ class MapModel(WeatherModel):
 
     def load_default_train_hyperparams(self):
 
-        self.num_epochs = 50
-        self.batch_size = 128
+        self.num_epochs = 200
+        self.batch_size = 48
         self.learning_rate = 0.01
 
     def load_default_cnn_hyperparams(self):
@@ -63,12 +63,12 @@ class MapModel(WeatherModel):
         self.num_filters = 32
         self.filter_size = 3
         self.pool_size = 3
-        self.embedding = 50
+        self.embedding = 100
 
     def load_default_data_hyperparams(self):
 
-        self.width = 80
-        self.height = 35
+        self.width = 160
+        self.height = 70
         self.timesteps = 10
         self.num_channels = 1
 
@@ -86,10 +86,7 @@ class MapModel(WeatherModel):
         self.load_default_data_hyperparams()
         self.load_default_net_hyperparams()
 
-    def create_cnn(self):
-
-        net = InputLayer(
-                shape=(None, self.num_channels, self.width, self.height))
+    def create_cnn_stack(self, net):
 
         net = Conv2DLayer(
                 net,
@@ -102,20 +99,31 @@ class MapModel(WeatherModel):
                 net,
                 pool_size=(self.pool_size, self.pool_size))
 
-        net = Conv2DLayer(
-                net,
-                num_filters=self.num_filters,
-                filter_size=(self.filter_size, self.filter_size),
-                nonlinearity=rectify)
+        return net
 
-        net = MaxPool2DLayer(
-                net,
-                pool_size=(self.pool_size, self.pool_size))
+    def create_cnn(self):
+
+        net = InputLayer(
+                shape=(None, self.num_channels, self.width, self.height))
+
+        for _ in range(2):
+            net = self.create_cnn_stack(net)
 
         net = DenseLayer(
                 net,
                 num_units=self.embedding,
                 nonlinearity=rectify)
+
+        return net
+
+    def create_lstm_stack(self, net):
+
+        net = LSTMLayer(
+                net, self.num_hidden,
+                grad_clipping=self.grad_clip,
+                nonlinearity=tanh)
+
+        net = DropoutLayer(net, self.dropout_val)
 
         return net
 
@@ -125,32 +133,16 @@ class MapModel(WeatherModel):
             None, self.timesteps, self.num_channels,
             self.width, self.height))
 
-        l_in_hid = self.create_cnn()
+        cnn = self.create_cnn()
 
-        l_hid_hid = DenseLayer(
-                InputLayer(l_in_hid.output_shape),
-                num_units=self.embedding)
-
-        l_pre = CustomRecurrentLayer(
-                i_map, l_in_hid, l_hid_hid)
+        l_pre = net_on_seq(cnn, i_map)
 
         i_stat = InputLayer(shape=(None, self.timesteps, input_spread))
 
         net = ConcatLayer([l_pre, i_stat], axis=2)
 
-        net = LSTMLayer(
-                net, self.num_hidden,
-                grad_clipping=self.grad_clip,
-                nonlinearity=tanh)
-
-        net = DropoutLayer(net, self.dropout_val)
-
-        net = LSTMLayer(
-                net, self.num_hidden,
-                grad_clipping=self.grad_clip,
-                nonlinearity=tanh)
-
-        net = DropoutLayer(net, self.dropout_val)
+        for _ in range(2):
+            net = self.create_lstm_stack(net)
 
         net = SliceLayer(net, -1, 1)
 
@@ -232,7 +224,8 @@ def grid_hyper_optim_station():
 
 def train_default():
 
-    model = MapModel()
+    fnm = 'params/phys_weather/map_model_w160,h70.p'
+    model = MapModel(param_filename=fnm)
     model.train_with_data()
 
 

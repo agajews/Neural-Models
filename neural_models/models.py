@@ -15,7 +15,7 @@ import pickle
 from neural_models.lib import iterate_minibatches
 
 
-class Model():
+class Model(object):
     def __init__(self, hyperparams=None, param_filename=None):
 
         self.set_hyperparams(hyperparams)
@@ -183,9 +183,9 @@ class Model():
 
         print('Val Loss: ' + str(val_loss) + ' | Val Acc: ' + str(val_acc))
 
-    def save_params(self, layers):
+    def save_params(self):
 
-        params = get_all_param_values(layers)
+        params = get_all_param_values(self.layers)
         pickle.dump(params, open(self.param_filename, 'wb'))
 
     def perform_epoch(self, train_fn, test_fn,
@@ -197,6 +197,9 @@ class Model():
 
         if verbose:
             self.display_train_metrics(train_metrics, epoch=epoch)
+
+        if save:
+            self.save_params()
 
         if val:
             val_metrics = self.compute_val_metrics(test_fn, val_Xs, val_y)
@@ -248,6 +251,7 @@ class Model():
         input_vars = self.get_input_vars(input_layers)
 
         layers = get_all_layers(net)
+        self.layers = layers
 
         train_fn = self.build_train_fn(net, layers, input_vars)
 
@@ -262,7 +266,7 @@ class Model():
                     val, epoch_save, verbose, epoch)
 
         if save:
-            self.save_params(layers)
+            self.save_params()
 
         if val:
             return val_metrics

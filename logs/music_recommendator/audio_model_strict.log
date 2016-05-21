@@ -1,0 +1,17 @@
+Loading song_meta from file
+Loading user_hist and users_ordered from file
+Loading filtered_hist from file
+Loading filtered_songs from file
+Generating truncated_hist and truncated_songs
+Reading songs
+Generating data
+Num examples: 15593
+Max songs: 25
+Max song length: 1004
+Compiling functions
+Input shapes:
+(8770, 25, 1004, 3)
+(8770, 25, 1)
+(8770, 1004, 3)
+Num params: 126301
+Beginning training
