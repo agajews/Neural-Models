@@ -6,7 +6,7 @@ from lasagne.nonlinearities import tanh, softmax
 
 from neural_models.data.music_recommendator.user_data import gen_audio_dataset
 
-from neural_models.lib import split_val
+from neural_models.lib import split_val, shared_zeros
 
 from neural_models.models import RegressionModel
 
@@ -17,7 +17,7 @@ class AudioModel(RegressionModel):
 
     def get_default_param_filename(self):
 
-        return 'params/phys_weather/station_model.p'
+        return 'params/music_recommendator/audio_model.p'
 
     def load_hyperparams(self, hyperparams):
 
@@ -54,16 +54,16 @@ class AudioModel(RegressionModel):
 
     def load_default_net_hyperparams(self):
 
-        self.num_hidden = 250
+        self.num_hidden = 100
         self.dropout_val = 0.0
         self.grad_clip = 927
         self.l2_reg_weight = 0.0007
-        self.embedding = 50
+        self.embedding = 10
 
     def load_default_train_hyperparams(self):
 
         self.num_epochs = 54
-        self.batch_size = 128
+        self.batch_size = 24
         self.learning_rate = 0.055
 
     def create_lstm_stack(self, net):
@@ -92,7 +92,7 @@ class AudioModel(RegressionModel):
                 net,
                 num_units=self.embedding,
                 W=init.Normal(),
-                nonlinearity=softmax)
+                nonlinearity=tanh)
 
         return net, i_song
 
@@ -113,7 +113,8 @@ class AudioModel(RegressionModel):
 
         l_hid_hid = DenseLayer(
                 InputLayer(l_in_hid.output_shape),
-                num_units=self.embedding)
+                num_units=self.embedding,
+                W=shared_zeros((self.embedding, self.embedding)))
 
         l_song_encoder = CustomRecurrentLayer(
                 i_user_songs, l_in_hid, l_hid_hid)
@@ -135,7 +136,7 @@ class AudioModel(RegressionModel):
                 net,
                 num_units=self.embedding,
                 W=init.Normal(),
-                nonlinearity=softmax)
+                nonlinearity=tanh)
 
         return net
 
@@ -172,13 +173,14 @@ class AudioModel(RegressionModel):
                 net,
                 num_units=self.num_hidden,
                 W=init.Normal(),
-                nonlinearity=softmax)
+                nonlinearity=tanh)
 
         net = DenseLayer(
                 net,
                 num_units=1,
                 W=init.Normal(),
                 nonlinearity=softmax)
+        net = SliceLayer(net, 0, 1)
 
         return net, [i_user_songs, i_user_counts, i_input_song]
 
@@ -186,24 +188,42 @@ class AudioModel(RegressionModel):
 
         return None
 
+    def train_with_data(self):
+
+        data = self.get_data()
+
+        self.train_model(
+                *data,
+                save=True, epoch_save=True,
+                verbose=True, val=True)
+
     def get_data(self):
 
         [
-                train_user_songs_X, train_song_X, train_y,
-                _, _, _
-        ] = gen_audio_dataset(num_truncated_songs=1000)
+                train_user_songs_X, train_user_count_X,
+                train_song_X, train_y,
+                _, _, _, _
+        ] = gen_audio_dataset(num_truncated_songs=4000)
 
         [
                 train_user_songs_X, val_user_songs_X,
+                train_user_count_X, val_user_count_X,
                 train_song_X, val_song_X,
                 train_y, val_y
-        ] = split_val(train_user_songs_X, train_song_X, train_y)
+        ] = split_val(
+                train_user_songs_X, train_user_count_X,
+                train_song_X, train_y,
+                split=0.25)
 
-        train_Xs = [train_user_songs_X, train_song_X]
-        train_Xs.reverse()
+        train_Xs = [
+                train_user_songs_X,
+                train_user_count_X,
+                train_song_X]
 
-        val_Xs = [val_user_songs_X, val_song_X]
-        val_Xs.reverse()
+        val_Xs = [
+                val_user_songs_X,
+                val_user_count_X,
+                val_song_X]
 
         return train_Xs, val_Xs, train_y, val_y
 
@@ -248,7 +268,7 @@ def grid_hyper_optim():
 
 def train_default():
 
-    model = AudioModel()
+    model = AudioModel(param_filename='params/music_recommendator/audio_model_n5000.p')
     model.train_with_data()
 
 

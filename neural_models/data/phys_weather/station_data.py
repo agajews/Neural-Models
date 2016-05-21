@@ -139,8 +139,9 @@ def gen_station_data(timesteps=10, verbose=False):
                 max_train_y, max_test_y
         ] = split_test(max_X, max_y, split=0.25)
 
-        station_data = [min_train_X, min_train_y, min_test_X, min_test_y,
-                        max_train_X, max_train_y, max_test_X, max_test_y]
+        station_data = [
+                min_train_X, min_train_y, min_test_X, min_test_y,
+                max_train_X, max_train_y, max_test_X, max_test_y]
 
         pickle.dump(station_data, open(fnm, 'wb'))
 

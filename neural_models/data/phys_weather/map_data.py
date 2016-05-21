@@ -106,7 +106,8 @@ def gen_map_data(width=100, height=50, timesteps=10,
         ] = split_test(
                  max_map_X, temp_map_X, max_map_y, split=0.25)
 
-        map_data = [min_map_train_X, min_map_train_y,
+        map_data = [
+                min_map_train_X, min_map_train_y,
                 min_map_test_X, min_map_test_y,
                 max_map_train_X, max_map_train_y,
                 max_map_test_X, max_map_test_y,

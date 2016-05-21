@@ -3,7 +3,7 @@ from lasagne.layers import InputLayer
 from lasagne.layers import get_output, get_all_params, get_all_param_values
 from lasagne.objectives import squared_error, aggregate
 from lasagne.regularization import regularize_layer_params, l2
-from lasagne.layers.helper import get_all_layers
+from lasagne.layers.helper import get_all_layers, count_params
 
 import theano
 import theano.tensor as T
@@ -102,14 +102,15 @@ class Model():
 
         return input_vars
 
+    def get_target_input_var(self):
+
+        return T.imatrix('target_output')
+
     def build_train_fn(self, net, layers, input_vars):
 
-        print(len(input_vars))
-
-        target_values = T.ivector('target_output')
+        target_values = self.get_target_input_var()
 
         train_output = get_output(net)
-
         loss = self.build_train_loss(layers, train_output, target_values)
         updates = self.build_train_updates(net, loss)
 
@@ -121,12 +122,10 @@ class Model():
 
     def build_test_fn(self, net, layers, input_vars):
 
-        target_values = T.ivector('target_output')
+        target_values = self.get_target_input_var()
 
         test_output = get_output(net, deterministic=True)
-
         test_loss = self.build_test_loss(layers, test_output, target_values)
-
         test_acc = self.build_test_acc(test_output, target_values)
 
         test_fn = theano.function(
@@ -167,9 +166,16 @@ class Model():
 
         return val_loss, val_acc
 
-    def display_train_metrics(self, train_metrics):
+    def display_train_metrics(self, train_metrics, epoch=None):
 
-        print('Train loss: ' + str(train_metrics))
+        disp = ''
+
+        if epoch is not None:
+            disp += 'Epoch: %s | ' % epoch
+
+        disp += 'Train loss: %s' % str(train_metrics)
+
+        print(disp)
 
     def display_val_metrics(self, val_metrics):
 
@@ -184,12 +190,13 @@ class Model():
 
     def perform_epoch(self, train_fn, test_fn,
             train_Xs, train_y, val_Xs, val_y,
-            val=True, save=False, verbose=False):
+            val=True, save=False, verbose=False,
+            epoch=None):
 
         train_metrics = self.compute_train_metrics(train_fn, train_Xs, train_y)
 
         if verbose:
-            self.display_train_metrics(train_metrics)
+            self.display_train_metrics(train_metrics, epoch=epoch)
 
         if val:
             val_metrics = self.compute_val_metrics(test_fn, val_Xs, val_y)
@@ -208,6 +215,16 @@ class Model():
 
         return net
 
+    def display_info(self, net,
+            train_Xs, val_Xs,
+            train_y, val_y):
+
+        print('Input shapes:')
+        self.print_shapes(train_Xs)
+
+        num_params = count_params(get_all_layers(net))
+        print('Num params: %d' % num_params)
+
     def print_shapes(self, arrays):
 
         for array in arrays:
@@ -215,18 +232,18 @@ class Model():
 
     def train_model(self, train_Xs, val_Xs, train_y, val_y,
             val=True,
-            save=False,
+            save=True, epoch_save=False,
             verbose=False):
-
-        # self.print_shapes(train_Xs)
 
         supp_model_params = self.get_supp_model_params(
                 train_Xs, train_y, val_Xs, val_y)
 
         if verbose:
-            print("Compiling functions ...")
+            print('Compiling functions')
 
         net, input_layers = self.create_model_with_supp(supp_model_params)
+
+        self.display_info(net, train_Xs, val_Xs, train_y, val_y)
 
         input_vars = self.get_input_vars(input_layers)
 
@@ -236,10 +253,13 @@ class Model():
 
         test_fn = self.build_test_fn(net, layers, input_vars)
 
+        if verbose:
+            print('Beginning training')
+
         for epoch in range(self.num_epochs):
             train_metrics, val_metrics = self.perform_epoch(
                     train_fn, test_fn, train_Xs, train_y, val_Xs, val_y,
-                    val, save, verbose)
+                    val, epoch_save, verbose, epoch)
 
         if save:
             self.save_params(layers)
@@ -257,7 +277,8 @@ class Model():
 
         self.train_model(
                 *data,
-                save=True, verbose=True, val=True)
+                save=True, epoch_save=False,
+                verbose=True, val=True)
 
     def test_hyperparams(self, **hyperparams):
 
@@ -300,3 +321,7 @@ class RegressionModel(Model):
         test_acc = T.mean(abs(test_output - target_values))
 
         return test_acc
+
+    def get_target_input_var(self):
+
+        return T.ivector('target output')

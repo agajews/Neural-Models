@@ -155,6 +155,8 @@ def gen_audio_dataset(num_truncated_songs=10000, num_mels=24):
     _, _, _, _, truncated_songs, truncated_hist = load_data(
             num_truncated_songs=num_truncated_songs)
 
+    del _
+
     data_list = []
     for user in truncated_hist:
         for i, song in enumerate(user):
@@ -170,8 +172,8 @@ def gen_audio_dataset(num_truncated_songs=10000, num_mels=24):
         fnm = 'raw_data/music_recommendator/audio/' + song + '.mp3.wav'
         if isfile(fnm):
             rate, wav = wavfile.read(fnm)
-            if len(wav.shape) == 2 and wav.shape[0] > 5:
-                downsampled_size = int(wav.shape[0] * 0.05)
+            if len(wav.shape) == 2 and wav.shape[0] > 500:
+                downsampled_size = int(wav.shape[0] * 0.01)
                 wav = signal.resample(wav, downsampled_size)
                 wavfiles[song] = {
                         'wav': wav,
@@ -194,7 +196,7 @@ def gen_audio_dataset(num_truncated_songs=10000, num_mels=24):
                 pass
         wav_entry = {}
         try:
-            if len(user_songs_X) > 4:
+            if len(user_songs_X) > 15:
                 wav_entry['user_songs_X'] = user_songs_X
                 wav_entry['song_X'] = wavfiles[entry['song_X']]
                 wav_entry['song_y'] = entry['song_y']
@@ -207,31 +209,39 @@ def gen_audio_dataset(num_truncated_songs=10000, num_mels=24):
     print('Num examples: ' + str(num_examples))
     nums_of_songs = [len(example['user_songs_X']) for example in wav_data_list]
     max_num_songs = max(nums_of_songs)
+    max_num_songs = min(25, max_num_songs)
     print('Max songs: ' + str(max_num_songs))
     all_wavs = [wavfiles[song]['wav'] for song in wavfiles.keys()]
     lengths_of_songs = [len(wav[:, 0]) for wav in all_wavs]
     max_song_length = max(lengths_of_songs)
     print('Max song length: ' + str(max_song_length))
 
+    del truncated_songs, truncated_hist
+
     user_songs_X = np.zeros((num_examples, max_num_songs, max_song_length, 3))
+    user_count_X = np.zeros((num_examples, max_num_songs, 1))
     song_X = np.zeros((num_examples, max_song_length, 3))
     song_y = np.zeros((num_examples))
 
     for i, entry in enumerate(wav_data_list):
-        for j, song_entry in enumerate(entry['user_songs_X']):
+        for j, song_entry in enumerate(entry['user_songs_X'][:max_num_songs]):
             wav = song_entry['wav']
             user_songs_X[i, j, :len(wav), :len(wav[0, :])] = wav
+            user_count_X[i, j] = song_entry['play_count']
         wav = entry['song_X']['wav']
         song_X[i, :len(wav), :len(wav[0, :])] = wav
         song_y[i] = entry['song_y']
 
     [
             train_user_songs_X, test_user_songs_X,
+            train_user_count_X, test_user_count_X,
             train_song_X, test_song_X,
             train_song_y, test_song_y
-    ] = split_test(user_songs_X, song_X, song_y, split=0.25)
+    ] = split_test(user_songs_X, user_count_X, song_X, song_y, split=0.25)
 
     audio_dataset = [
-            train_user_songs_X, train_song_X, train_song_y,
-            test_user_songs_X, test_song_X, test_song_y]
+            train_user_songs_X, train_user_count_X,
+            train_song_X, train_song_y,
+            test_user_songs_X, test_user_count_X,
+            test_song_X, test_song_y]
     return audio_dataset

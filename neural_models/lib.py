@@ -4,6 +4,8 @@ import tarfile
 
 import numpy as np
 
+import theano
+
 
 class cd:
     """Context manager for changing the current working directory"""
@@ -68,3 +70,11 @@ def iterate_minibatches(*inputs, batch_size=128, shuffle=True):
             batch.append(input[excerpt])
 
         yield batch
+
+
+def shared_zeros(shape):
+
+    zeros = np.zeros(shape).astype('float32')
+    zeros = theano.shared(zeros)
+
+    return zeros
