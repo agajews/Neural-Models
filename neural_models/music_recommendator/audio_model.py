@@ -359,7 +359,8 @@ def gen_user_prefs(model, song_embeddings):
 def get_all_song_wavs():
 
     base_fnm = 'raw_data/music_recommendator/audio'
-    all_song_fnms = base_fnm + '/' + listdir(base_fnm)
+    all_song_fnms = listdir(base_fnm)
+    all_song_fnms = [base_fnm + '/' + fnm for fnm in all_song_fnms]
     all_song_fnms = [fnm for fnm in all_song_fnms if fnm[-3:] == '.wav']
 
     song_meta_fnm = 'saved_data/music_recommendator/song_meta.p'
@@ -375,6 +376,20 @@ def get_all_song_wavs():
         all_song_wavs.append(song_wav)
 
     return all_song_wavs
+
+
+def get_all_song_embeddings(model):
+
+    all_song_embeddings_fnm = 'saved_data/music_recommendator/all_song_embeddings.p'
+    if isfile(all_song_embeddings_fnm):
+        all_song_embeddings = pickle.load(open(all_song_embeddings_fnm, 'rb'))
+
+    else:
+        all_song_wavs = get_all_song_wavs()
+        all_song_embeddings = gen_song_embeddings(model, all_song_wavs)
+        pickle.save(all_song_embeddings, open(all_song_embeddings_fnm, 'wb'))
+
+    return all_song_embeddings
 
 
 def get_user_preds(model, user_prefs, all_song_embeddings):
@@ -466,9 +481,7 @@ def test_pref_embedding():
     user_prefs = gen_user_prefs(model, song_embeddings)
     print(user_prefs)
 
-    all_song_wavs = get_all_song_wavs()
-    print(all_song_wavs)
-    all_song_embeddings = gen_song_embeddings(model, all_song_wavs)
+    all_song_embeddings = get_all_song_embeddings(model)
 
     user_preds = get_user_preds(model, user_prefs, all_song_embeddings)
     user_preds = sorted(user_preds, key=lambda k: k['exp_play_count'], reverse=True)
