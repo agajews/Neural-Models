@@ -369,6 +369,7 @@ def get_all_song_wavs():
     all_song_wavs = []
 
     for fnm in all_song_fnms:
+        print(fnm)
         song_wav = {}
         song_wav['wav'] = get_wav(fnm)
         song_wav['name'] = song_meta[fnm[:-8]]
