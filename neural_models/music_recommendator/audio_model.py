@@ -299,8 +299,9 @@ def gen_song_data_np(songs_list):
     for song in songs_list:
 
         song_fnm = 'raw_data/music_recommendator/audio/%s.mp3' % song['name']
-        song_fnm = shlex.quote(song_fnm)
         song_wav_fnm = song_fnm + '.wav'
+        song_fnm = shlex.quote(song_fnm)
+        song_wav_fnm = shlex.quote(song_wav_fnm)
 
         if not isfile(song_wav_fnm):
             download(song['name'], '', song['name'])
