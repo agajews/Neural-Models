@@ -389,8 +389,7 @@ def get_all_song_wavs():
         try:
             song_wav = {}
             song_wav['wav'] = get_wav(fnm)
-            song_wav['name'] = song_meta[song_id]['name']
-            song_wav['artist'] = song_meta[song_id]['artist']
+            song_wav['name'] = song_meta[song_id]
             song_wav['song_id'] = song_id
         except:
             song_wav['wav'] = None
@@ -425,7 +424,6 @@ def get_user_preds(model, user_prefs, all_song_embeddings):
 
         song = {}
         song['name'] = song_embedding['name']
-        song['artist'] = song_embedding['artist']
         song['song_id'] = song_embedding['song_id']
         song['exp_play_count'] = exp_play_count[0]
 
