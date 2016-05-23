@@ -147,7 +147,6 @@ class AudioModel(RegressionModel):
 
         # shape=(num_users, num_songs, embedding)
         l_song_encoder, i_user_songs = self.create_song_encoder(l_song_embedding)
-        self.i_user_songs = i_user_songs
 
         # shape=(num_users, num_songs, 1 (value is play_count))
         i_user_counts = InputLayer(shape=(
@@ -174,6 +173,8 @@ class AudioModel(RegressionModel):
         # shape=(num_users, embedding)
         l_user_prefs, i_user_songs, i_user_counts = \
             self.create_user_pref_encoder(l_song_embedding)
+        self.i_user_songs = i_user_songs
+        self.i_user_counts = i_user_counts
         self.layers += get_all_layers(l_user_prefs)
 
         i_prefs = InputLayer((None, self.embedding), input_var=get_output(l_user_prefs))
