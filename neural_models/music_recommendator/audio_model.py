@@ -18,7 +18,8 @@ from os.path import isfile
 
 from subprocess import call
 
-from neural_models.data.music_recommendator.user_data import gen_audio_dataset, download
+from neural_models.data.music_recommendator.user_data import \
+    gen_audio_dataset, download
 
 from neural_models.lib import split_val, net_on_seq
 
@@ -314,13 +315,10 @@ def gen_song_data_np(songs_list):
 
 def gen_song_embeddings(model, song_data_np):
 
-    song_embeddings = []
-
     for song_data in song_data_np:
-        song_embedding = {}
-        song_embedding['embedding'] = model.get_song_embedding(song_data['wav'])
-        song_embedding['name'] = song_data['name']
-        song_embeddings.append(song_embedding)
+        song_data['embedding'] = model.get_song_embedding(song_data['wav'])
+
+    return song_data_np
 
 
 def gen_user_prefs(model, song_embeddings, song_data_np):
