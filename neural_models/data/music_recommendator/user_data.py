@@ -7,6 +7,8 @@ import numpy as np
 
 from os.path import isfile
 
+import shlex
+
 from neural_models.lib import cd, split_test
 
 import youtube_dl
@@ -17,7 +19,7 @@ def download(song_name, artist, song_id):
     with cd('raw_data/music_recommendator/audio'):
         ydl_opts = {
             'format': 'worstaudio',
-            'outtmpl': song_id + '.mp3',
+            'outtmpl': shlex.quote(song_id + '.mp3'),
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
