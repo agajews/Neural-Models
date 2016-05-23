@@ -289,8 +289,6 @@ def get_wav(song_fnm):
     downsampled_size = int(wav.shape[0] * 0.10)
     wav = signal.resample(wav, downsampled_size)
 
-    print(wav.shape)
-
     if len(wav.shape) == 2:
         bitwidth = wav.shape[1]
 
@@ -298,7 +296,7 @@ def get_wav(song_fnm):
         bitwidth = 1
 
     wav_np = np.zeros((1, wav.shape[0], 3))
-    wav_np[:, :, bitwidth] = wav
+    wav_np[:, :, :bitwidth] = wav
 
     return wav_np
 
