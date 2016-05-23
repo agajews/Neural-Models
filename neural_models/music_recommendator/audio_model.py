@@ -150,6 +150,7 @@ class AudioModel(RegressionModel):
         # shape=(num_users, num_songs, embedding)
         l_song_encoder, i_user_songs = self.create_song_encoder(l_song_embedding)
         self.layers += get_all_layers(l_song_encoder)
+
         i_user_song_embeddings = InputLayer(
             shape=(None, None, self.embedding),
             input_var=get_output(l_song_encoder))
@@ -222,7 +223,7 @@ class AudioModel(RegressionModel):
 
         pref_out = get_output(self.pref_embedding)
         pref_fn = theano.function(
-            [self.i_user_songs.input_var, self.i_user_counts.input_var],
+            [self.i_user_song_embeddings.input_var, self.i_user_counts.input_var],
             pref_out,
             allow_input_downcast=True)
 
