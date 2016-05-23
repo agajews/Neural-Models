@@ -448,9 +448,9 @@ def test_pref_embedding():
 
 def main():
 
-    # test_pref_embedding()
+    test_pref_embedding()
 
-    train_default()
+    # train_default()
 
     # bayes_hyper_optim_station()
 
