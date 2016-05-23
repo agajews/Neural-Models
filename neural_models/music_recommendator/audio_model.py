@@ -289,6 +289,8 @@ def get_wav(song_fnm):
     downsampled_size = int(wav.shape[0] * 0.10)
     wav = signal.resample(wav, downsampled_size)
 
+    print(wav.shape)
+
     if len(wav.shape) == 2:
         bitwidth = wav.shape[1]
 
