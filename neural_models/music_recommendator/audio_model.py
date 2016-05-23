@@ -334,14 +334,14 @@ def gen_song_embeddings(model, song_data_np):
     return song_data_np
 
 
-def gen_user_prefs(model, song_embeddings, song_data_np):
+def gen_user_prefs(model, song_embeddings):
 
     song_embeddings_np = np.zeros((1, len(song_embeddings), model.embedding))
     song_counts_np = np.zeros((1, len(song_embeddings), 1))
 
-    for i, [song_embedding, song_data] in enumerate(zip(song_embeddings, song_data_np)):
-        song_embeddings_np[:, i, :] = song_embedding['embedding']
-        song_counts_np = song_data['play_count']
+    for i, song_data in enumerate(song_embeddings):
+        song_embeddings_np[:, i, :] = song_data['embedding']
+        song_counts_np[:, i, :] = song_data['play_count']
 
     user_prefs = model.get_user_prefs(song_embeddings_np, song_counts_np)
 
