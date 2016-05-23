@@ -304,7 +304,7 @@ def gen_song_data_np(songs_list):
         song_wav_fnm = shlex.quote(song_wav_fnm)
 
         if not isfile(song_wav_fnm):
-            download(song['name'], '', song_fnm)
+            download(song['name'], '', shlex.quote(song['name']))
             call('sox %s %s' % (song_fnm, song_wav_fnm), shell=True)
 
         wav = get_wav(song_wav_fnm)
