@@ -340,7 +340,9 @@ def gen_song_data_np(songs_list):
 
 def gen_song_embeddings(model, song_data_np):
 
-    for song_data in song_data_np:
+    for i, song_data in enumerate(song_data_np):
+        if i % 100 == 0:
+            print(song_data['song_id'])
         song_data['embedding'] = model.get_song_embedding(song_data['wav'])
 
     return song_data_np
@@ -387,6 +389,7 @@ def get_all_song_wavs():
             song_wav = {}
             song_wav['wav'] = get_wav(fnm)
             song_wav['name'] = song_meta[song_id]
+            song_wav['song_id'] = song_id
         except:
             song_wav['wav'] = None
 
