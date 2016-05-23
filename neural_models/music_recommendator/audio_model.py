@@ -293,7 +293,7 @@ def get_wav(song_fnm):
         wav = np.reshape(wav, (1, wav.shape[0], wav.shape[1]))
 
     elif len(wav.shape) == 1:
-        wav = np.reshape(wav, (1, wav.shape[0], 1)
+        wav = np.reshape(wav, (1, wav.shape[0], 1))
 
     return wav
 
