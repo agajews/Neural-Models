@@ -425,7 +425,7 @@ def get_user_preds(model, user_prefs, all_song_embeddings):
         song = {}
         song['name'] = song_embedding['name']
         song['song_id'] = song_embedding['song_id']
-        song['exp_play_count'] = exp_play_count
+        song['exp_play_count'] = exp_play_count[0]
 
         songs.append(song)
 
