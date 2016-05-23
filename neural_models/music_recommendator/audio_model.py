@@ -286,7 +286,7 @@ def train_default():
 def get_wav(song_fnm):
 
     rate, wav = wavfile.read(song_fnm)
-    downsampled_size = int(wav.shape[0] * 0.01)
+    downsampled_size = int(wav.shape[0] * 0.10)
     wav = signal.resample(wav, downsampled_size)
 
     return wav
