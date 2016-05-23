@@ -18,7 +18,7 @@ def download(song_name, artist, song_id):
 
     with cd('raw_data/music_recommendator/audio'):
         ydl_opts = {
-            'format': 'worstaudio',
+            # 'format': 'worstaudio',
             'outtmpl': shlex.quote(song_id + '.mp3'),
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
