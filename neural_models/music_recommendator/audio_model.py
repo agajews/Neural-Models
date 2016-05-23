@@ -514,7 +514,7 @@ def test_pref_embedding():
     all_song_embeddings = get_all_song_embeddings(model)
 
     user_preds = get_user_preds(model, user_prefs, all_song_embeddings)
-    # user_preds = sorted(user_preds, key=lambda k: k['exp_play_count'], reverse=False)
+    user_preds = sorted(user_preds, key=lambda k: k['exp_play_count'], reverse=True)
 
     print(user_preds[:10])
 
