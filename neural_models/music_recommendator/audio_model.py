@@ -296,7 +296,7 @@ def get_wav(song_fnm):
         bitwidth = 1
 
     wav_np = np.zeros((1, wav.shape[0], 3))
-    wav_np[:, :, :bitwidth] = wav
+    wav_np[:, :, :bitwidth] = wav.reshape(1, wav.shape[0], bitwidth)
 
     return wav_np
 
