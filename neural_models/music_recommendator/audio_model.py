@@ -389,7 +389,8 @@ def get_all_song_wavs():
         try:
             song_wav = {}
             song_wav['wav'] = get_wav(fnm)
-            song_wav['name'] = song_meta[song_id]
+            song_wav['name'] = song_meta[song_id]['name']
+            song_wav['artist'] = song_meta[song_id]['artist']
             song_wav['song_id'] = song_id
         except:
             song_wav['wav'] = None
