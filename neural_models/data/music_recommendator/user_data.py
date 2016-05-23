@@ -166,7 +166,6 @@ def gen_audio_dataset(num_truncated_songs=10000, num_mels=24):
             data_entry['user_songs_X'] = user[:i] + user[i + 1:]
             data_entry['song_X'] = song['song_id']
             data_entry['song_y'] = song['play_count']
-            print(song['play_count'])
             data_list.append(data_entry)
 
     wavfiles = {}
@@ -247,4 +246,5 @@ def gen_audio_dataset(num_truncated_songs=10000, num_mels=24):
             train_song_X, train_song_y,
             test_user_songs_X, test_user_count_X,
             test_song_X, test_song_y]
+    print(train_song_y)
     return audio_dataset
