@@ -6,6 +6,8 @@ from lasagne.nonlinearities import tanh, softmax
 
 import theano
 
+import shlex
+
 from scipy.io import wavfile
 from scipy import signal
 
@@ -297,6 +299,7 @@ def gen_song_data_np(songs_list):
     for song in songs_list:
 
         song_fnm = 'raw_data/music_recommendator/audio/%s.mp3' % song['name']
+        song_fnm = shlex.quote(song_fnm)
         song_wav_fnm = song_fnm + '.wav'
 
         if not isfile(song_wav_fnm):
@@ -359,18 +362,12 @@ def get_all_song_wavs():
 
 def get_user_preds(model, user_prefs, all_song_embeddings):
 
-    user_preds = []
-
     for song_embedding in all_song_embeddings:
         exp_play_count = model.get_preds(song_embedding['embedding'], user_prefs)
 
-        pred = {}
-        pred['name'] = song_embedding['name']
-        pred['exp_play_count'] = exp_play_count
+        song_embedding['exp_play_count'] = exp_play_count
 
-        user_preds.append(pred)
-
-    return user_preds
+    return all_song_embeddings
 
 
 def test_pref_embedding():
