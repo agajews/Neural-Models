@@ -361,7 +361,8 @@ def get_all_song_wavs():
     base_fnm = 'raw_data/music_recommendator/audio'
     all_song_fnms = listdir(base_fnm)
     all_song_fnms = [base_fnm + '/' + fnm for fnm in all_song_fnms]
-    all_song_fnms = [fnm for fnm in all_song_fnms if fnm[-3:] == '.wav']
+    all_song_fnms = [fnm for fnm in all_song_fnms if fnm[-4:] == '.wav']
+    print(all_song_fnms)
 
     song_meta_fnm = 'saved_data/music_recommendator/song_meta.p'
     song_meta = pickle.load(open(song_meta_fnm, 'rb'))
