@@ -18,7 +18,7 @@ def download(song_name, artist, song_id):
 
     with cd('raw_data/music_recommendator/audio'):
         ydl_opts = {
-            # 'format': 'worstaudio',
+            'format': 'worstaudio',
             'outtmpl': shlex.quote(song_id + '.mp3'),
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
@@ -29,9 +29,9 @@ def download(song_name, artist, song_id):
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             try:
                 ydl.download(['gvsearch1:youtube ' + song_name + ' ' + artist])
-                return False
-            except:
                 return True
+            except:
+                return False
 
 
 def load_data(num_truncated_songs=10000):
