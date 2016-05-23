@@ -290,12 +290,15 @@ def get_wav(song_fnm):
     wav = signal.resample(wav, downsampled_size)
 
     if len(wav.shape) == 2:
-        wav = np.reshape(wav, (1, wav.shape[0], wav.shape[1]))
+        bitwidth = wav.shape[1]
 
-    elif len(wav.shape) == 1:
-        wav = np.reshape(wav, (1, wav.shape[0], 1))
+    else:
+        bitwidth = 1
 
-    return wav
+    wav_np = np.zeros((1, wav.shape[0], 3))
+    wav_np[:, :, bitwidth] = wav
+
+    return wav_np
 
 
 def gen_song_data_np(songs_list):
