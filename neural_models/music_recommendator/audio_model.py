@@ -305,7 +305,7 @@ def gen_song_data_np(songs_list):
 
         if not isfile(song_wav_fnm):
             download(song['name'], '', song['name'])
-            call('sox %s %s' % (song_fnm, song_wav_fnm))
+            call('sox %s %s' % (song_fnm, song_wav_fnm), shell=True)
 
         wav = get_wav(song_wav_fnm)
 
