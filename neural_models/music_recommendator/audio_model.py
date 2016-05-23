@@ -287,7 +287,7 @@ class AudioModel(RegressionModel):
 
 def train_default():
 
-    model = AudioModel(param_filename='params/music_recommendator/audio_model_strict_n3500,l0.015.p')
+    model = AudioModel(param_filename='params/music_recommendator/audio_model_strict_n3500,l0.015,t1.p')
     model.train_with_data()
 
 
@@ -522,9 +522,9 @@ def test_pref_embedding():
 
 def main():
 
-    test_pref_embedding()
+    # test_pref_embedding()
 
-    # train_default()
+    train_default()
 
     # bayes_hyper_optim_station()
 
