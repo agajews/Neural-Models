@@ -295,7 +295,11 @@ def get_wav(song_fnm):
 
     rate, wav = wavfile.read(song_fnm)
     downsampled_size = int(wav.shape[0] * 0.10)
-    wav = signal.resample(wav, downsampled_size)
+    if downsampled_size > 3:
+        wav = signal.resample(wav, downsampled_size)
+
+    else:
+        return None
 
     if len(wav.shape) == 2:
         bitwidth = wav.shape[1]
@@ -378,7 +382,8 @@ def get_all_song_wavs():
         song_wav['wav'] = get_wav(fnm)
         song_wav['name'] = song_meta[song_id]
 
-        all_song_wavs.append(song_wav)
+        if song_wav['wav'] is not None:
+            all_song_wavs.append(song_wav)
 
     return all_song_wavs
 
