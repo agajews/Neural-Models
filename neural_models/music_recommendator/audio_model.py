@@ -221,7 +221,7 @@ class AudioModel(RegressionModel):
             pref_out,
             allow_input_downcast=True)
 
-        self.get_pref_embedding = pref_fn
+        self.get_user_prefs = pref_fn
 
     def build_pred_fn(self):
 
