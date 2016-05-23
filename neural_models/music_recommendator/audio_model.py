@@ -2,11 +2,9 @@ from lasagne import init
 from lasagne.layers import InputLayer, LSTMLayer, \
     DropoutLayer, SliceLayer, DenseLayer, ConcatLayer
 from lasagne.layers import get_output, get_all_layers
-from lasagne.nonlinearities import tanh, softmax
+from lasagne.nonlinearities import tanh
 
 import theano
-
-import shlex
 
 from scipy.io import wavfile
 from scipy import signal
@@ -198,13 +196,13 @@ class AudioModel(RegressionModel):
                 net,
                 num_units=self.num_hidden,
                 W=init.Normal(),
-                nonlinearity=tanh)
+                nonlinearity=None)
 
         net = DenseLayer(
                 net,
                 num_units=1,
                 W=init.Normal(),
-                nonlinearity=softmax)
+                nonlinearity=None)
         net = SliceLayer(net, 0, 1)
 
         self.net = net
@@ -323,6 +321,16 @@ def get_wav(song_fnm):
     return wav_np
 
 
+def get_std_user_preds(model, user_songs, user_counts, song_fnm):
+
+    input_song = get_wav(song_fnm)
+    input_song_np = np.zeros((1, user_songs.shape[2], 3))
+    input_song_np[0, :input_song.shape[1], :] = input_song
+    preds = model.get_std_preds(input_song_np, user_songs, user_counts)
+
+    return preds
+
+
 def gen_song_data_np(songs_list):
 
     song_data_np = []
@@ -347,6 +355,21 @@ def gen_song_data_np(songs_list):
         song_data_np.append(song_wav)
 
     return song_data_np
+
+
+def gen_user_data_np(songs_list):
+
+    song_data_np = gen_song_data_np(songs_list)
+    lengths = [song['wav'].shape[1] for song in song_data_np]
+    user_songs = np.zeros((1, len(songs_list), max(lengths), 3))
+    user_counts = np.zeros((1, len(songs_list), 1))
+
+    for i, song in enumerate(song_data_np):
+        wav = song['wav']
+        user_songs[0, i, :wav.shape[1], :wav.shape[2]] = wav
+        user_counts[0, i, 0] = song['play_count']
+
+    return user_songs, user_counts
 
 
 def gen_song_embeddings(model, song_data_np):
@@ -431,7 +454,6 @@ def get_user_preds(model, user_prefs, all_song_embeddings):
     songs = []
     for song_embedding in all_song_embeddings:
         exp_play_count = model.get_preds(song_embedding['embedding'], user_prefs)[0]
-        print(exp_play_count)
 
         song = {}
         song['name'] = song_embedding['name']
@@ -529,6 +551,11 @@ def test_pref_embedding():
     user_preds = sorted(user_preds, key=lambda k: k['exp_play_count'], reverse=True)
 
     print(user_preds[:10])
+
+    '''user_songs, user_counts = gen_user_data_np(songs_list)
+    input_song_fnm = 'raw_data/music_recommendator/audio/' + 'SOAATLI12A8C13E319.mp3.wav'
+    user_preds = get_std_user_preds(model, user_songs, user_counts, input_song_fnm)
+    print(user_preds)'''
 
 
 def main():
