@@ -332,6 +332,7 @@ def gen_song_data_np(songs_list):
         song_wav['wav'] = wav
         song_wav['play_count'] = song['play_count']
         song_wav['name'] = song['name']
+        song_wav['song_id'] = song['song_id']
 
         song_data_np.append(song_wav)
 
