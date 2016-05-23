@@ -151,10 +151,10 @@ class AudioModel(RegressionModel):
         l_song_encoder, i_user_songs = self.create_song_encoder(l_song_embedding)
         self.layers += get_all_layers(l_song_encoder)
 
-        i_user_song_embeddings = InputLayer(
+        l_song_encoder = InputLayer(
             shape=(None, None, self.embedding),
             input_var=get_output(l_song_encoder))
-        self.i_user_song_embeddings = i_user_song_embeddings
+        self.i_user_song_embeddings = l_song_encoder
 
         # shape=(num_users, num_songs, 1 (value is play_count))
         i_user_counts = InputLayer(shape=(
@@ -176,8 +176,10 @@ class AudioModel(RegressionModel):
         self.i_input_song = i_input_song
         self.song_embedding = l_song_embedding
 
-        i_input_song_embedding = InputLayer((None, self.embedding), input_var=get_output(l_song_embedding))
-        self.i_input_song_embedding = i_input_song_embedding
+        l_song_embedding = InputLayer(
+            (None, self.embedding),
+            input_var=get_output(l_song_embedding))
+        self.i_input_song_embedding = l_song_embedding
 
         # shape=(num_users, embedding)
         l_user_prefs, i_user_songs, i_user_counts = \
@@ -190,7 +192,7 @@ class AudioModel(RegressionModel):
         self.i_prefs = i_prefs
 
         # shape=(num_users, 2*embedding)
-        net = ConcatLayer([i_prefs, i_input_song_embedding], axis=1)
+        net = ConcatLayer([i_prefs, l_song_embedding], axis=1)
 
         net = DenseLayer(
                 net,
