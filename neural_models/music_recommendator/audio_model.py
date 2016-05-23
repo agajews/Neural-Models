@@ -225,7 +225,7 @@ class AudioModel(RegressionModel):
 
         pred_out = get_output(self.net)
         pred_fn = theano.function(
-            [self.i_input_song_embedding.input_var, self.i_pref.input_var],
+            [self.i_input_song_embedding.input_var, self.i_prefs.input_var],
             pred_out,
             allow_input_downcast=True)
 
