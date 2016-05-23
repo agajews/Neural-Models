@@ -384,6 +384,8 @@ def get_all_song_wavs():
 
 def get_all_song_embeddings(model):
 
+    print('Getting song embeddings')
+
     all_song_embeddings_fnm = 'saved_data/music_recommendator/all_song_embeddings.p'
     if isfile(all_song_embeddings_fnm):
         all_song_embeddings = pickle.load(open(all_song_embeddings_fnm, 'rb'))
