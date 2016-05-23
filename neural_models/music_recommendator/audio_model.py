@@ -169,6 +169,7 @@ class AudioModel(RegressionModel):
         self.song_embedding = l_song_embedding
 
         i_input_song_embedding = InputLayer((None, self.embedding), input_var=get_output(l_song_embedding))
+        self.i_input_song_embedding = i_input_song_embedding
 
         # shape=(num_users, embedding)
         l_user_prefs, i_user_songs, i_user_counts = \
