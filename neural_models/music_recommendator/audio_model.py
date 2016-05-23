@@ -308,7 +308,7 @@ def gen_song_data_np(songs_list):
         wav = get_wav(song_wav_fnm)
 
         song_wav = {}
-        song_wav['wav'] = wav
+        song_wav['wav'] = np.reshape(wav, (1, wav.shape[0], wav.shape[1]))
         song_wav['play_count'] = song['play_count']
         song_wav['name'] = song['name']
 
