@@ -466,6 +466,7 @@ def test_pref_embedding():
     print(user_prefs)
 
     all_song_wavs = get_all_song_wavs()
+    print(all_song_wavs)
     all_song_embeddings = gen_song_embeddings(model, all_song_wavs)
 
     user_preds = get_user_preds(model, user_prefs, all_song_embeddings)
