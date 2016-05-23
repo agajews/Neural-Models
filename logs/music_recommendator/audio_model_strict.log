@@ -15,3 +15,19 @@ Input shapes:
 (8770, 1004, 3)
 Num params: 126301
 Beginning training
+Epoch: 0 | Train loss: 16.6765083758
+Val Loss: 21.1433470508 | Val Acc: 1.50960219479
+Epoch: 1 | Train loss: 16.6908675799
+Val Loss: 21.1484910837 | Val Acc: 1.51200274348
+Epoch: 2 | Train loss: 16.6888127854
+Val Loss: 20.2908093278 | Val Acc: 1.49451303155
+Epoch: 3 | Train loss: 16.5479452055
+Val Loss: 21.1395747599 | Val Acc: 1.50925925926
+Epoch: 4 | Train loss: 16.6899543379
+Val Loss: 21.1481481481 | Val Acc: 1.51165980796
+Epoch: 5 | Train loss: 16.6827625571
+Val Loss: 21.1478052126 | Val Acc: 1.51131687243
+Epoch: 6 | Train loss: 16.6885844749
+Val Loss: 21.1296296296 | Val Acc: 1.50823045267
+Epoch: 7 | Train loss: 16.6835616438
+Val Loss: 21.1299725652 | Val Acc: 1.50788751715

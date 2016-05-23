@@ -1,19 +1,19 @@
 from lasagne import init
-from lasagne.layers import InputLayer, LSTMLayer
-from lasagne.layers import DropoutLayer, SliceLayer, DenseLayer
+from lasagne.layers import InputLayer, LSTMLayer, \
+    DropoutLayer, SliceLayer, DenseLayer
+from lasagne.layers import get_all_layers
 from lasagne.nonlinearities import tanh, softmax
 
 import theano.tensor as T
 
 import numpy as np
 
-from neural_models.data.phys_weather.station_data import gen_station_data
+from neural_models.data.phys_weather.station_data import get_min_station_data, \
+    get_max_station_data
 
 from neural_models.lib import split_val, iterate_minibatches
 
 from neural_models.models import Model
-
-from neural_models.hyper_optim import BayesHyperOptim, GridHyperOptim
 
 
 class WeatherModel(Model):
@@ -157,7 +157,10 @@ class StationModel(WeatherModel):
                 W=init.Normal(),
                 nonlinearity=softmax)
 
-        return net, [i_stat]
+        self.net = net
+        self.layers = get_all_layers(net)
+
+        return i_stat
 
     def get_supp_model_params(self, train_Xs, train_y, val_Xs, val_y):
 
@@ -174,50 +177,27 @@ class StationModel(WeatherModel):
         [
                 min_train_X, min_train_y,
                 min_test_X, min_test_y,
-                _, _, _, _
-        ] = gen_station_data(timesteps=self.timesteps)
+        ] = get_min_station_data(timesteps=self.timesteps)
+
         train_X, val_X, train_y, val_y = split_val(min_train_X, min_train_y)
         train_Xs, val_Xs = [train_X], [val_X]
 
         return train_Xs, val_Xs, train_y, val_y
 
 
-def bayes_hyper_optim_station():
+class MaxStationModel(StationModel):
 
-    model = StationModel()
+    def get_data(self):
 
-    hp_ranges = {
-            'num_hidden': (100, 1024),
-            'num_epochs': (5, 100),
-            'timesteps': (5, 30),
-            'batch_size': (64, 512),
-            'dropout_val': (0, 0.9),
-            'learning_rate': (1e-5, 1e-1),
-            'grad_clip': (50, 1000),
-            'l2_reg_weight': (0, 1e-1)}
+        [
+                max_train_X, max_train_y,
+                max_test_X, max_test_y,
+        ] = get_max_station_data(timesteps=self.timesteps)
 
-    optim = BayesHyperOptim(model, hp_ranges)
+        train_X, val_X, train_y, val_y = split_val(max_train_X, max_train_y)
+        train_Xs, val_Xs = [train_X], [val_X]
 
-    optim.optimize()
-
-
-def grid_hyper_optim_station():
-
-    model = StationModel()
-
-    hp_choices = {
-            'num_hidden': (128, 256, 512),
-            'num_epochs': (128,),
-            'timesteps': (10, 30),
-            'batch_size': (256,),
-            'dropout_val': (0.4, 0.5, 0.6),
-            'learning_rate': (1e-5, 1e-3, 1e-2, 1e-1),
-            'grad_clip': (100,),
-            'l2_reg_weight': (0, 1e-4, 1e-2)}
-
-    optim = GridHyperOptim(model, hp_choices)
-
-    optim.optimize()
+        return train_Xs, val_Xs, train_y, val_y
 
 
 def train_default():
@@ -226,9 +206,17 @@ def train_default():
     model.train_with_data()
 
 
+def train_default_max():
+
+    model = MaxStationModel()
+    model.train_with_data()
+
+
 def main():
 
-    train_default()
+    train_default_max()
+
+    # train_default()
 
     # bayes_hyper_optim_station()
 

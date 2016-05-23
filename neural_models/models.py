@@ -1,9 +1,10 @@
 from lasagne.updates import adagrad
 from lasagne.layers import InputLayer
-from lasagne.layers import get_output, get_all_params, get_all_param_values
+from lasagne.layers import get_output, get_all_params, get_all_param_values, \
+    set_all_param_values
 from lasagne.objectives import squared_error, aggregate
 from lasagne.regularization import regularize_layer_params, l2
-from lasagne.layers.helper import get_all_layers, count_params
+from lasagne.layers.helper import count_params
 
 import theano
 import theano.tensor as T
@@ -60,16 +61,16 @@ class Model(object):
 
         return None
 
-    def build_train_loss(self, layers, train_output, target_values):
+    def build_train_loss(self, train_output, target_values):
 
-        l2_penalty = regularize_layer_params(layers, l2) * self.l2_reg_weight
+        l2_penalty = regularize_layer_params(self.layers, l2) * self.l2_reg_weight
         loss = T.nnet.categorical_crossentropy(
                 train_output, target_values).mean()
         loss += l2_penalty
 
         return loss
 
-    def build_test_loss(self, layers, test_output, target_values):
+    def build_test_loss(self, test_output, target_values):
 
         test_loss = T.nnet.categorical_crossentropy(
                 test_output, target_values).mean()
@@ -85,9 +86,9 @@ class Model(object):
 
         return test_acc
 
-    def build_train_updates(self, net, loss):
+    def build_train_updates(self, loss):
 
-        all_params = get_all_params(net, trainable=True)
+        all_params = get_all_params(self.net, trainable=True)
         updates = adagrad(loss, all_params, self.learning_rate)
 
         return updates
@@ -106,30 +107,30 @@ class Model(object):
 
         return T.imatrix('target_output')
 
-    def build_train_fn(self, net, layers, input_vars):
+    def build_train_fn(self):
 
         target_values = self.get_target_input_var()
 
-        train_output = get_output(net)
-        loss = self.build_train_loss(layers, train_output, target_values)
-        updates = self.build_train_updates(net, loss)
+        train_output = get_output(self.net)
+        loss = self.build_train_loss(train_output, target_values)
+        updates = self.build_train_updates(loss)
 
         train_fn = theano.function(
-                input_vars + [target_values],
+                self.input_vars + [target_values],
                 loss, updates=updates, allow_input_downcast=True)
 
         return train_fn
 
-    def build_test_fn(self, net, layers, input_vars):
+    def build_test_fn(self):
 
         target_values = self.get_target_input_var()
 
-        test_output = get_output(net, deterministic=True)
-        test_loss = self.build_test_loss(layers, test_output, target_values)
+        test_output = get_output(self.net, deterministic=True)
+        test_loss = self.build_test_loss(test_output, target_values)
         test_acc = self.build_test_acc(test_output, target_values)
 
         test_fn = theano.function(
-                input_vars + [target_values],
+                self.input_vars + [target_values],
                 [test_loss, test_acc], allow_input_downcast=True)
 
         return test_fn
@@ -188,6 +189,11 @@ class Model(object):
         params = get_all_param_values(self.layers)
         pickle.dump(params, open(self.param_filename, 'wb'))
 
+    def load_params(self):
+
+        params = pickle.load(open(self.param_filename, 'rb'))
+        set_all_param_values(self.layers, params)
+
     def perform_epoch(self, train_fn, test_fn,
             train_Xs, train_y, val_Xs, val_y,
             val=True, save=False, verbose=False,
@@ -218,14 +224,14 @@ class Model(object):
 
         return net
 
-    def display_info(self, net,
+    def display_info(self,
             train_Xs, val_Xs,
             train_y, val_y):
 
         print('Input shapes:')
         self.print_shapes(train_Xs)
 
-        num_params = count_params(get_all_layers(net))
+        num_params = count_params(self.layers)
         print('Num params: %d' % num_params)
 
     def print_shapes(self, arrays):
@@ -233,29 +239,36 @@ class Model(object):
         for array in arrays:
             print(array.shape)
 
+    def compile_net(self, train_Xs, val_Xs, train_y, val_y):
+
+        self.layers = []
+
+        supp_model_params = self.get_supp_model_params(
+                train_Xs, train_y, val_Xs, val_y)
+
+        input_layers = self.create_model_with_supp(supp_model_params)
+
+        self.input_vars = self.get_input_vars(input_layers)
+
+    def compile_net_notrain(self):
+
+        self.compile_net(None, None, None, None)
+
     def train_model(self, train_Xs, val_Xs, train_y, val_y,
             val=True,
             save=True, epoch_save=False,
             verbose=False):
 
-        supp_model_params = self.get_supp_model_params(
-                train_Xs, train_y, val_Xs, val_y)
-
         if verbose:
             print('Compiling functions')
 
-        net, input_layers = self.create_model_with_supp(supp_model_params)
+        self.compile_net(train_Xs, val_Xs, train_y, val_y)
 
-        self.display_info(net, train_Xs, val_Xs, train_y, val_y)
+        self.display_info(train_Xs, val_Xs, train_y, val_y)
 
-        input_vars = self.get_input_vars(input_layers)
+        train_fn = self.build_train_fn()
 
-        layers = get_all_layers(net)
-        self.layers = layers
-
-        train_fn = self.build_train_fn(net, layers, input_vars)
-
-        test_fn = self.build_test_fn(net, layers, input_vars)
+        test_fn = self.build_test_fn()
 
         if verbose:
             print('Beginning training')
@@ -299,9 +312,9 @@ class Model(object):
 
 class RegressionModel(Model):
 
-    def build_train_loss(self, layers, train_output, target_values):
+    def build_train_loss(self, train_output, target_values):
 
-        l2_penalty = regularize_layer_params(layers, l2) * self.l2_reg_weight
+        l2_penalty = regularize_layer_params(self.layers, l2) * self.l2_reg_weight
         loss = self.msq_err(train_output, target_values)
         loss += l2_penalty
 
@@ -314,7 +327,7 @@ class RegressionModel(Model):
 
         return loss
 
-    def build_test_loss(self, layers, test_output, target_values):
+    def build_test_loss(self, test_output, target_values):
 
         test_loss = self.msq_err(test_output, target_values)
 

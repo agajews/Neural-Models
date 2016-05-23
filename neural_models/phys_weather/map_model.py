@@ -1,11 +1,10 @@
 from lasagne import init
-from lasagne.layers import InputLayer, LSTMLayer, DropoutLayer
-from lasagne.layers import SliceLayer, DenseLayer
-from lasagne.layers import Conv2DLayer, MaxPool2DLayer
-from lasagne.layers import ConcatLayer
+from lasagne.layers import InputLayer, LSTMLayer, DropoutLayer, \
+    SliceLayer, DenseLayer, Conv2DLayer, MaxPool2DLayer, ConcatLayer
+from lasagne.layers import get_all_layers
 from lasagne.nonlinearities import tanh, softmax, rectify
 
-from neural_models.data.phys_weather.map_data import gen_map_data
+from neural_models.data.phys_weather.map_data import get_min_temp_data
 from neural_models.lib import split_val, net_on_seq
 from neural_models.hyper_optim import BayesHyperOptim, GridHyperOptim
 from .station_model import WeatherModel
@@ -152,7 +151,10 @@ class MapModel(WeatherModel):
                 W=init.Normal(),
                 nonlinearity=softmax)
 
-        return net, [i_map, i_stat]
+        self.net = net
+        self.layers += get_all_layers(net)
+
+        return i_map, i_stat
 
     def get_supp_model_params(self, train_Xs, train_y, val_Xs, val_y):
 
@@ -168,9 +170,9 @@ class MapModel(WeatherModel):
 
         [
                 min_stat_train_X, min_train_y,
-                _, _, _, _, _, _,
+                _, _,
                 min_map_train_X, _
-        ] = gen_map_data(
+        ] = get_min_temp_data(
                 width=self.width, height=self.height,
                 timesteps=self.timesteps, color='hsv')
 

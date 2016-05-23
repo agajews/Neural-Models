@@ -7,112 +7,151 @@ import pickle
 import numpy as np
 
 from neural_models.lib import split_test
-from .station_data import get_days_list
+from .station_data import get_days_list, display_station_data, map_fnm_fn, gen_station_np_seq
 
 
-def gen_map_data(width=100, height=50, timesteps=10,
-        verbose=False, color='hsv'):
-    fnm = 'saved_data/phys_weather/map_data_' + \
-        str(width) + ',' + \
-        str(height) + ',' + \
-        str(timesteps) + ',' + \
-        color + \
-        '.p'
-    if isfile(fnm):
-        print('Loading map_data from file')
-        map_data = pickle.load(open(fnm, 'rb'))
+def get_channels(color):
+
+    if color == 'rgb':
+        channels = 3
+
+    elif color == 'hsv':
+        channels = 1
+
     else:
-        print('Generating map_data')
-        dly_fnm = 'raw_data/phys_weather/chicago_summaries.dly'
-        days_list = get_days_list(dly_fnm, map_exists=True)
-        num_days = len(days_list)
+        raise Exception('Invalid color %s' % color)
+
+    return channels
+
+
+def proc_rgb_image(image, channels, width, height):
+
+    image_np = np.zeros((channels, width, height))
+    image = np.transpose(image, (2, 0, 1))
+
+    for channel in range(channels):
+        image = resize(image[channel, :, :], (height, width))
+        image_np[channel, :, :] = image
+
+    return image_np
+
+
+def proc_hsv_image(image, width, height):
+
+    image_np = np.zeros((1, width, height))
+
+    image = cvtColor(image, COLOR_BGR2HSV)
+    image = resize(image[:, :, 0], (height, width))
+
+    image_np[:, :, :] = image
+
+    return image_np
+
+
+def load_image_np(item_list, fnm_fn, width, height, color):
+
+    channels = get_channels(color)
+
+    image_np = np.zeros((len(item_list), channels, width, height))
+
+    for i, item in enumerate(item_list):
+        image_fnm = fnm_fn(item)
+        image = imread(image_fnm)
+
         if color == 'rgb':
-            channels = 3
+            proc_image = proc_rgb_image(image, channels, width, height)
+
         elif color == 'hsv':
-            channels = 1
-        else:
-            raise Exception('Invalid color %s' % color)
+            proc_image = proc_hsv_image(image, width, height)
 
-        temp_maps = np.zeros((num_days, channels, width, height))
-        for i, (day, minimum, maximum) in enumerate(days_list):
-            map_fnm = 'raw_data/phys_weather/temp_maps/colormaxmin_' + \
-                str(day) + '.jpg'
-            image = imread(map_fnm)
-            if color == 'rgb':
-                image = np.transpose(image, (2, 0, 1))
-                for channel in range(image.shape[0]):
-                    temp_maps[i, channel, :, :] = resize(
-                           image[channel, :, :], (height, width))
-            elif color == 'hsv':
-                image = cvtColor(image, COLOR_BGR2HSV)
-                temp_maps[i, 0, :, :] = resize(image[:, :, 0], (height, width))
-        mins = [day[1] for day in days_list]
-        maxs = [day[2] for day in days_list]
-        min_min = min(mins)
-        max_min = max(mins)
-        min_max = min(maxs)
-        max_max = max(maxs)
+        image_np[i, :, :, :] = proc_image
 
-        min_spread = max_min - min_min + 1
-        max_spread = max_max - min_max + 1
-        if verbose:
-            print('Num days: ' + str(num_days))
+    return image_np
 
-            print('Min min: ' + str(min_min))
-            print('Max min: ' + str(max_min))
-            print('Min max: ' + str(min_max))
-            print('Max max: ' + str(max_max))
 
-            print('Min spread: ' + str(min_spread))
-            print('Max spread: ' + str(max_spread))
+def get_image_meta(image_np):
 
-        min_map_X = np.zeros((num_days - timesteps, timesteps, min_spread))
-        min_map_y = np.zeros((num_days - timesteps, min_spread))
-        max_map_X = np.zeros((num_days - timesteps, timesteps, min_spread))
-        max_map_y = np.zeros((num_days - timesteps, max_spread))
-        temp_map_X = np.zeros(
-                (num_days - timesteps, timesteps, channels, width, height))
-        for i in range(timesteps, num_days):
-            day = days_list[i]
-            example_num = i - timesteps
+    num_days, channels, _, _ = image_np.shape
+    return num_days, channels
 
-            min_map_y_pos = day[1] - min_min
-            min_map_y[example_num, min_map_y_pos] = 1
-            for j in range(timesteps):
-                min_map_X_pos = days_list[example_num + j][1] - min_min
-                min_map_X[example_num, j, min_map_X_pos] = 1
 
-            max_map_y_pos = day[2] - max_min
-            max_map_y[example_num, max_map_y_pos] = 1
-            for j in range(timesteps):
-                max_map_X_pos = days_list[example_num + j][2] - max_min
-                max_map_X[example_num, j, max_map_X_pos] = 1
+def gen_image_np_seq(image_np, width, height, timesteps):
 
-            for j in range(timesteps):
-                temp_map_X[example_num, j, :, :, :] = \
-                    temp_maps[example_num + j, :, :, :]
+    num_days, channels = get_image_meta(image_np)
 
-        [
-                min_map_train_X, min_map_test_X,
-                temp_map_train_X, temp_map_test_X,
-                min_map_train_y, min_map_test_y
-        ] = split_test(
-                min_map_X, temp_map_X, min_map_y, split=0.25)
+    X = np.zeros((num_days - timesteps, timesteps, channels, width, height))
 
-        [
-                max_map_train_X, max_map_test_X,
-                temp_map_train_X, temp_map_test_X,
-                max_map_train_y, max_map_test_y
-        ] = split_test(
-                 max_map_X, temp_map_X, max_map_y, split=0.25)
+    for day_num in range(timesteps, num_days):
+        example_num = day_num - timesteps
 
-        map_data = [
-                min_map_train_X, min_map_train_y,
-                min_map_test_X, min_map_test_y,
-                max_map_train_X, max_map_train_y,
-                max_map_test_X, max_map_test_y,
-                temp_map_train_X, temp_map_test_X]
+        for hist_num in range(timesteps):
+            X[example_num, hist_num, :, :, :] = \
+                image_np[example_num + hist_num, :, :, :]
 
-        pickle.dump(map_data, open(fnm, 'wb'))
+    return X
 
-    return map_data
+
+def gen_temp_data(width, height, timesteps,
+        verbose, color, elem):
+
+    dly_fnm = 'raw_data/phys_weather/chicago_summaries.dly'
+    days_list = get_days_list(dly_fnm, map_filter=True)
+
+    data = [day[elem] for day in days_list]
+
+    if verbose:
+        display_station_data(data)
+
+    temp_maps = load_image_np(days_list, map_fnm_fn, width, height, color)
+
+    X, y = gen_station_np_seq(data, timesteps)
+
+    temp_X = gen_image_np_seq(temp_maps, width, height, timesteps)
+
+    [
+            train_X, test_X,
+            temp_train_X, temp_test_X,
+            train_y, test_y
+    ] = split_test(
+            X, temp_X, y, split=0.25)
+
+    temp_data = [
+            train_X, train_y,
+            test_X, test_y,
+            temp_train_X, temp_test_X]
+
+    return temp_data
+
+
+def get_min_temp_data(width=160, height=70, timesteps=10, color='hsv', verbose=False):
+
+    fnm = 'saved_data/phys_weather/min_temp_data_%d,%d,%d,%s.p' % \
+        (width, height, timesteps, color)
+
+    if isfile(fnm):
+        print('Loading min_temp_data from file')
+        min_temp_data = pickle.load(open(fnm, 'rb'))
+
+    else:
+        print('Generating min_temp_data')
+        min_temp_data = gen_temp_data(width, height, timesteps, verbose, color, 1)
+        pickle.dump(min_temp_data, open(fnm, 'wb'))
+
+    return min_temp_data
+
+
+def get_max_temp_data(width=160, height=70, timesteps=10, color='hsv', verbose=False):
+
+    fnm = 'saved_data/phys_weather/max_temp_data_%d,%d,%d,%s.p' % \
+        (width, height, timesteps, color)
+
+    if isfile(fnm):
+        print('Loading max_temp_data from file')
+        max_temp_data = pickle.load(open(fnm, 'rb'))
+
+    else:
+        print('Generating max_temp_data')
+        max_temp_data = gen_temp_data(width, height, timesteps, verbose, color, 2)
+        pickle.dump(max_temp_data, open(fnm, 'wb'))
+
+    return max_temp_data

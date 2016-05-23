@@ -14,7 +14,7 @@ import youtube_dl
 
 def download(song_name, artist, song_id):
 
-    with cd('audio'):
+    with cd('raw_data/music_recommendator/audio'):
         ydl_opts = {
             'format': 'worstaudio',
             'outtmpl': song_id + '.mp3',

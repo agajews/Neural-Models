@@ -1,16 +1,28 @@
 from lasagne import init
-from lasagne.layers import InputLayer, LSTMLayer
-from lasagne.layers import DropoutLayer, SliceLayer, DenseLayer
-from lasagne.layers import ConcatLayer
+from lasagne.layers import InputLayer, LSTMLayer, \
+    DropoutLayer, SliceLayer, DenseLayer, ConcatLayer
+from lasagne.layers import get_output, get_all_layers
 from lasagne.nonlinearities import tanh, softmax
 
-from neural_models.data.music_recommendator.user_data import gen_audio_dataset
+import theano
+
+from scipy.io import wavfile
+from scipy import signal
+
+import numpy as np
+
+import pickle
+
+from os import listdir
+from os.path import isfile
+
+from subprocess import call
+
+from neural_models.data.music_recommendator.user_data import gen_audio_dataset, download
 
 from neural_models.lib import split_val, net_on_seq
 
 from neural_models.models import RegressionModel
-
-from neural_models.hyper_optim import BayesHyperOptim, GridHyperOptim
 
 
 class AudioModel(RegressionModel):
@@ -55,16 +67,16 @@ class AudioModel(RegressionModel):
     def load_default_net_hyperparams(self):
 
         self.num_hidden = 100
-        self.dropout_val = 0.0
+        self.dropout_val = 0.2
         self.grad_clip = 927
         self.l2_reg_weight = 0.0007
-        self.embedding = 50
+        self.embedding = 100
 
     def load_default_train_hyperparams(self):
 
         self.num_epochs = 54
         self.batch_size = 12
-        self.learning_rate = 0.055
+        self.learning_rate = 0.015
 
     def create_lstm_stack(self, net):
 
@@ -81,6 +93,7 @@ class AudioModel(RegressionModel):
 
         # shape=(num_songs, song_length, bitwidth)
         i_song = InputLayer(shape=(None, None, self.bitwidth))
+        self.i_song = i_song
         net = i_song
 
         for _ in range(1):
@@ -93,6 +106,8 @@ class AudioModel(RegressionModel):
                 num_units=self.embedding,
                 W=init.Normal(),
                 nonlinearity=tanh)
+
+        self.song_embedding = net
 
         return net, i_song
 
@@ -109,8 +124,8 @@ class AudioModel(RegressionModel):
 
     def create_pref_embedding(self, l_song_vals):
 
-        net = l_song_vals
         # shape=(num_users, num_songs, embedding + 1 (value is play_count))
+        net = l_song_vals
 
         for _ in range(1):
             net = self.create_lstm_stack(net)
@@ -123,12 +138,15 @@ class AudioModel(RegressionModel):
                 W=init.Normal(),
                 nonlinearity=tanh)
 
+        self.pref_embedding = net
+
         return net
 
     def create_user_pref_encoder(self, l_song_embedding):
 
         # shape=(num_users, num_songs, embedding)
         l_song_encoder, i_user_songs = self.create_song_encoder(l_song_embedding)
+        self.i_user_songs = i_user_songs
 
         # shape=(num_users, num_songs, 1 (value is play_count))
         i_user_counts = InputLayer(shape=(
@@ -146,14 +164,19 @@ class AudioModel(RegressionModel):
 
         # shape=(num_users, embedding)
         l_song_embedding, i_input_song = self.create_song_embedding()
-        l_input_song_encoder = l_song_embedding
+        self.layers += get_all_layers(l_song_embedding)
+        i_input_song_embedding = InputLayer((None, self.embedding), input_var=get_output(l_song_embedding))
 
         # shape=(num_users, embedding)
         l_user_prefs, i_user_songs, i_user_counts = \
             self.create_user_pref_encoder(l_song_embedding)
+        self.layers += get_all_layers(l_user_prefs)
+
+        i_prefs = InputLayer((None, self.embedding), input_var=get_output(l_user_prefs))
+        self.i_prefs = i_prefs
 
         # shape=(num_users, 2*embedding)
-        net = ConcatLayer([l_user_prefs, l_input_song_encoder], axis=1)
+        net = ConcatLayer([i_prefs, i_input_song_embedding], axis=1)
 
         net = DenseLayer(
                 net,
@@ -168,7 +191,36 @@ class AudioModel(RegressionModel):
                 nonlinearity=softmax)
         net = SliceLayer(net, 0, 1)
 
+        self.net = net
+
         return net, [i_user_songs, i_user_counts, i_input_song]
+
+    def build_song_embedding_fn(self):
+
+        embedding_out = get_output(self.song_embedding)
+        embedding_fn = theano.function(
+            [self.i_input_song], embedding_out,
+            allow_input_downcast=True)
+
+        self.get_song_embedding = embedding_fn
+
+    def build_pref_embedding_fn(self):
+
+        pref_out = get_output(self.pref_embedding)
+        pref_fn = theano.function(
+            [self.i_user_songs, self.i_user_counts], pref_out,
+            allow_input_downcast=True)
+
+        self.get_pref_embedding = pref_fn
+
+    def build_pred_fn(self):
+
+        pred_out = get_output(self.net)
+        pred_fn = theano.function(
+            [self.i_input_song_embedding, self.i_pref], pred_out,
+            allow_input_downcast=True)
+
+        self.get_preds = pred_fn
 
     def get_supp_model_params(self, train_Xs, train_y, val_Xs, val_y):
 
@@ -214,59 +266,186 @@ class AudioModel(RegressionModel):
         return train_Xs, val_Xs, train_y, val_y
 
 
-def bayes_hyper_optim():
-
-    model = AudioModel()
-
-    hp_ranges = {
-            'num_hidden': (100, 1024),
-            'num_epochs': (5, 100),
-            'timesteps': (5, 30),
-            'batch_size': (64, 512),
-            'dropout_val': (0, 0.9),
-            'learning_rate': (1e-5, 1e-1),
-            'grad_clip': (50, 1000),
-            'l2_reg_weight': (0, 1e-1)}
-
-    optim = BayesHyperOptim(model, hp_ranges)
-
-    optim.optimize()
-
-
-def grid_hyper_optim():
-
-    model = AudioModel()
-
-    hp_choices = {
-            'num_hidden': (128, 256, 512),
-            'num_epochs': (128,),
-            'timesteps': (10, 30),
-            'batch_size': (256,),
-            'dropout_val': (0.4, 0.5, 0.6),
-            'learning_rate': (1e-5, 1e-3, 1e-2, 1e-1),
-            'grad_clip': (100,),
-            'l2_reg_weight': (0, 1e-4, 1e-2)}
-
-    optim = GridHyperOptim(model, hp_choices)
-
-    optim.optimize()
-
-
 def train_default():
 
-    model = AudioModel(param_filename='params/music_recommendator/audio_model_n5000.p')
+    model = AudioModel(param_filename='params/music_recommendator/audio_model_strict_n3500,l0.015.p')
     model.train_with_data()
 
 
-def test_data():
-    gen_audio_dataset(num_truncated_songs=10000)
+def get_wav(song_fnm):
+
+    wav = wavfile.read(song_fnm)
+    downsampled_size = int(wav.shape[0] * 0.01)
+    wav = signal.resample(wav, downsampled_size)
+
+    return wav
+
+
+def gen_song_data_np(songs_list):
+
+    song_data_np = []
+
+    for song in songs_list:
+
+        song_fnm = 'raw_data/music_recommendator/audio/%s.mp3' % song['name']
+        song_wav_fnm = song_fnm + '.wav'
+
+        if not isfile(song_wav_fnm):
+            download(song['name'], '', song['name'])
+            call('sox %s %s' % (song_fnm, song_wav_fnm))
+
+        wav = get_wav(song_wav_fnm)
+
+        song_wav = {}
+        song_wav['wav'] = wav
+        song_wav['play_count'] = song['play_count']
+        song_wav['name'] = song['name']
+
+        song_data_np.append(song_wav)
+
+    return song_data_np
+
+
+def gen_song_embeddings(model, song_data_np):
+
+    song_embeddings = []
+
+    for song_data in song_data_np:
+        song_embedding = {}
+        song_embedding['embedding'] = model.get_song_embedding(song_data['wav'])
+        song_embedding['name'] = song_data['name']
+        song_embeddings.append(song_embedding)
+
+
+def gen_user_prefs(model, song_embeddings, song_data_np):
+
+    song_embeddings_np = np.zeros((1, len(song_embeddings), model.embedding))
+    song_counts_np = np.zeros((1, len(song_embeddings), 1))
+
+    for i, [song_embedding, song_data] in enumerate(zip(song_embeddings, song_data_np)):
+        song_embeddings_np[:, i, :] = song_embedding['embedding']
+        song_counts_np = song_data['play_count']
+
+    user_prefs = model.get_user_prefs(song_embeddings_np, song_counts_np)
+
+    return user_prefs
+
+
+def get_all_song_wavs():
+
+    all_song_fnms = listdir('raw_data/music_recommendator/audio')
+    all_song_fnms = [fnm for fnm in all_song_fnms if fnm[-3:] == '.wav']
+
+    song_meta_fnm = 'saved_data/music_recommendator/song_meta.p'
+    song_meta = pickle.load(open(song_meta_fnm, 'rb'))
+
+    all_song_wavs = []
+
+    for fnm in all_song_fnms:
+        song_wav = {}
+        song_wav['wav'] = get_wav(fnm)
+        song_wav['name'] = song_meta[fnm[:-8]]
+
+        all_song_wavs.append(song_wav)
+
+    return all_song_wavs
+
+
+def get_user_preds(model, user_prefs, all_song_embeddings):
+
+    user_preds = []
+
+    for song_embedding in all_song_embeddings:
+        exp_play_count = model.get_preds(song_embedding['embedding'], user_prefs)
+
+        pred = {}
+        pred['name'] = song_embedding['name']
+        pred['exp_play_count'] = exp_play_count
+
+        user_preds.append(pred)
+
+    return user_preds
+
+
+def test_pref_embedding():
+
+    songs_list = [
+            {
+                'name': 'hamilton room where it happens',
+                'play_count': 15
+            },
+            {
+                'name': 'hamilton hurricane',
+                'play_count': 10
+            },
+            {
+                'name': 'pentatonix mary did you know',
+                'play_count': 10
+            },
+            {
+                'name': 'pentatonix daft funk',
+                'play_count': 10
+            },
+            {
+                'name': 'ellie goulding lights',
+                'play_count': 7
+            },
+            {
+                'name': 'clean bandit rather be',
+                'play_count': 7
+            },
+            {
+                'name': 'beatles penny lane',
+                'play_count': 5
+            },
+            {
+                'name': 'beatles let it be',
+                'play_count': 5
+            },
+            {
+                'name': 'queen bohemian rhapsody',
+                'play_count': 5
+            },
+            {
+                'name': 'queen under pressure',
+                'play_count': 5
+            },
+            {
+                'name': 'fall out boy uma thurman',
+                'play_count': 4
+            },
+            {
+                'name': 'jackson black or white',
+                'play_count': 4
+            }
+    ]
+
+    model = AudioModel(param_filename='params/music_recommendator/audio_model_strict_n3500,l0.015.p')
+    model.compile_net_notrain()
+    model.load_params()
+
+    song_data_np = gen_song_data_np(songs_list)
+
+    song_embeddings = gen_song_embeddings(model, song_data_np)
+
+    user_prefs = gen_user_prefs(model, song_embeddings)
+
+    all_song_wavs = get_all_song_wavs()
+    all_song_embeddings = gen_song_embeddings(model, all_song_wavs)
+
+    user_preds = get_user_preds(model, user_prefs, all_song_embeddings)
+    user_preds = sorted(user_preds, key=lambda k: k['exp_play_count'], reverse=True)
+
+    print(user_preds[:10])
 
 
 def main():
 
+    test_pref_embedding()
+
     # test_data()
 
-    train_default()
+    # train_default()
 
     # bayes_hyper_optim_station()
 
