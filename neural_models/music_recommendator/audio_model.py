@@ -358,7 +358,8 @@ def gen_user_prefs(model, song_embeddings):
 
 def get_all_song_wavs():
 
-    all_song_fnms = listdir('raw_data/music_recommendator/audio')
+    base_fnm = 'raw_data/music_recommendator/audio'
+    all_song_fnms = base_fnm + '/' + listdir(base_fnm)
     all_song_fnms = [fnm for fnm in all_song_fnms if fnm[-3:] == '.wav']
 
     song_meta_fnm = 'saved_data/music_recommendator/song_meta.p'
