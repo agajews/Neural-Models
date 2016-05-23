@@ -376,13 +376,19 @@ def get_all_song_wavs():
 
     all_song_wavs = []
 
-    for fnm in sorted(all_song_fnms):
+    for i, fnm in enumerate(sorted(all_song_fnms)):
         song_id = fnm[:-8]
         song_id = song_id[-18:]
-        print(song_id)
-        song_wav = {}
-        song_wav['wav'] = get_wav(fnm)
-        song_wav['name'] = song_meta[song_id]
+
+        if i % 100 == 0:
+            print(song_id)
+
+        try:
+            song_wav = {}
+            song_wav['wav'] = get_wav(fnm)
+            song_wav['name'] = song_meta[song_id]
+        except:
+            song_wav['wav'] = None
 
         if song_wav['wav'] is not None:
             all_song_wavs.append(song_wav)
