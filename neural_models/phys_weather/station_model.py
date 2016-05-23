@@ -158,9 +158,9 @@ class StationModel(WeatherModel):
                 nonlinearity=softmax)
 
         self.net = net
-        self.layers = get_all_layers(net)
+        self.layers += get_all_layers(net)
 
-        return i_stat
+        return [i_stat]
 
     def get_supp_model_params(self, train_Xs, train_y, val_Xs, val_y):
 

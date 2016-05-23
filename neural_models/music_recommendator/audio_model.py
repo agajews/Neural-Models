@@ -46,7 +46,8 @@ class AudioModel(RegressionModel):
 
     def load_data_hyperparams(self, hyperparams):
 
-        self.timesteps = int(hyperparams['timesteps'])
+        self.num_songs = int(hyperparams['num_songs'])
+        self.bitwidth = int(hyperparams['bitwidth'])
 
     def load_train_hyperparams(self, hyperparams):
 
@@ -63,6 +64,7 @@ class AudioModel(RegressionModel):
     def load_default_data_hyperparams(self):
 
         self.bitwidth = 3
+        self.num_songs = 3500
 
     def load_default_net_hyperparams(self):
 
@@ -74,7 +76,7 @@ class AudioModel(RegressionModel):
 
     def load_default_train_hyperparams(self):
 
-        self.num_epochs = 54
+        self.num_epochs = 5
         self.batch_size = 12
         self.learning_rate = 0.015
 
@@ -106,8 +108,6 @@ class AudioModel(RegressionModel):
                 num_units=self.embedding,
                 W=init.Normal(),
                 nonlinearity=tanh)
-
-        self.song_embedding = net
 
         return net, i_song
 
@@ -165,6 +165,9 @@ class AudioModel(RegressionModel):
         # shape=(num_users, embedding)
         l_song_embedding, i_input_song = self.create_song_embedding()
         self.layers += get_all_layers(l_song_embedding)
+        self.i_input_song = i_input_song
+        self.song_embedding = l_song_embedding
+
         i_input_song_embedding = InputLayer((None, self.embedding), input_var=get_output(l_song_embedding))
 
         # shape=(num_users, embedding)
@@ -192,14 +195,15 @@ class AudioModel(RegressionModel):
         net = SliceLayer(net, 0, 1)
 
         self.net = net
+        self.layers += get_all_layers(net)
 
-        return net, [i_user_songs, i_user_counts, i_input_song]
+        return [i_user_songs, i_user_counts, i_input_song]
 
     def build_song_embedding_fn(self):
 
         embedding_out = get_output(self.song_embedding)
         embedding_fn = theano.function(
-            [self.i_input_song], embedding_out,
+            [self.i_input_song.input_var], embedding_out,
             allow_input_downcast=True)
 
         self.get_song_embedding = embedding_fn
@@ -208,7 +212,8 @@ class AudioModel(RegressionModel):
 
         pref_out = get_output(self.pref_embedding)
         pref_fn = theano.function(
-            [self.i_user_songs, self.i_user_counts], pref_out,
+            [self.i_user_songs.input_var, self.i_user_counts.input_var],
+            pref_out,
             allow_input_downcast=True)
 
         self.get_pref_embedding = pref_fn
@@ -217,7 +222,8 @@ class AudioModel(RegressionModel):
 
         pred_out = get_output(self.net)
         pred_fn = theano.function(
-            [self.i_input_song_embedding, self.i_pref], pred_out,
+            [self.i_input_song_embedding.input_var, self.i_pref.input_var],
+            pred_out,
             allow_input_downcast=True)
 
         self.get_preds = pred_fn
@@ -240,8 +246,8 @@ class AudioModel(RegressionModel):
         [
                 train_user_songs_X, train_user_count_X,
                 train_song_X, train_y,
-                _, _, _, _
-        ] = gen_audio_dataset(num_truncated_songs=3500)
+                unused_test, unused_test, unused_test, unused_test
+        ] = gen_audio_dataset(num_truncated_songs=self.num_songs)
 
         [
                 train_user_songs_X, val_user_songs_X,
@@ -422,6 +428,9 @@ def test_pref_embedding():
 
     model = AudioModel(param_filename='params/music_recommendator/audio_model_strict_n3500,l0.015.p')
     model.compile_net_notrain()
+    model.build_song_embedding_fn()
+    model.build_pref_embedding_fn()
+    model.build_pred_fn()
     model.load_params()
 
     song_data_np = gen_song_data_np(songs_list)
@@ -441,11 +450,9 @@ def test_pref_embedding():
 
 def main():
 
-    test_pref_embedding()
+    # test_pref_embedding()
 
-    # test_data()
-
-    # train_default()
+    train_default()
 
     # bayes_hyper_optim_station()
 

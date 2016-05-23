@@ -218,11 +218,11 @@ class Model(object):
     def create_model_with_supp(self, supp_model_params):
 
         if supp_model_params is not None:
-            net = self.create_model(**supp_model_params)
+            input_layers = self.create_model(**supp_model_params)
         else:
-            net = self.create_model()
+            input_layers = self.create_model()
 
-        return net
+        return input_layers
 
     def display_info(self,
             train_Xs, val_Xs,
@@ -264,11 +264,12 @@ class Model(object):
 
         self.compile_net(train_Xs, val_Xs, train_y, val_y)
 
-        self.display_info(train_Xs, val_Xs, train_y, val_y)
-
         train_fn = self.build_train_fn()
 
         test_fn = self.build_test_fn()
+
+        if verbose:
+            self.display_info(train_Xs, val_Xs, train_y, val_y)
 
         if verbose:
             print('Beginning training')

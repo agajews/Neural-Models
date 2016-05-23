@@ -154,7 +154,7 @@ class MapModel(WeatherModel):
         self.net = net
         self.layers += get_all_layers(net)
 
-        return i_map, i_stat
+        return [i_map, i_stat]
 
     def get_supp_model_params(self, train_Xs, train_y, val_Xs, val_y):
 
@@ -170,8 +170,8 @@ class MapModel(WeatherModel):
 
         [
                 min_stat_train_X, min_train_y,
-                _, _,
-                min_map_train_X, _
+                unused_test, unused_test,
+                min_map_train_X, unused_test
         ] = get_min_temp_data(
                 width=self.width, height=self.height,
                 timesteps=self.timesteps, color='hsv')
