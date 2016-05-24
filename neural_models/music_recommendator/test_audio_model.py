@@ -324,7 +324,7 @@ def test_pref_embedding():
                 'play_count': 12,
                 'song_id': 'u2s6'
             },
-            { 
+            {
                 'name': 'Coco Butter Kisses Chance the rapper',
                 'play_count': 15,
                 'song_id': 'u2s7'

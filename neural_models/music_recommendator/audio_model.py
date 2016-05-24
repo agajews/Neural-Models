@@ -179,6 +179,7 @@ class AudioModel(RegressionModel):
 
         # shape=(num_users, 2*embedding)
         net = ConcatLayer([l_user_prefs, i_input_song_embedding], axis=1)
+        print(net.output_shape)
 
         net = DenseLayer(
                 net,
