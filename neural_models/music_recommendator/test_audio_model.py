@@ -319,7 +319,7 @@ def test_pref_embedding():
     model.build_std_pred_fn()
     model.load_params()
 
-    song_data_np = gen_song_data_np(alex_songs_list)
+    song_data_np = gen_song_data_np(sam_songs_list)
 
     song_embeddings = gen_song_embeddings(model, song_data_np)
 
