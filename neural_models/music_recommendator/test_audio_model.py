@@ -236,7 +236,7 @@ def get_all_preds(songs_list):
 
     user_preds = sorted(user_preds, key=exp_count_key, reverse=True)
 
-    display_preds(user_preds[:10])
+    display_preds(user_preds[10:20])
 
 
 def test_pref_embedding():
