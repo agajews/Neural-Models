@@ -117,7 +117,7 @@ def get_all_song_wavs():
     print('getting wavs')
 
     base_fnm = 'raw_data/music_recommendator/audio/'
-    all_song_fnms = listdir(base_fnm)
+    all_song_fnms = listdir(base_fnm)[:20]
     all_song_fnms = [base_fnm + fnm for fnm in all_song_fnms]
     all_song_fnms = [fnm for fnm in all_song_fnms if fnm[-4:] == '.wav']
     all_song_fnms = [fnm for fnm in all_song_fnms if 'temp' not in fnm]
