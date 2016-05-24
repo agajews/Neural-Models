@@ -184,7 +184,7 @@ def get_user_preds(model, user_prefs, all_song_embeddings):
 
 def test_pref_embedding():
 
-    songs_list = [
+    alex_songs_list = [
             {
                 'name': 'hamilton room where it happens',
                 'play_count': 15,
@@ -247,6 +247,69 @@ def test_pref_embedding():
             }
     ]
 
+    sam_songs_list = [
+            {
+                'name': 'Pt.2 Kanye West ',
+                'play_count': 10,
+                'song_id': 'u2s1'
+            },
+            {
+                'name': 'Fire and Rain James Taylor',
+                'play_count': 10,
+                'song_id': 'u2s2'
+            },
+            {
+                'name': 'Sun King Beatles',
+                'play_count': 12,
+                'song_id': 'u2s3'
+            },
+            {
+                'name': 'Fly me to the Moon Sinatra ',
+                'play_count': 3,
+                'song_id': 'u2s4'
+            },
+            {
+                'name': 'Queen Bohemian Rhapsody',
+                'play_count': 3,
+                'song_id': 'u2s5'
+            },
+            {
+                'name': 'Ultralight Beam Kanye West',
+                'play_count': 12,
+                'song_id': 'u2s6'
+            },
+            { 
+                'name': 'Coco Butter Kisses Chance the rapper',
+                'play_count': 15,
+                'song_id': 'u2s7'
+            },
+            {
+                'name': 'Sunday Candy Social Experiment ',
+                'play_count': 15,
+                'song_id': 'u2s8'
+            },
+            {
+                'name': 'Earned It The weeknd',
+                'play_count': 8,
+                'song_id': 'u2s9'
+            },
+            {
+                'name': 'Thinkin Bout you frank ocean ',
+                'play_count': 9,
+                'song_id': 'u2s10'
+            },
+            {
+                'name': ' She came in through the bathroom window beatles',
+                'play_count': 10,
+                'song_id': 'u2s11'
+            },
+            {
+                'name': 'Carolina in my mind james taylor ',
+                'play_count': 6,
+                'song_id': 'u2s12'
+            }
+    ]
+
     model = AudioModel(param_filename='params/music_recommendator/audio_model_strict_n3500,l0.015,t2.p')
     model.compile_net_notrain()
     model.build_song_embedding_fn()
@@ -255,7 +318,7 @@ def test_pref_embedding():
     model.build_std_pred_fn()
     model.load_params()
 
-    song_data_np = gen_song_data_np(songs_list)
+    song_data_np = gen_song_data_np(sam_songs_list)
 
     song_embeddings = gen_song_embeddings(model, song_data_np)
 
