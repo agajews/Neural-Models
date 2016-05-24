@@ -225,7 +225,7 @@ def get_all_preds(songs_list):
     song_embeddings = gen_song_embeddings(model, song_data_np)
 
     user_prefs = gen_user_prefs(model, song_embeddings)
-    print(user_prefs)
+    # print(user_prefs)
 
     all_song_embeddings = get_all_song_embeddings(model)
 
@@ -368,6 +368,7 @@ def test_pref_embedding():
     ]
 
     get_all_preds(sam_songs_list)
+    get_all_preds(alex_songs_list)
 
     '''input_song_fnm = 'raw_data/music_recommendator/audio/' + \
         'SOAATLI12A8C13E319.mp3.wav'
