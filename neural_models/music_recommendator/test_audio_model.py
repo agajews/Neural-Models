@@ -178,7 +178,7 @@ def get_single_song_embedding(model, song_fnm):
     song['song_id'] = 'none'
     song['embedding'] = embedding
 
-    return song
+    return [song]
 
 
 def get_user_preds(model, user_prefs, all_song_embeddings):
