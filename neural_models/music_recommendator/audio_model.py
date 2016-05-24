@@ -53,7 +53,7 @@ class AudioModel(RegressionModel):
     def load_default_data_hyperparams(self):
 
         self.bitwidth = 3
-        self.num_songs = 3300
+        self.num_songs = 3200
 
     def load_default_net_hyperparams(self):
 
