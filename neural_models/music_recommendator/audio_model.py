@@ -178,7 +178,7 @@ class AudioModel(RegressionModel):
         self.i_prefs = l_user_prefs
 
         # shape=(num_users, 2*embedding)
-        net = ElemwiseSumLayer([i_input_song_embedding, l_user_prefs], axis=1)
+        net = ElemwiseSumLayer([i_input_song_embedding, l_user_prefs])
 
         net = DenseLayer(
                 net,
