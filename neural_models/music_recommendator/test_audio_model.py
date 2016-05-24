@@ -203,7 +203,7 @@ def display_preds(preds):
     for song in preds:
         print(
             'Name: %s | Artist: %s | Exp Play Count: %d' %
-            song['name'], song['artist'], song['exp_play_count'])
+            (song['name'], song['artist'], song['exp_play_count']))
 
 
 def test_pref_embedding():
