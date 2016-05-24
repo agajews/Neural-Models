@@ -209,8 +209,8 @@ def display_preds(preds):
 
 def get_all_preds(songs_list):
 
-    param_fnm = 'params/music_recommendator/audio_model_strict_\
-        n3500,l0.015,t2.p'
+    param_fnm = 'params/music_recommendator/audio_model_strict_' + \
+        'n3500,l0.015,t2.p'
 
     model = AudioModel(param_filename=param_fnm)
     model.compile_net_notrain()
