@@ -341,11 +341,11 @@ def test_pref_embedding():
     user_prefs = gen_user_prefs(model, song_embeddings)
     print(user_prefs)
 
-    # all_song_embeddings = get_all_song_embeddings(model)
-    input_song_fnm = 'raw_data/music_recommendator/audio/' + 'SOAATLI12A8C13E319.mp3.wav'
-    single_song_embedding = get_single_song_embedding(model, input_song_fnm)
+    all_song_embeddings = get_all_song_embeddings(model)
+    # input_song_fnm = 'raw_data/music_recommendator/audio/' + 'SOAATLI12A8C13E319.mp3.wav'
+    # single_song_embedding = get_single_song_embedding(model, input_song_fnm)
 
-    user_preds = get_user_preds(model, user_prefs, single_song_embedding)
+    user_preds = get_user_preds(model, user_prefs, all_song_embeddings)
     user_preds = sorted(user_preds, key=lambda k: k['exp_play_count'], reverse=True)
 
     print(user_preds[:10])
