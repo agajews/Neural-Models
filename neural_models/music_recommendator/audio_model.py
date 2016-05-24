@@ -258,13 +258,16 @@ class AudioModel(RegressionModel):
 
         self.set_hyperparams(hyperparams)
 
-        data = self.get_data()
+        try:
+            data = self.get_data()
 
-        val_loss, val_acc = self.train_model(
-                *data,
-                save=False, verbose=True, val=True)
+            val_loss, val_acc = self.train_model(
+                    *data,
+                    save=False, verbose=True, val=True)
+        except:
+            return -10.0
 
-        return val_acc
+        return -val_acc
 
     def get_data(self):
 
