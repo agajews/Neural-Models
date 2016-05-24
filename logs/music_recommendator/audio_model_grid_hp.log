@@ -1,0 +1,488 @@
+Loading song_meta from file
+Loading user_hist and users_ordered from file
+Loading filtered_hist from file
+Loading filtered_songs from file
+Loading truncated_hist and truncated_songs from file
+Reading songs
+Generating data
+Num examples: 12411
+Max songs: 25
+Max song length: 1576
+Compiling functions
+Input shapes:
+(6981, 25, 1576, 3)
+(6981, 25, 1)
+(6981, 1576, 3)
+Num params: 174001
+Beginning training
+Epoch: 0 | Train loss: 14.292266494
+Val Loss: 17.9039597997 | Val Acc: 2.20875778928
+Epoch: 1 | Train loss: 14.2467346283
+Val Loss: 17.8166670232 | Val Acc: 2.18934882889
+{'grad_clip': 1000, 'l2_reg_weight': 0.0, 'embedding': 100, 'num_hidden': 100, 'dropout_val': 0.2, 'learning_rate': 1e-05, 'batch_size': 12, 'num_epochs': 2}
+2.18934882889
+Loading song_meta from file
+Loading user_hist and users_ordered from file
+Loading filtered_hist from file
+Loading filtered_songs from file
+Loading truncated_hist and truncated_songs from file
+Reading songs
+Generating data
+Num examples: 12411
+Max songs: 25
+Max song length: 1576
+Compiling functions
+Input shapes:
+(6981, 25, 1576, 3)
+(6981, 25, 1)
+(6981, 1576, 3)
+Num params: 174001
+Beginning training
+Epoch: 0 | Train loss: 14.2403042368
+Val Loss: 17.8189103288 | Val Acc: 2.20364560403
+Epoch: 1 | Train loss: 14.2492941891
+Val Loss: 17.8248053336 | Val Acc: 2.19194716346
+Epoch: 2 | Train loss: 14.1366663149
+Val Loss: 17.7003039523 | Val Acc: 2.16390195489
+Epoch: 3 | Train loss: 13.9365203276
+Val Loss: 17.4607222094 | Val Acc: 2.12590916203
+Epoch: 4 | Train loss: 13.8646238682
+Val Loss: 17.3927230866 | Val Acc: 2.09256749447
+{'grad_clip': 1000, 'l2_reg_weight': 0.0, 'embedding': 100, 'num_hidden': 100, 'dropout_val': 0.2, 'learning_rate': 1e-05, 'batch_size': 12, 'num_epochs': 5}
+2.09256749447
+Loading song_meta from file
+Loading user_hist and users_ordered from file
+Loading filtered_hist from file
+Loading filtered_songs from file
+Loading truncated_hist and truncated_songs from file
+Reading songs
+Generating data
+Num examples: 12411
+Max songs: 25
+Max song length: 1576
+Compiling functions
+Input shapes:
+(6981, 25, 1576, 3)
+(6981, 25, 1)
+(6981, 1576, 3)
+Num params: 174001
+Beginning training
+Epoch: 0 | Train loss: 14.1489640414
+Val Loss: 17.9158451445 | Val Acc: 2.2118790826
+Epoch: 1 | Train loss: 14.2521445717
+Val Loss: 17.8094439609 | Val Acc: 2.18886468978
+Epoch: 2 | Train loss: 14.145540943
+Val Loss: 17.6845013559 | Val Acc: 2.16121547619
+Epoch: 3 | Train loss: 14.0087751789
+Val Loss: 17.504687536 | Val Acc: 2.1235724972
+Epoch: 4 | Train loss: 13.8332051076
+Val Loss: 17.2939854837 | Val Acc: 2.0813149817
+Epoch: 5 | Train loss: 13.6381834755
+Val Loss: 17.1302016598 | Val Acc: 2.03396943103
+Epoch: 6 | Train loss: 13.4376327884
+Val Loss: 16.7156745365 | Val Acc: 1.97354870044
+Epoch: 7 | Train loss: 13.1907815068
+Val Loss: 16.6729078196 | Val Acc: 1.92178371121
+Epoch: 8 | Train loss: 12.944513105
+Val Loss: 16.3488231301 | Val Acc: 1.84537371213
+Epoch: 9 | Train loss: 12.6547238424
+Val Loss: 16.0932554372 | Val Acc: 1.77357971473
+{'grad_clip': 1000, 'l2_reg_weight': 0.0, 'embedding': 100, 'num_hidden': 100, 'dropout_val': 0.2, 'learning_rate': 1e-05, 'batch_size': 12, 'num_epochs': 10}
+1.77357971473
+Loading song_meta from file
+Loading user_hist and users_ordered from file
+Loading filtered_hist from file
+Loading filtered_songs from file
+Loading truncated_hist and truncated_songs from file
+Reading songs
+Generating data
+Num examples: 12411
+Max songs: 25
+Max song length: 1576
+Compiling functions
+Input shapes:
+(6981, 25, 1576, 3)
+(6981, 25, 1)
+(6981, 1576, 3)
+Num params: 174001
+Beginning training
+Epoch: 0 | Train loss: 13.5773590796
+Val Loss: 15.960084627 | Val Acc: 1.7396540939
+Epoch: 1 | Train loss: 11.051853605
+Val Loss: 13.2223066378 | Val Acc: 1.3009886177
+{'grad_clip': 1000, 'l2_reg_weight': 0.0, 'embedding': 100, 'num_hidden': 100, 'dropout_val': 0.2, 'learning_rate': 0.0001, 'batch_size': 12, 'num_epochs': 2}
+1.3009886177
+Loading song_meta from file
+Loading user_hist and users_ordered from file
+Loading filtered_hist from file
+Loading filtered_songs from file
+Loading truncated_hist and truncated_songs from file
+Reading songs
+Generating data
+Num examples: 12411
+Max songs: 25
+Max song length: 1576
+Compiling functions
+Input shapes:
+(6981, 25, 1576, 3)
+(6981, 25, 1)
+(6981, 1576, 3)
+Num params: 174001
+Beginning training
+Epoch: 0 | Train loss: 13.5771149801
+Val Loss: 16.0499479526 | Val Acc: 1.75740033754
+Epoch: 1 | Train loss: 11.0803769632
+Val Loss: 13.4487719333 | Val Acc: 1.30745512422
+Epoch: 2 | Train loss: 9.55198232728
+Val Loss: 12.8761550969 | Val Acc: 1.50601692557
+Epoch: 3 | Train loss: 9.33575406825
+Val Loss: 12.8459436803 | Val Acc: 1.55941573568
+Epoch: 4 | Train loss: 9.31644683298
+Val Loss: 12.842974759 | Val Acc: 1.58186641361
+{'grad_clip': 1000, 'l2_reg_weight': 0.0, 'embedding': 100, 'num_hidden': 100, 'dropout_val': 0.2, 'learning_rate': 0.0001, 'batch_size': 12, 'num_epochs': 5}
+1.58186641361
+Loading song_meta from file
+Loading user_hist and users_ordered from file
+Loading filtered_hist from file
+Loading filtered_songs from file
+Loading truncated_hist and truncated_songs from file
+Reading songs
+Generating data
+Num examples: 12411
+Max songs: 25
+Max song length: 1576
+Compiling functions
+Input shapes:
+(6981, 25, 1576, 3)
+(6981, 25, 1)
+(6981, 1576, 3)
+Num params: 174001
+Beginning training
+Epoch: 0 | Train loss: 13.5843587703
+Val Loss: 15.9440720196 | Val Acc: 1.7441231866
+Epoch: 1 | Train loss: 11.1312870495
+Val Loss: 13.1953577183 | Val Acc: 1.29953240195
+Epoch: 2 | Train loss: 9.48424273597
+Val Loss: 11.5314828784 | Val Acc: 1.50814042854
+Epoch: 3 | Train loss: 9.31519548444
+Val Loss: 12.7736909977 | Val Acc: 1.5679127329
+Epoch: 4 | Train loss: 9.31296442703
+Val Loss: 12.8553869498 | Val Acc: 1.56732564691
+Epoch: 5 | Train loss: 9.08926284041
+Val Loss: 12.8503512761 | Val Acc: 1.59974683206
+Epoch: 6 | Train loss: 9.29788142216
+Val Loss: 12.81061046 | Val Acc: 1.58086254786
+Epoch: 7 | Train loss: 9.29123855177
+Val Loss: 12.8782666883 | Val Acc: 1.58959610943
+Epoch: 8 | Train loss: 9.29427199056
+Val Loss: 12.8644665758 | Val Acc: 1.60478336659
+Epoch: 9 | Train loss: 9.29725258668
+Val Loss: 12.8612091332 | Val Acc: 1.58554643068
+{'grad_clip': 1000, 'l2_reg_weight': 0.0, 'embedding': 100, 'num_hidden': 100, 'dropout_val': 0.2, 'learning_rate': 0.0001, 'batch_size': 12, 'num_epochs': 10}
+1.58554643068
+Loading song_meta from file
+Loading user_hist and users_ordered from file
+Loading filtered_hist from file
+Loading filtered_songs from file
+Loading truncated_hist and truncated_songs from file
+Reading songs
+Generating data
+Num examples: 12411
+Max songs: 25
+Max song length: 1576
+Compiling functions
+Input shapes:
+(6981, 25, 1576, 3)
+(6981, 25, 1)
+(6981, 1576, 3)
+Num params: 174001
+Beginning training
+Epoch: 0 | Train loss: 9.73968867109
+Val Loss: 12.9143819147 | Val Acc: 1.56747101147
+Epoch: 1 | Train loss: 9.2900167212
+Val Loss: 12.7885625757 | Val Acc: 1.59331626168
+{'grad_clip': 1000, 'l2_reg_weight': 0.0, 'embedding': 100, 'num_hidden': 100, 'dropout_val': 0.2, 'learning_rate': 0.001, 'batch_size': 12, 'num_epochs': 2}
+1.59331626168
+Loading song_meta from file
+Loading user_hist and users_ordered from file
+Loading filtered_hist from file
+Loading filtered_songs from file
+Loading truncated_hist and truncated_songs from file
+Reading songs
+Generating data
+Num examples: 12411
+Max songs: 25
+Max song length: 1576
+Compiling functions
+Input shapes:
+(6981, 25, 1576, 3)
+(6981, 25, 1)
+(6981, 1576, 3)
+Num params: 174001
+Beginning training
+Epoch: 0 | Train loss: 9.70257056803
+Val Loss: 12.6590473323 | Val Acc: 1.63958921848
+Epoch: 1 | Train loss: 9.29244705486
+Val Loss: 12.924977251 | Val Acc: 1.53302495164
+Epoch: 2 | Train loss: 9.26287746373
+Val Loss: 12.8373663017 | Val Acc: 1.68406968573
+Epoch: 3 | Train loss: 9.21055018193
+Val Loss: 12.8357020552 | Val Acc: 1.65735763136
+Epoch: 4 | Train loss: 9.25914325211
+Val Loss: 12.3324396104 | Val Acc: 1.59559395703
+{'grad_clip': 1000, 'l2_reg_weight': 0.0, 'embedding': 100, 'num_hidden': 100, 'dropout_val': 0.2, 'learning_rate': 0.001, 'batch_size': 12, 'num_epochs': 5}
+1.59559395703
+Loading song_meta from file
+Loading user_hist and users_ordered from file
+Loading filtered_hist from file
+Loading filtered_songs from file
+Loading truncated_hist and truncated_songs from file
+Reading songs
+Generating data
+Num examples: 12411
+Max songs: 25
+Max song length: 1576
+Compiling functions
+Input shapes:
+(6981, 25, 1576, 3)
+(6981, 25, 1)
+(6981, 1576, 3)
+Num params: 174001
+Beginning training
+Epoch: 0 | Train loss: 9.83237831338
+Val Loss: 12.9150192492 | Val Acc: 1.59410475552
+Epoch: 1 | Train loss: 9.31620065867
+Val Loss: 12.9450883795 | Val Acc: 1.58998352361
+Epoch: 2 | Train loss: 9.29702608571
+Val Loss: 12.8784131391 | Val Acc: 1.70282423131
+Epoch: 3 | Train loss: 9.20798077426
+Val Loss: 12.8924364594 | Val Acc: 1.60235278996
+Epoch: 4 | Train loss: 9.28749898915
+Val Loss: 12.8850527883 | Val Acc: 1.62634363971
+Epoch: 5 | Train loss: 9.2909716274
+Val Loss: 12.7937105205 | Val Acc: 1.65565475945
+Epoch: 6 | Train loss: 9.29929495066
+Val Loss: 12.8484611881 | Val Acc: 1.54248548017
+Epoch: 7 | Train loss: 9.2625240689
+Val Loss: 12.8587288302 | Val Acc: 1.63796226853
+Epoch: 8 | Train loss: 9.26196862511
+Val Loss: 12.8725644325 | Val Acc: 1.56487217607
+Epoch: 9 | Train loss: 9.25591299662
+Val Loss: 12.762934598 | Val Acc: 1.55419633626
+{'grad_clip': 1000, 'l2_reg_weight': 0.0, 'embedding': 100, 'num_hidden': 100, 'dropout_val': 0.2, 'learning_rate': 0.001, 'batch_size': 12, 'num_epochs': 10}
+1.55419633626
+Loading song_meta from file
+Loading user_hist and users_ordered from file
+Loading filtered_hist from file
+Loading filtered_songs from file
+Loading truncated_hist and truncated_songs from file
+Reading songs
+Generating data
+Num examples: 12411
+Max songs: 25
+Max song length: 1576
+Compiling functions
+Input shapes:
+(6981, 25, 1576, 3)
+(6981, 25, 1)
+(6981, 1576, 3)
+Num params: 174001
+Beginning training
+Epoch: 0 | Train loss: 14.2982686326
+Val Loss: 17.9232030476 | Val Acc: 2.21349919802
+Epoch: 1 | Train loss: 14.2520573163
+Val Loss: 17.8294797622 | Val Acc: 2.19197249132
+{'grad_clip': 1000, 'l2_reg_weight': 0.0, 'embedding': 100, 'num_hidden': 100, 'dropout_val': 0.4, 'learning_rate': 1e-05, 'batch_size': 12, 'num_epochs': 2}
+2.19197249132
+Loading song_meta from file
+Loading user_hist and users_ordered from file
+Loading filtered_hist from file
+Loading filtered_songs from file
+Loading truncated_hist and truncated_songs from file
+Reading songs
+Generating data
+Num examples: 12411
+Max songs: 25
+Max song length: 1576
+Compiling functions
+Input shapes:
+(6981, 25, 1576, 3)
+(6981, 25, 1)
+(6981, 1576, 3)
+Num params: 174001
+Beginning training
+Epoch: 0 | Train loss: 14.3291421067
+Val Loss: 17.8339479213 | Val Acc: 2.20339895831
+Epoch: 1 | Train loss: 14.2535638325
+Val Loss: 17.8229731737 | Val Acc: 2.19069394482
+Epoch: 2 | Train loss: 14.1069548726
+Val Loss: 17.6776619567 | Val Acc: 2.15973790955
+Epoch: 3 | Train loss: 14.0017843625
+Val Loss: 17.5312120311 | Val Acc: 2.12630046171
+Epoch: 4 | Train loss: 13.8297105807
+Val Loss: 17.3335483124 | Val Acc: 2.08428019728
+{'grad_clip': 1000, 'l2_reg_weight': 0.0, 'embedding': 100, 'num_hidden': 100, 'dropout_val': 0.4, 'learning_rate': 1e-05, 'batch_size': 12, 'num_epochs': 5}
+2.08428019728
+Loading song_meta from file
+Loading user_hist and users_ordered from file
+Loading filtered_hist from file
+Loading filtered_songs from file
+Loading truncated_hist and truncated_songs from file
+Reading songs
+Generating data
+Num examples: 12411
+Max songs: 25
+Max song length: 1576
+Compiling functions
+Input shapes:
+(6981, 25, 1576, 3)
+(6981, 25, 1)
+(6981, 1576, 3)
+Num params: 174001
+Beginning training
+Epoch: 0 | Train loss: 14.3219920377
+Val Loss: 16.502994614 | Val Acc: 2.18487483152
+Epoch: 1 | Train loss: 14.2454469517
+Val Loss: 17.6860876052 | Val Acc: 2.18365819953
+Epoch: 2 | Train loss: 14.127179528
+Val Loss: 17.700074239 | Val Acc: 2.16317322032
+Epoch: 3 | Train loss: 14.0036760351
+Val Loss: 17.5561997425 | Val Acc: 2.13011227816
+Epoch: 4 | Train loss: 13.8584779223
+Val Loss: 17.3842398126 | Val Acc: 2.0911131172
+Epoch: 5 | Train loss: 13.6585334488
+Val Loss: 17.1566607491 | Val Acc: 2.03745754876
+Epoch: 6 | Train loss: 13.4511194881
+Val Loss: 16.9488408071 | Val Acc: 1.98751092436
+Epoch: 7 | Train loss: 13.222661819
+Val Loss: 16.605949032 | Val Acc: 1.9192359081
+Epoch: 8 | Train loss: 12.9798416814
+Val Loss: 16.4470318082 | Val Acc: 1.86165500763
+Epoch: 9 | Train loss: 12.711947184
+Val Loss: 16.0675992494 | Val Acc: 1.78008818565
+{'grad_clip': 1000, 'l2_reg_weight': 0.0, 'embedding': 100, 'num_hidden': 100, 'dropout_val': 0.4, 'learning_rate': 1e-05, 'batch_size': 12, 'num_epochs': 10}
+1.78008818565
+Loading song_meta from file
+Loading user_hist and users_ordered from file
+Loading filtered_hist from file
+Loading filtered_songs from file
+Loading truncated_hist and truncated_songs from file
+Reading songs
+Generating data
+Num examples: 12411
+Max songs: 25
+Max song length: 1576
+Compiling functions
+Input shapes:
+(6981, 25, 1576, 3)
+(6981, 25, 1)
+(6981, 1576, 3)
+Num params: 174001
+Beginning training
+Epoch: 0 | Train loss: 13.5212677354
+Val Loss: 15.8315249008 | Val Acc: 1.72401484613
+Epoch: 1 | Train loss: 11.0231802898
+Val Loss: 13.0082115116 | Val Acc: 1.31055337551
+{'grad_clip': 1000, 'l2_reg_weight': 0.0, 'embedding': 100, 'num_hidden': 100, 'dropout_val': 0.4, 'learning_rate': 0.0001, 'batch_size': 12, 'num_epochs': 2}
+1.31055337551
+Loading song_meta from file
+Loading user_hist and users_ordered from file
+Loading filtered_hist from file
+Loading filtered_songs from file
+Loading truncated_hist and truncated_songs from file
+Reading songs
+Generating data
+Num examples: 12411
+Max songs: 25
+Max song length: 1576
+Compiling functions
+Input shapes:
+(6981, 25, 1576, 3)
+(6981, 25, 1)
+(6981, 1576, 3)
+Num params: 174001
+Beginning training
+Epoch: 0 | Train loss: 13.6105397137
+Val Loss: 16.0897033869 | Val Acc: 1.76803668309
+Epoch: 1 | Train loss: 11.1122581283
+Val Loss: 13.4840751312 | Val Acc: 1.31042896425
+Epoch: 2 | Train loss: 9.54889253297
+Val Loss: 12.7891692834 | Val Acc: 1.50172063693
+Epoch: 3 | Train loss: 9.30989282061
+Val Loss: 12.8199686898 | Val Acc: 1.57442305727
+Epoch: 4 | Train loss: 9.28821464998
+Val Loss: 12.8320725543 | Val Acc: 1.5734386004
+{'grad_clip': 1000, 'l2_reg_weight': 0.0, 'embedding': 100, 'num_hidden': 100, 'dropout_val': 0.4, 'learning_rate': 0.0001, 'batch_size': 12, 'num_epochs': 5}
+1.5734386004
+Loading song_meta from file
+Loading user_hist and users_ordered from file
+Loading filtered_hist from file
+Loading filtered_songs from file
+Loading truncated_hist and truncated_songs from file
+Reading songs
+Generating data
+Num examples: 12411
+Max songs: 25
+Max song length: 1576
+Compiling functions
+Input shapes:
+(6981, 25, 1576, 3)
+(6981, 25, 1)
+(6981, 1576, 3)
+Num params: 174001
+Beginning training
+Epoch: 0 | Train loss: 13.5804972907
+Val Loss: 16.0283354164 | Val Acc: 1.74862209287
+Epoch: 1 | Train loss: 11.0565507464
+Val Loss: 13.4642026753 | Val Acc: 1.31365309483
+Epoch: 2 | Train loss: 9.51925993504
+Val Loss: 12.6151983389 | Val Acc: 1.52989877109
+Epoch: 3 | Train loss: 9.3246904723
+Val Loss: 12.8468603066 | Val Acc: 1.58030637702
+Epoch: 4 | Train loss: 9.26150153653
+Val Loss: 12.8679429455 | Val Acc: 1.5883786632
+Epoch: 5 | Train loss: 9.31094070299
+Val Loss: 12.8214993547 | Val Acc: 1.58623158561
+Epoch: 6 | Train loss: 9.30844375081
+Val Loss: 12.8461019904 | Val Acc: 1.60225245727
+Epoch: 7 | Train loss: 9.28735096054
+Val Loss: 12.877514365 | Val Acc: 1.575724656
+Epoch: 8 | Train loss: 9.29836087003
+Val Loss: 12.8458949256 | Val Acc: 1.59031989501
+Epoch: 9 | Train loss: 9.28787735529
+Val Loss: 12.8874905477 | Val Acc: 1.60015905068
+{'grad_clip': 1000, 'l2_reg_weight': 0.0, 'embedding': 100, 'num_hidden': 100, 'dropout_val': 0.4, 'learning_rate': 0.0001, 'batch_size': 12, 'num_epochs': 10}
+1.60015905068
+Loading song_meta from file
+Loading user_hist and users_ordered from file
+Loading filtered_hist from file
+Loading filtered_songs from file
+Loading truncated_hist and truncated_songs from file
+Reading songs
+Generating data
+Num examples: 12411
+Max songs: 25
+Max song length: 1576
+Compiling functions
+Input shapes:
+(6981, 25, 1576, 3)
+(6981, 25, 1)
+(6981, 1576, 3)
+Num params: 174001
+Beginning training
+Epoch: 0 | Train loss: 9.83970333822
+Val Loss: 12.8369674422 | Val Acc: 1.65366587058
+Epoch: 1 | Train loss: 9.30051186221
+Val Loss: 12.8361059016 | Val Acc: 1.52737731683
+{'grad_clip': 1000, 'l2_reg_weight': 0.0, 'embedding': 100, 'num_hidden': 100, 'dropout_val': 0.4, 'learning_rate': 0.001, 'batch_size': 12, 'num_epochs': 2}
+1.52737731683
+Loading song_meta from file
+Loading user_hist and users_ordered from file
+Loading filtered_hist from file
+Loading filtered_songs from file
+Loading truncated_hist and truncated_songs from file
+Reading songs
+Generating data
+Num examples: 12411
+Max songs: 25
+Max song length: 1576

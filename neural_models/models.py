@@ -86,10 +86,14 @@ class Model(object):
 
         return test_acc
 
+    def update_params(self, loss, all_params):
+
+        return adagrad(loss, all_params, self.learning_rate)
+
     def build_train_updates(self, loss):
 
         all_params = get_all_params(self.net, trainable=True)
-        updates = adagrad(loss, all_params, self.learning_rate)
+        updates = self.update_params(loss, all_params)
 
         return updates
 
