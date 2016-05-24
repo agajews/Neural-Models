@@ -367,7 +367,7 @@ def test_pref_embedding():
             }
     ]
 
-    get_all_preds(alex_songs_list)
+    get_all_preds(sam_songs_list)
 
     '''input_song_fnm = 'raw_data/music_recommendator/audio/' + \
         'SOAATLI12A8C13E319.mp3.wav'
