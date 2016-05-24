@@ -17,7 +17,7 @@ from neural_models.music_recommendator.audio_model import AudioModel
 def get_wav(song_fnm):
 
     rate, wav = wavfile.read(song_fnm)
-    downsampled_size = int(wav.shape[0] * 0.10)
+    downsampled_size = int(wav.shape[0] * 0.01)
     if downsampled_size > 3:
         wav = signal.resample(wav, downsampled_size)
 
@@ -67,7 +67,8 @@ def gen_song_data_np(songs_list):
         song_wav['name'] = song['name']
         song_wav['song_id'] = song['song_id']
 
-        song_data_np.append(song_wav)
+        if wav is not None:
+            song_data_np.append(song_wav)
 
     return song_data_np
 
