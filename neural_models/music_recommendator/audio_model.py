@@ -185,7 +185,6 @@ class AudioModel(RegressionModel):
                 num_units=self.num_hidden,
                 W=init.Normal(),
                 nonlinearity=None)
-        print(net.output_shape)
 
         net = DenseLayer(
                 net,
@@ -198,6 +197,7 @@ class AudioModel(RegressionModel):
                 num_units=1,
                 W=init.Normal(),
                 nonlinearity=None)
+        print(net.output_shape)
         # net = SliceLayer(net, 0, 1)
 
         self.net = net
