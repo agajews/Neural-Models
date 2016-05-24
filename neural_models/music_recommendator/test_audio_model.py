@@ -333,7 +333,7 @@ def test_pref_embedding():
 
     print(user_preds[:10])'''
 
-    user_songs, user_counts = gen_user_data_np(alex_songs_list)
+    user_songs, user_counts = gen_user_data_np(sam_songs_list)
     input_song_fnm = 'raw_data/music_recommendator/audio/' + 'SOAATLI12A8C13E319.mp3.wav'
     user_preds = get_std_user_preds(model, user_songs, user_counts, input_song_fnm)
     print(user_preds)
