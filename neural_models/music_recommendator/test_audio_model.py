@@ -207,18 +207,10 @@ def display_preds(preds):
             (song['name'], song['artist'], song['exp_play_count']))
 
 
-def get_all_preds(songs_list):
+def get_all_preds(model, songs_list):
 
     param_fnm = 'params/music_recommendator/audio_model_strict_' + \
         'n3500,l0.015,t2.p'
-
-    model = AudioModel(param_filename=param_fnm)
-    model.compile_net_notrain()
-    model.build_song_embedding_fn()
-    model.build_pref_embedding_fn()
-    model.build_pred_fn()
-    model.build_std_pred_fn()
-    model.load_params()
 
     song_data_np = gen_song_data_np(songs_list)
 
@@ -236,7 +228,7 @@ def get_all_preds(songs_list):
 
     user_preds = sorted(user_preds, key=exp_count_key, reverse=True)
 
-    display_preds(user_preds[10:20])
+    display_preds(user_preds[:10])
 
 
 def test_pref_embedding():
@@ -367,8 +359,16 @@ def test_pref_embedding():
             }
     ]
 
-    get_all_preds(sam_songs_list)
-    get_all_preds(alex_songs_list)
+    model = AudioModel(param_filename=param_fnm)
+    model.compile_net_notrain()
+    model.build_song_embedding_fn()
+    model.build_pref_embedding_fn()
+    model.build_pred_fn()
+    model.build_std_pred_fn()
+    # model.load_params()
+
+    get_all_preds(model, sam_songs_list)
+    get_all_preds(model, alex_songs_list)
 
     '''input_song_fnm = 'raw_data/music_recommendator/audio/' + \
         'SOAATLI12A8C13E319.mp3.wav'
