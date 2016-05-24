@@ -191,7 +191,7 @@ class AudioModel(RegressionModel):
                 num_units=1,
                 W=init.Normal(),
                 nonlinearity=None)
-        net = SliceLayer(net, 0, 1)
+        # net = SliceLayer(net, 0, 1)
 
         self.net = net
         self.layers += get_all_layers(net)
