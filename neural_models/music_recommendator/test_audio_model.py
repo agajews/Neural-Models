@@ -184,7 +184,7 @@ def get_user_preds(model, user_prefs, all_song_embeddings):
 
 def test_pref_embedding():
 
-    alex_songs_list = [
+    '''alex_songs_list = [
             {
                 'name': 'hamilton room where it happens',
                 'play_count': 15,
@@ -245,7 +245,7 @@ def test_pref_embedding():
                 'play_count': 4,
                 'song_id': 'u1s12'
             }
-    ]
+    ]'''
 
     sam_songs_list = [
             {
