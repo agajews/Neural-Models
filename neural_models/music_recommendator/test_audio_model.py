@@ -209,9 +209,6 @@ def display_preds(preds):
 
 def get_all_preds(model, songs_list):
 
-    param_fnm = 'params/music_recommendator/audio_model_strict_' + \
-        'n3500,l0.015,t2.p'
-
     song_data_np = gen_song_data_np(songs_list)
 
     song_embeddings = gen_song_embeddings(model, song_data_np)
@@ -358,6 +355,9 @@ def test_pref_embedding():
                 'song_id': 'u2s12'
             }
     ]
+
+    param_fnm = 'params/music_recommendator/audio_model_strict_' + \
+        'n3500,l0.015,t2.p'
 
     model = AudioModel(param_filename=param_fnm)
     model.compile_net_notrain()
