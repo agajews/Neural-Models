@@ -198,6 +198,14 @@ def get_user_preds(model, user_prefs, all_song_embeddings):
     return songs
 
 
+def display_preds(preds):
+
+    for song in preds:
+        print(
+            'Name: %s | Artist: %s | Exp Play Count: %d' %
+            song['name'], song['artist'], song['exp_play_count'])
+
+
 def test_pref_embedding():
 
     alex_songs_list = [
@@ -348,7 +356,7 @@ def test_pref_embedding():
     user_preds = get_user_preds(model, user_prefs, all_song_embeddings)
     user_preds = sorted(user_preds, key=lambda k: k['exp_play_count'], reverse=True)
 
-    print(user_preds[:10])
+    display_preds(user_preds[:10])
 
     '''user_songs, user_counts = gen_user_data_np(sam_songs_list)
     user_preds = get_std_user_preds(model, user_songs, user_counts, input_song_fnm)
