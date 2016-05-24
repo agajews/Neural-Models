@@ -216,7 +216,7 @@ def get_all_preds(model, songs_list):
     song_embeddings = gen_song_embeddings(model, song_data_np)
 
     user_prefs = gen_user_prefs(model, song_embeddings)
-    # print(user_prefs)
+    print(user_prefs)
 
     all_song_embeddings = get_all_song_embeddings(model)
 
@@ -226,7 +226,6 @@ def get_all_preds(model, songs_list):
         return k['exp_play_count']
 
     user_preds = sorted(user_preds, key=exp_count_key, reverse=True)
-    print(user_preds)
 
     display_preds(user_preds[:10])
 
