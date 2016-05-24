@@ -1,6 +1,6 @@
 from lasagne import init
 from lasagne.layers import InputLayer, LSTMLayer, \
-    DropoutLayer, SliceLayer, DenseLayer, ConcatLayer
+    DropoutLayer, SliceLayer, DenseLayer, ConcatLayer, ElemwiseSumLayer
 from lasagne.layers import get_output, get_all_layers
 from lasagne.nonlinearities import tanh
 from lasagne.updates import rmsprop
@@ -178,24 +178,24 @@ class AudioModel(RegressionModel):
         self.i_prefs = l_user_prefs
 
         # shape=(num_users, 2*embedding)
-        net = ConcatLayer([i_input_song_embedding, l_user_prefs], axis=1)
+        net = ElemwiseSumLayer([i_input_song_embedding, l_user_prefs], axis=1)
 
         net = DenseLayer(
                 net,
                 num_units=self.num_hidden,
-                W=init.Uniform(),
+                W=init.Normal(),
                 nonlinearity=None)
 
         net = DenseLayer(
                 net,
                 num_units=self.num_hidden,
-                W=init.Uniform(),
+                W=init.Normal(),
                 nonlinearity=None)
 
         net = DenseLayer(
                 net,
                 num_units=1,
-                W=init.Uniform(),
+                W=init.Normal(),
                 nonlinearity=None)
         print(net.output_shape)
         # net = SliceLayer(net, 0, 1)
