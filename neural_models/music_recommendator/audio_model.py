@@ -207,7 +207,9 @@ class AudioModel(RegressionModel):
 
     def build_song_embedding_fn(self):
 
-        embedding_out = get_output(self.song_embedding)
+        embedding_out = get_output(
+            self.song_embedding,
+            deterministic=True)
         embedding_fn = theano.function(
             [self.i_input_song.input_var], embedding_out,
             allow_input_downcast=True)
@@ -216,7 +218,9 @@ class AudioModel(RegressionModel):
 
     def build_pref_embedding_fn(self):
 
-        pref_out = get_output(self.pref_embedding)
+        pref_out = get_output(
+            self.pref_embedding,
+            deterministic=True)
         pref_fn = theano.function(
             [self.i_user_song_embeddings.input_var, self.i_user_counts.input_var],
             pref_out,
@@ -226,7 +230,9 @@ class AudioModel(RegressionModel):
 
     def build_pred_fn(self):
 
-        pred_out = get_output(self.net)
+        pred_out = get_output(
+            self.net,
+            deterministic=True)
         pred_fn = theano.function(
             [self.i_input_song_embedding.input_var, self.i_prefs.input_var],
             pred_out,
@@ -236,7 +242,9 @@ class AudioModel(RegressionModel):
 
     def build_std_pred_fn(self):
 
-        pred_out = get_output(self.net)
+        pred_out = get_output(
+            self.net,
+            deterministic=True)
         std_pred_fn = theano.function(
             [self.i_input_song.input_var, self.i_user_songs.input_var, self.i_user_counts.input_var],
             pred_out,
