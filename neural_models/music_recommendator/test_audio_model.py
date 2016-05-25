@@ -359,6 +359,11 @@ def test_pref_embedding():
     ]
 
     marisa_songs_list = [
+            {
+                'name': 'Baby its cold outside louis armstrong',
+                'play_count': 6,
+                'song_id': 'u3s5'
+            },
             '''{
                 'name': 'My name is Luca Susan Vega',
                 'play_count': 10,
@@ -378,13 +383,8 @@ def test_pref_embedding():
                 'name': 'In this world ladysmith black mambazo',
                 'play_count': 7,
                 'song_id': 'u3s4'
-            },'''
-            {
-                'name': 'Baby its cold outside louis armstrong',
-                'play_count': 6,
-                'song_id': 'u3s5'
             },
-            '''{
+            {
                 'name': 'Youve got a friend Carole King',
                 'play_count': 12,
                 'song_id': 'u3s6'
