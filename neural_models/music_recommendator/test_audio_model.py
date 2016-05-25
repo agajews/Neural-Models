@@ -364,6 +364,11 @@ def test_pref_embedding():
                 'play_count': 6,
                 'song_id': 'u3s5'
             },
+            {
+                'name': 'Summertime Ella Fitzgerald',
+                'play_count': 8,
+                'song_id': 'u3s9'
+            },
             '''{
                 'name': 'My name is Luca Susan Vega',
                 'play_count': 10,
@@ -398,13 +403,8 @@ def test_pref_embedding():
                 'name': 'Hijo de la luna Mecano ',
                 'play_count': 12,
                 'song_id': 'u3s8'
-            },'''
-            {
-                'name': 'Summertime Ella Fitzgerald',
-                'play_count': 8,
-                'song_id': 'u3s9'
             },
-            '''{
+            {
                 'name': 'Freeway Aimee Man',
                 'play_count': 9,
                 'song_id': 'u3s10'
