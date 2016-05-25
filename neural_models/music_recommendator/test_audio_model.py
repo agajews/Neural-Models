@@ -370,6 +370,7 @@ def test_pref_embedding():
                 'song_id': 'u3s9'
             },
     ]
+
     '''{
         'name': 'My name is Luca Susan Vega',
         'play_count': 10,
@@ -431,8 +432,8 @@ def test_pref_embedding():
     model.build_std_pred_fn()
     model.load_params()
 
-    get_all_preds(model, alex_songs_list)
-    get_all_preds(model, sam_songs_list)
+    # get_all_preds(model, alex_songs_list)
+    # get_all_preds(model, sam_songs_list)
     get_all_preds(model, marisa_songs_list)
 
     '''input_song_fnm = 'raw_data/music_recommendator/audio/' + \
