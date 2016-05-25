@@ -458,7 +458,7 @@ def test_pref_embedding():
                 'song_id': 'u4s6'
             },
             {
-                'name': 'Vanilla Twilight Owl City,
+                'name': 'Vanilla Twilight Owl City',
                 'play_count': 60,
                 'song_id': 'u4s7'
             },
