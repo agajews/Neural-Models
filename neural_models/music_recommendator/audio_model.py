@@ -53,7 +53,7 @@ class AudioModel(RegressionModel):
     def load_default_data_hyperparams(self):
 
         self.bitwidth = 3
-        self.num_songs = 3100
+        self.num_songs = 3000
 
     def load_default_net_hyperparams(self):
 
@@ -67,7 +67,7 @@ class AudioModel(RegressionModel):
 
         self.num_epochs = 10
         self.batch_size = 12
-        self.learning_rate = 0.0001
+        self.learning_rate = 0.001
 
     def create_lstm_stack(self, net):
 
@@ -183,27 +183,39 @@ class AudioModel(RegressionModel):
         net = DenseLayer(
                 net,
                 num_units=self.num_hidden,
-                W=init.Normal(),
+                W=init.Uniform(1),
                 nonlinearity=tanh)
 
         net = DenseLayer(
                 net,
                 num_units=self.num_hidden,
-                W=init.Normal(),
+                W=init.Uniform(1),
                 nonlinearity=tanh)
+
         net = DenseLayer(
                 net,
                 num_units=self.num_hidden,
-                W=init.Normal(),
+                W=init.Uniform(1),
+                nonlinearity=tanh)
+
+        net = DenseLayer(
+                net,
+                num_units=self.num_hidden,
+                W=init.Uniform(1),
+                nonlinearity=tanh)
+
+        net = DenseLayer(
+                net,
+                num_units=self.num_hidden,
+                W=init.Uniform(1),
                 nonlinearity=None)
 
         net = DenseLayer(
                 net,
                 num_units=1,
-                W=init.Normal(),
+                W=init.Uniform(1),
                 nonlinearity=None)
-        print(net.output_shape)
-        # net = SliceLayer(net, 0, 1)
+        net = SliceLayer(net, 0, 1)
 
         self.net = net
         self.layers += get_all_layers(net)
@@ -322,7 +334,8 @@ class AudioModel(RegressionModel):
 
 def train_default():
 
-    model = AudioModel(param_filename='params/music_recommendator/audio_model_strict_n3500,l0.015,t3.p')
+    param_fnm = 'params/music_recommendator/audio_model_strict_n3500,l0.015,t3.p'
+    model = AudioModel(param_filename=param_fnm)
     model.train_with_data()
 
 
@@ -338,7 +351,8 @@ def grid_hp_search():
         'batch_size': (12, ),
         'learning_rate': (0.00001, 0.0001, 0.001)}
 
-    model = AudioModel(param_filename='params/music_recommendator/audio_model_strict_n3500,l0.015,hp1.p')
+    param_fnm = 'params/music_recommendator/audio_model_strict_n3500,l0.015,hp1.p'
+    model = AudioModel(param_filename=param_fnm)
 
     optim = GridHyperOptim(model, hp_choices)
     optim.optimize()
@@ -346,7 +360,8 @@ def grid_hp_search():
 
 def main():
 
-    grid_hp_search()
+    # grid_hp_search()
+    train_default()
 
 
 if __name__ == '__main__':

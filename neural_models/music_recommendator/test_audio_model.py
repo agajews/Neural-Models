@@ -117,7 +117,7 @@ def get_all_song_wavs():
     print('getting wavs')
 
     base_fnm = 'raw_data/music_recommendator/audio/'
-    all_song_fnms = listdir(base_fnm)[:20]
+    all_song_fnms = listdir(base_fnm)  # [:20]
     all_song_fnms = [base_fnm + fnm for fnm in all_song_fnms]
     all_song_fnms = [fnm for fnm in all_song_fnms if fnm[-4:] == '.wav']
     all_song_fnms = [fnm for fnm in all_song_fnms if 'temp' not in fnm]
@@ -216,7 +216,7 @@ def get_all_preds(model, songs_list):
     song_embeddings = gen_song_embeddings(model, song_data_np)
 
     user_prefs = gen_user_prefs(model, song_embeddings)
-    print(user_prefs)
+    # print(user_prefs)
 
     all_song_embeddings = get_all_song_embeddings(model)
 
@@ -358,19 +358,18 @@ def test_pref_embedding():
             }
     ]
 
-    param_fnm = 'params/music_recommendator/audio_model_strict_' + \
-        'n3500,l0.015,t2.p'
-
+    param_fnm = 'params/music_recommendator/audio_model_strict_n3500,l0.015,t3.p'
     model = AudioModel(param_filename=param_fnm)
+
     model.compile_net_notrain()
     model.build_song_embedding_fn()
     model.build_pref_embedding_fn()
     model.build_pred_fn()
     model.build_std_pred_fn()
-    # model.load_params()
+    model.load_params()
 
-    get_all_preds(model, sam_songs_list)
     get_all_preds(model, alex_songs_list)
+    get_all_preds(model, sam_songs_list)
 
     '''input_song_fnm = 'raw_data/music_recommendator/audio/' + \
         'SOAATLI12A8C13E319.mp3.wav'
