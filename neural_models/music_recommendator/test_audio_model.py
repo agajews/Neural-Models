@@ -369,58 +369,120 @@ def test_pref_embedding():
                 'play_count': 8,
                 'song_id': 'u3s9'
             },
+            {
+                'name': 'My name is Luca Susan Vega',
+                'play_count': 10,
+                'song_id': 'u3s1'
+            },
+            {
+                'name': 'Sunshine Nora Jones',
+                'play_count': 9,
+                'song_id': 'u3s2'
+            },
+            {
+                'name': 'Whats up 4 non blondes',
+                'play_count': 8,
+                'song_id': 'u3s3'
+            },
+            {
+                'name': 'In this world ladysmith black mambazo',
+                'play_count': 7,
+                'song_id': 'u3s4'
+            },
+            {
+                'name': 'Youve got a friend Carole King',
+                'play_count': 12,
+                'song_id': 'u3s6'
+            },
+            {
+                'name': 'Malaika Angelike Kidjo',
+                'play_count': 6,
+                'song_id': 'u3s7'
+            },
+            {
+                'name': 'Hijo de la luna Mecano ',
+                'play_count': 12,
+                'song_id': 'u3s8'
+            },
+            {
+                'name': 'Freeway Aimee Man',
+                'play_count': 9,
+                'song_id': 'u3s10'
+            },
+            {
+                'name': 'Yesterday Beatles',
+                'play_count': 10,
+                'song_id': 'u3s11'
+            },
+            {
+                'name': 'Watermark Enya',
+                'play_count': 6,
+                'song_id': 'u3s12'
+            }
     ]
 
-    '''{
-        'name': 'My name is Luca Susan Vega',
-        'play_count': 10,
-        'song_id': 'u3s1'
-    },
-    {
-        'name': 'Sunshine Nora Jones',
-        'play_count': 9,
-        'song_id': 'u3s2'
-    },
-    {
-        'name': 'Whats up 4 non blondes',
-        'play_count': 8,
-        'song_id': 'u3s3'
-    },
-    {
-        'name': 'In this world ladysmith black mambazo',
-        'play_count': 7,
-        'song_id': 'u3s4'
-    },
-    {
-        'name': 'Youve got a friend Carole King',
-        'play_count': 12,
-        'song_id': 'u3s6'
-    },
-    {
-        'name': 'Malaika Angelike Kidjo',
-        'play_count': 6,
-        'song_id': 'u3s7'
-    },
-    {
-        'name': 'Hijo de la luna Mecano ',
-        'play_count': 12,
-        'song_id': 'u3s8'
-    },
-    {
-        'name': 'Freeway Aimee Man',
-        'play_count': 9,
-        'song_id': 'u3s10'
-    },
-    {
-        'name': 'Yesterday Beatles',
-        'play_count': 10,
-        'song_id': 'u3s11'
-    },
-    {
-        'name': 'Watermark Enya',
-        'play_count': 6,
-        'song_id': 'u3s12'
-    }'''
+    wanqi_songs_list = [
+            {
+                'name': 'The Saltwater Room Owl City',
+                'play_count': 6,
+                'song_id': 'u4s5'
+            },
+            {
+                'name': 'Paradise Coldplay',
+                'play_count': 8,
+                'song_id': 'u4s9'
+            },
+            {
+                'name': 'Yellow Lights Of Monster and Men',
+                'play_count': 5,
+                'song_id': 'u4s1'
+            },
+            {
+                'name': 'Ghost Towns Radical Face',
+                'play_count': 1,
+                'song_id': 'u4s2'
+            },
+            {
+                'name': 'Welcome to Season 5 Instalok',
+                'play_count': 800,
+                'song_id': 'u4s3'
+            },
+            {
+                'name': 'What a wonderful world',
+                'play_count': 7,
+                'song_id': 'u4s4'
+            },
+            {
+                'name': 'Eet Regina Spector',
+                'play_count': 1,
+                'song_id': 'u4s6'
+            },
+            {
+                'name': 'Vanilla Twilight Owl City,
+                'play_count': 60,
+                'song_id': 'u4s7'
+            },
+            {
+                'name': 'Clocks Coldplay',
+                'play_count': 12,
+                'song_id': 'u4s8'
+            },
+            {
+                'name': 'City of black and white Mat',
+                'play_count': 9,
+                'song_id': 'u4s10'
+            },
+            {
+                'name': 'Westcoast Friendship Owl City',
+                'play_count': 10,
+                'song_id': 'u4s11'
+            },
+            {
+                'name': 'Summer Love Workday Release',
+                'play_count': 6,
+                'song_id': 'u4s12'
+            }
+    ]
 
     param_fnm = 'params/music_recommendator/audio_model_strict_n3500,l0.015,t3.p'
     model = AudioModel(param_filename=param_fnm)
@@ -434,7 +496,8 @@ def test_pref_embedding():
 
     # get_all_preds(model, alex_songs_list)
     # get_all_preds(model, sam_songs_list)
-    get_all_preds(model, marisa_songs_list)
+    # get_all_preds(model, marisa_songs_list)
+    get_all_preds(model, wanqi_songs_list)
 
     '''input_song_fnm = 'raw_data/music_recommendator/audio/' + \
         'SOAATLI12A8C13E319.mp3.wav'
