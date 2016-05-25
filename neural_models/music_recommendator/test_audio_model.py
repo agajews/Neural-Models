@@ -299,62 +299,62 @@ def test_pref_embedding():
             {
                 'name': 'Pt.2 Kanye West ',
                 'play_count': 10,
-                'song_id': 'u3s1'
+                'song_id': 'u2s1'
             },
             {
                 'name': 'Fire and Rain James Taylor',
                 'play_count': 10,
-                'song_id': 'u3s2'
+                'song_id': 'u2s2'
             },
             {
                 'name': 'Sun King Beatles',
                 'play_count': 12,
-                'song_id': 'u3s3'
+                'song_id': 'u2s3'
             },
             {
                 'name': 'Fly me to the Moon Sinatra ',
                 'play_count': 3,
-                'song_id': 'u3s4'
+                'song_id': 'u2s4'
             },
             {
                 'name': 'Queen Bohemian Rhapsody',
                 'play_count': 3,
-                'song_id': 'u3s5'
+                'song_id': 'u2s5'
             },
             {
                 'name': 'Ultralight Beam Kanye West',
                 'play_count': 12,
-                'song_id': 'u3s6'
+                'song_id': 'u2s6'
             },
             {
                 'name': 'Coco Butter Kisses Chance the rapper',
                 'play_count': 15,
-                'song_id': 'u3s7'
+                'song_id': 'u2s7'
             },
             {
                 'name': 'Sunday Candy Social Experiment ',
                 'play_count': 15,
-                'song_id': 'u3s8'
+                'song_id': 'u2s8'
             },
             {
                 'name': 'Earned It The weeknd',
                 'play_count': 8,
-                'song_id': 'u3s9'
+                'song_id': 'u2s9'
             },
             {
                 'name': 'Thinkin Bout you frank ocean ',
                 'play_count': 9,
-                'song_id': 'u3s10'
+                'song_id': 'u2s10'
             },
             {
                 'name': ' She came in through the bathroom window beatles',
                 'play_count': 10,
-                'song_id': 'u3s11'
+                'song_id': 'u2s11'
             },
             {
                 'name': 'Carolina in my mind james taylor ',
                 'play_count': 6,
-                'song_id': 'u3s12'
+                'song_id': 'u2s12'
             }
     ]
 
