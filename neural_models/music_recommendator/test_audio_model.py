@@ -369,57 +369,58 @@ def test_pref_embedding():
                 'play_count': 8,
                 'song_id': 'u3s9'
             },
-            '''{
-                'name': 'My name is Luca Susan Vega',
-                'play_count': 10,
-                'song_id': 'u3s1'
-            },
-            {
-                'name': 'Sunshine Nora Jones',
-                'play_count': 9,
-                'song_id': 'u3s2'
-            },
-            {
-                'name': 'Whats up 4 non blondes',
-                'play_count': 8,
-                'song_id': 'u3s3'
-            },
-            {
-                'name': 'In this world ladysmith black mambazo',
-                'play_count': 7,
-                'song_id': 'u3s4'
-            },
-            {
-                'name': 'Youve got a friend Carole King',
-                'play_count': 12,
-                'song_id': 'u3s6'
-            },
-            {
-                'name': 'Malaika Angelike Kidjo',
-                'play_count': 6,
-                'song_id': 'u3s7'
-            },
-            {
-                'name': 'Hijo de la luna Mecano ',
-                'play_count': 12,
-                'song_id': 'u3s8'
-            },
-            {
-                'name': 'Freeway Aimee Man',
-                'play_count': 9,
-                'song_id': 'u3s10'
-            },
-            {
-                'name': 'Yesterday Beatles',
-                'play_count': 10,
-                'song_id': 'u3s11'
-            },
-            {
-                'name': 'Watermark Enya',
-                'play_count': 6,
-                'song_id': 'u3s12'
-            }'''
     ]
+    '''{
+        'name': 'My name is Luca Susan Vega',
+        'play_count': 10,
+        'song_id': 'u3s1'
+    },
+    {
+        'name': 'Sunshine Nora Jones',
+        'play_count': 9,
+        'song_id': 'u3s2'
+    },
+    {
+        'name': 'Whats up 4 non blondes',
+        'play_count': 8,
+        'song_id': 'u3s3'
+    },
+    {
+        'name': 'In this world ladysmith black mambazo',
+        'play_count': 7,
+        'song_id': 'u3s4'
+    },
+    {
+        'name': 'Youve got a friend Carole King',
+        'play_count': 12,
+        'song_id': 'u3s6'
+    },
+    {
+        'name': 'Malaika Angelike Kidjo',
+        'play_count': 6,
+        'song_id': 'u3s7'
+    },
+    {
+        'name': 'Hijo de la luna Mecano ',
+        'play_count': 12,
+        'song_id': 'u3s8'
+    },
+    {
+        'name': 'Freeway Aimee Man',
+        'play_count': 9,
+        'song_id': 'u3s10'
+    },
+    {
+        'name': 'Yesterday Beatles',
+        'play_count': 10,
+        'song_id': 'u3s11'
+    },
+    {
+        'name': 'Watermark Enya',
+        'play_count': 6,
+        'song_id': 'u3s12'
+    }'''
+
     param_fnm = 'params/music_recommendator/audio_model_strict_n3500,l0.015,t3.p'
     model = AudioModel(param_filename=param_fnm)
 
