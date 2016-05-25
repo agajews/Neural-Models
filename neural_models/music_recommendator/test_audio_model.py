@@ -359,7 +359,7 @@ def test_pref_embedding():
     ]
 
     marisa_songs_list = [
-            {
+            '''{
                 'name': 'My name is Luca Susan Vega',
                 'play_count': 10,
                 'song_id': 'u3s1'
@@ -378,13 +378,13 @@ def test_pref_embedding():
                 'name': 'In this world ladysmith black mambazo',
                 'play_count': 7,
                 'song_id': 'u3s4'
-            },
+            },'''
             {
                 'name': 'Baby its cold outside louis armstrong',
                 'play_count': 6,
                 'song_id': 'u3s5'
             },
-            {
+            '''{
                 'name': 'Youve got a friend Carole King',
                 'play_count': 12,
                 'song_id': 'u3s6'
@@ -398,13 +398,13 @@ def test_pref_embedding():
                 'name': 'Hijo de la luna Mecano ',
                 'play_count': 12,
                 'song_id': 'u3s8'
-            },
+            },'''
             {
                 'name': 'Summertime Ella Fitzgerald',
                 'play_count': 8,
                 'song_id': 'u3s9'
             },
-            {
+            '''{
                 'name': 'Freeway Aimee Man',
                 'play_count': 9,
                 'song_id': 'u3s10'
@@ -418,7 +418,7 @@ def test_pref_embedding():
                 'name': 'Watermark Enya',
                 'play_count': 6,
                 'song_id': 'u3s12'
-            }
+            }'''
     ]
     param_fnm = 'params/music_recommendator/audio_model_strict_n3500,l0.015,t3.p'
     model = AudioModel(param_filename=param_fnm)
