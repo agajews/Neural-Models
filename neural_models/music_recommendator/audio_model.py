@@ -360,8 +360,8 @@ def grid_hp_search():
 
 def main():
 
-    # grid_hp_search()
-    train_default()
+    grid_hp_search()
+    # train_default()
 
 
 if __name__ == '__main__':
