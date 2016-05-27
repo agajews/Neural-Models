@@ -1,17 +1,28 @@
+import scipy.signal
 from scipy.io import wavfile
-from scipy import signal
 
 import numpy as np
 
 import pickle
 
-from os import listdir
+from os import listdir, kill, getpid
 from os.path import isfile
+
+import signal
 
 from subprocess import call
 
 from neural_models.data.music_recommendator.user_data import download
 from neural_models.music_recommendator.audio_model import AudioModel
+
+
+def sig_handler(signum, frame):
+    print('Segfault')
+
+
+signal.signal(signal.SIGSEGV, sig_handler)
+
+kill(getpid(), signal.SIGSEGV)
 
 
 alex_songs_list = [
@@ -314,7 +325,7 @@ def add_wav(song):
     downsampled_size = int(wav.shape[0] * 0.01)
 
     if downsampled_size > 10:
-        wav = signal.resample(wav, downsampled_size)
+        wav = scipy.signal.resample(wav, downsampled_size)
 
     else:
         wav = None
