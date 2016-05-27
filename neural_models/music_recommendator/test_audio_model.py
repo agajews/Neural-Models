@@ -405,7 +405,10 @@ def add_song_embeddings(model, songs):
         if i % 100 == 0:
             print(song.song_id)
             print(song.wav.shape)
-        song.embedding = model.get_song_embedding(song.wav)
+        try:
+            song.embedding = model.get_song_embedding(song.wav)
+        except:
+            song.embedding = None
 
 
 def gen_user_prefs(model, user):
@@ -458,6 +461,13 @@ def create_all_songs():
     return all_songs
 
 
+def filter_songs_by_embedding(all_songs):
+
+    for song in all_songs:
+        if song.embedding is None:
+            all_songs.remove(song)
+
+
 def get_all_songs_with_embeddings(model):
 
     print('Getting song embeddings')
@@ -469,6 +479,7 @@ def get_all_songs_with_embeddings(model):
     else:
         all_songs = create_all_songs()
         add_song_embeddings(model, all_songs)
+        filter_songs_by_embedding(all_songs)
         pickle.dump(all_songs, open(embeddings_fnm, 'wb'))
 
     return all_songs
