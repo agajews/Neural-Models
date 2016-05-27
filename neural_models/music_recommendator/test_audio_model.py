@@ -310,7 +310,6 @@ class User(object):
 
 def add_wav(song):
 
-    print(song.fnm)
     rate, wav = wavfile.read(song.fnm)
     downsampled_size = int(wav.shape[0] * 0.01)
 
@@ -320,16 +319,21 @@ def add_wav(song):
     else:
         wav = None
 
-    if len(wav.shape) == 2:
-        bitwidth = wav.shape[1]
+    if wav is not None:
+
+        if len(wav.shape) == 2:
+            bitwidth = wav.shape[1]
+
+        else:
+            bitwidth = 1
+
+        wav_np = np.zeros((1, wav.shape[0], 3))
+        wav_np[:, :, :bitwidth] = wav.reshape(1, wav.shape[0], bitwidth)
+
+        song.wav = wav_np
 
     else:
-        bitwidth = 1
-
-    wav_np = np.zeros((1, wav.shape[0], 3))
-    wav_np[:, :, :bitwidth] = wav.reshape(1, wav.shape[0], bitwidth)
-
-    song.wav = wav_np
+        song.wav = None
 
 
 def add_wavs(songs):
