@@ -435,6 +435,7 @@ def create_all_songs():
         song = Song(song_id, song_name, artist)
         song.fnm = fnm
         song.wav = add_wav(song)
+        print(song.wav)
 
         if song.wav is not None:
 
