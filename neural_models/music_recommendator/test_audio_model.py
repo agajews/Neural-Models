@@ -9,7 +9,7 @@ from os.path import isfile
 # import signal
 
 from neural_models.music_recommendator.audio_model import AudioModel
-import neural_models
+from neural_models.data.music_recommendator.lib import Song, User
 from neural_models.data.music_recommendator.lib import add_wav
 
 
@@ -270,7 +270,7 @@ def create_songs(songs_list):
 
     songs = []
     for song in songs_list:
-        song_obj = neural_models.data.music_recommendator.lib.Song(
+        song_obj = Song(
             song['song_id'],
             song['name'],
             artist='',
@@ -329,7 +329,7 @@ def create_all_songs():
             song_name = song_meta[song_id]['name']
             artist = song_meta[song_id]['artist']
 
-            song = neural_models.data.music_recommendator.lib.Song(song_id, song_name, artist)
+            song = Song(song_id, song_name, artist)
             song.fnm = fnm
             add_wav(song)
 
@@ -412,7 +412,7 @@ def get_user_recs(user, model):
 
 def get_all_preds(model, user_id, songs_list):
 
-    user = neural_models.data.music_recommendator.lib.User(user_id)
+    user = User(user_id)
     user.hist = create_songs(songs_list)
     user.add_filenames()
     user.add_wavs()
