@@ -515,6 +515,7 @@ def get_all_songs_with_embeddings(model):
 
 
 def get_user_preds(model, user, all_songs):
+    print(user.prefs)
 
     for song in all_songs:
         song.exp_play_count = model.get_preds(
