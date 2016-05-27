@@ -281,13 +281,6 @@ def create_songs(songs_list):
     return songs
 
 
-def add_filenames(songs):
-
-    for song in songs:
-        song_fnm = 'raw_data/music_recommendator/audio/%s.mp3' % song.song_id
-        song.fnm = song_fnm
-
-
 def add_song_embeddings(model, songs):
 
     for i, song in enumerate(songs):

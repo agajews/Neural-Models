@@ -93,3 +93,10 @@ def create_wavs(songs):
             download(song.name, song.artist, song.song_id)
             call('lame --decode %s %s' % (song.fnm, song_wav_fnm), shell=True)
         song.fnm = song_wav_fnm
+
+
+def add_filenames(songs):
+
+    for song in songs:
+        song_fnm = 'raw_data/music_recommendator/audio/%s.mp3' % song.song_id
+        song.fnm = song_fnm
