@@ -277,6 +277,31 @@ class Song(object):
         self.play_count = play_count
 
 
+class User(object):
+
+    def __init__(self, songs_list):
+
+        self.hist = create_songs(songs_list)
+
+    def add_wavs(self):
+
+        create_wavs(self.hist)
+        add_wavs(self.hist)
+
+        for song in self.hist:
+            if song.wav is None:
+                self.hist.remove(song)
+
+    def add_embeddings(self, model):
+
+        for song in self.hist:
+            song.embedding = model.get_song_embedding(song.wav)
+
+    def add_filenames(self):
+
+        add_filenames(self.hist)
+
+
 def add_wav(song):
 
     rate, wav = wavfile.read(song.fnm)
@@ -347,16 +372,6 @@ def create_wavs(songs):
             call('lame --decode %s %s' % (song.fnm, song_wav_fnm), shell=True)
 
 
-def add_user_wavs(songs):
-
-    create_wavs(songs)
-    add_wavs(songs)
-
-    for song in songs:
-        if song.wav is None:
-            songs.remove(song)
-
-
 '''def gen_user_data_np(songs_list):
 
     song_data_np = gen_song_data_np(songs_list)
@@ -380,14 +395,14 @@ def add_song_embeddings(model, songs):
         song.embedding = model.get_song_embedding(song.wav)
 
 
-def gen_user_prefs(model, songs):
+def gen_user_prefs(model, user):
 
-    song_embeddings_np = np.zeros((1, len(songs), model.embedding))
-    song_counts_np = np.zeros((1, len(songs), 1))
+    song_embeddings_np = np.zeros((1, len(user.hist), model.embedding))
+    song_counts_np = np.zeros((1, len(user.hist), 1))
 
-    for i, song in enumerate(songs):
-        song_embeddings_np[:, i, :] = songs.embedding
-        song_counts_np[:, i, :] = songs.play_count
+    for i, song in enumerate(user.hist):
+        song_embeddings_np[:, i, :] = song.embedding
+        song_counts_np[:, i, :] = song.play_count
 
     user_prefs = model.get_user_prefs(song_embeddings_np, song_counts_np)
 
@@ -478,11 +493,12 @@ def display_preds(preds):
 
 def get_all_preds(model, songs_list):
 
-    user_songs = create_songs(songs_list)
-    add_user_wavs(user_songs)
-    add_song_embeddings(user_songs)
+    user = User(songs_list)
+    user.add_wavs()
+    user.add_embeddings()
+    user.add_filenames()
 
-    user_prefs = gen_user_prefs(model, user_songs)
+    user_prefs = gen_user_prefs(model, user)
     # print(user_prefs)
 
     all_songs = get_all_songs_with_embeddings(model)
