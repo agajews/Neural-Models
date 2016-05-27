@@ -438,6 +438,8 @@ def create_all_songs():
 
         if song.wav is not None:
 
+            print('Appending song')
+
             if i % 100 == 0:
                 print(song_id)
 
