@@ -370,6 +370,7 @@ def create_wavs(songs):
         if not isfile(song_wav_fnm):
             download(song['name'], '', song['song_id'])
             call('lame --decode %s %s' % (song.fnm, song_wav_fnm), shell=True)
+        song.fnm = song_wav_fnm
 
 
 '''def gen_user_data_np(songs_list):
