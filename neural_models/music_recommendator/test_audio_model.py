@@ -415,10 +415,13 @@ def add_song_embeddings(model, songs):
     for i, song in enumerate(songs):
         if i % 100 == 0:
             print(song.song_id)
-        try:
-            song.embedding = model.get_song_embedding(song.wav)
-        except:
-            print(song.wav.shape)
+        if song.wav is not None:
+            try:
+                song.embedding = model.get_song_embedding(song.wav)
+            except:
+                print(song.wav.shape)
+                song.embedding = None
+        else:
             song.embedding = None
 
 
