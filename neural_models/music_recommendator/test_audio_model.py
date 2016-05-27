@@ -535,10 +535,10 @@ def display_preds(preds):
 def get_user_recs(user, model):
 
     if user.prefs is not None:
-        user_prefs = gen_user_prefs(model, user)
+        user.prefs = gen_user_prefs(model, user)
 
     all_songs = get_all_songs_with_embeddings(model)
-    get_user_preds(model, user_prefs, all_songs)
+    get_user_preds(model, user, all_songs)
 
     def exp_count_key(s):
         return s.exp_play_count
