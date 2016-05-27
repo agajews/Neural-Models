@@ -305,6 +305,7 @@ class User(object):
 def add_wav(song):
 
     rate, wav = wavfile.read(song.fnm)
+    print(wav)
     downsampled_size = int(wav.shape[0] * 0.01)
 
     if downsampled_size > 3:
