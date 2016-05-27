@@ -429,9 +429,6 @@ def create_all_songs():
         song_id = fnm[:-8]
         song_id = song_id[-18:]
 
-        if i % 100 == 0:
-            print(song_id)
-
         song_name = song_meta[song_id]['name']
         artist = song_meta[song_id]['artist']
 
@@ -440,6 +437,10 @@ def create_all_songs():
         song.wav = add_wav(song)
 
         if song.wav is not None:
+
+            if i % 100 == 0:
+                print(song_id)
+
             all_songs.append(song)
 
     return all_songs
