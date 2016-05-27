@@ -485,6 +485,8 @@ def get_user_preds(model, user_prefs, all_songs):
 
 def display_preds(preds):
 
+    print('Displaying preds')
+
     for song in preds:
         print(
             'Name: %s | Artist: %s | Exp Play Count: %f' %
