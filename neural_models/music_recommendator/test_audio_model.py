@@ -494,9 +494,9 @@ def display_preds(preds):
 def get_all_preds(model, songs_list):
 
     user = User(songs_list)
+    user.add_filenames()
     user.add_wavs()
     user.add_embeddings()
-    user.add_filenames()
 
     user_prefs = gen_user_prefs(model, user)
     # print(user_prefs)
