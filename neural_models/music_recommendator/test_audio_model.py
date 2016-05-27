@@ -323,7 +323,6 @@ def add_wav(song):
     wav_np[:, :, :bitwidth] = wav.reshape(1, wav.shape[0], bitwidth)
 
     song.wav = wav_np
-    print(song.wav)
 
 
 def add_wavs(songs):
@@ -435,12 +434,9 @@ def create_all_songs():
 
         song = Song(song_id, song_name, artist)
         song.fnm = fnm
-        song.wav = add_wav(song)
-        print(song.wav)
+        add_wav(song)
 
         if song.wav is not None:
-
-            print('Appending song')
 
             if i % 100 == 0:
                 print(song_id)
