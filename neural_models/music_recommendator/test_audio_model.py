@@ -507,8 +507,8 @@ def get_all_preds(model, songs_list):
 
     get_user_preds(model, user_prefs, all_songs)
 
-    def exp_count_key(k):
-        return k['exp_play_count']
+    def exp_count_key(s):
+        return s.exp_play_count
 
     all_songs = sorted(all_songs, key=exp_count_key, reverse=True)
 
