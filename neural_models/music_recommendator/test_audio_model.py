@@ -451,12 +451,12 @@ def get_all_songs_with_embeddings(model):
 
     embeddings_fnm = 'saved_data/music_recommendator/all_song_embeddings.p'
     if isfile(embeddings_fnm):
-        all_song_embeddings = pickle.load(open(embeddings_fnm, 'rb'))
+        all_songs = pickle.load(open(embeddings_fnm, 'rb'))
 
     else:
         all_songs = create_all_songs()
         add_song_embeddings(model, all_songs)
-        pickle.dump(all_song_embeddings, open(embeddings_fnm, 'wb'))
+        pickle.dump(all_songs, open(embeddings_fnm, 'wb'))
 
     return all_songs
 
