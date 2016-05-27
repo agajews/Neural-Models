@@ -1,5 +1,13 @@
-from neural_models.music_recommendator.test_audio_model import \
-    add_wavs, create_wavs, add_filenames
+import scipy.signal
+from scipy.io import wavfile
+
+from subprocess import call
+
+from neural_models.data.music_recommendator.user_data import download
+
+import numpy as np
+
+from os.path import isfile
 
 
 class Song(object):
@@ -41,3 +49,47 @@ class User(object):
     def add_filenames(self):
 
         add_filenames(self.hist)
+
+
+def add_wavs(songs):
+
+    for song in songs:
+        add_wav(song)
+
+
+def add_wav(song):
+
+    rate, wav = wavfile.read(song.fnm)
+    downsampled_size = int(wav.shape[0] * 0.01)
+
+    if downsampled_size > 10:
+        wav = scipy.signal.resample(wav, downsampled_size)
+
+    else:
+        wav = None
+
+    if wav is not None:
+
+        if len(wav.shape) == 2:
+            bitwidth = wav.shape[1]
+
+        else:
+            bitwidth = 1
+
+        wav_np = np.zeros((1, wav.shape[0], 3))
+        wav_np[:, :, :bitwidth] = wav.reshape(1, wav.shape[0], bitwidth)
+
+        song.wav = wav_np
+
+    else:
+        song.wav = None
+
+
+def create_wavs(songs):
+
+    for song in songs:
+        song_wav_fnm = song.fnm + '.wav'
+        if not isfile(song_wav_fnm):
+            download(song.name, song.artist, song.song_id)
+            call('lame --decode %s %s' % (song.fnm, song_wav_fnm), shell=True)
+        song.fnm = song_wav_fnm

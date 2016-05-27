@@ -1,5 +1,3 @@
-import scipy.signal
-from scipy.io import wavfile
 
 import numpy as np
 
@@ -10,19 +8,9 @@ from os.path import isfile
 
 # import signal
 
-from subprocess import call
-
-from neural_models.data.music_recommendator.user_data import download
 from neural_models.music_recommendator.audio_model import AudioModel
-
-
-'''def sig_handler(signum, frame):
-    print('Segfault')
-
-
-signal.signal(signal.SIGSEGV, sig_handler)
-
-kill(getpid(), signal.SIGSEGV)'''
+from neural_models.data.music_recommendator.lib import Song, User
+from neural_models.data.music_recommendator.lib import add_wav
 
 
 alex_songs_list = [
@@ -278,91 +266,6 @@ wanqi_songs_list = [
 ]
 
 
-class Song(object):
-
-    def __init__(self, song_id, name=None, artist=None, play_count=None):
-
-        self.song_id = song_id
-        self.name = name
-        self.artist = artist
-        self.play_count = play_count
-
-
-class User(object):
-
-    def __init__(self, user_id, songs=None):
-
-        self.user_id = user_id
-        self.hist = songs
-        self.prefs = None
-
-    def __repr__(self):
-
-        return 'User(%d)' % self.user_id
-
-    def add_wavs(self):
-
-        create_wavs(self.hist)
-        add_wavs(self.hist)
-
-        for song in self.hist:
-            if song.wav is None:
-                self.hist.remove(song)
-
-    def add_embeddings(self, model):
-
-        for song in self.hist:
-            song.embedding = model.get_song_embedding(song.wav)
-
-    def add_filenames(self):
-
-        add_filenames(self.hist)
-
-
-def add_wav(song):
-
-    rate, wav = wavfile.read(song.fnm)
-    downsampled_size = int(wav.shape[0] * 0.01)
-
-    if downsampled_size > 10:
-        wav = scipy.signal.resample(wav, downsampled_size)
-
-    else:
-        wav = None
-
-    if wav is not None:
-
-        if len(wav.shape) == 2:
-            bitwidth = wav.shape[1]
-
-        else:
-            bitwidth = 1
-
-        wav_np = np.zeros((1, wav.shape[0], 3))
-        wav_np[:, :, :bitwidth] = wav.reshape(1, wav.shape[0], bitwidth)
-
-        song.wav = wav_np
-
-    else:
-        song.wav = None
-
-
-def add_wavs(songs):
-
-    for song in songs:
-        add_wav(song)
-
-
-'''def get_std_user_preds(model, user_songs, user_counts, song_fnm):
-
-    input_song = get_wav(song_fnm)
-    input_song_np = np.zeros((1, user_songs.shape[2], 3))
-    input_song_np[0, :input_song.shape[1], :] = input_song
-    preds = model.get_std_preds(input_song_np, user_songs, user_counts)
-
-    return preds'''
-
-
 def create_songs(songs_list):
 
     songs = []
@@ -383,31 +286,6 @@ def add_filenames(songs):
     for song in songs:
         song_fnm = 'raw_data/music_recommendator/audio/%s.mp3' % song.song_id
         song.fnm = song_fnm
-
-
-def create_wavs(songs):
-
-    for song in songs:
-        song_wav_fnm = song.fnm + '.wav'
-        if not isfile(song_wav_fnm):
-            download(song.name, song.artist, song.song_id)
-            call('lame --decode %s %s' % (song.fnm, song_wav_fnm), shell=True)
-        song.fnm = song_wav_fnm
-
-
-'''def gen_user_data_np(songs_list):
-
-    song_data_np = gen_song_data_np(songs_list)
-    lengths = [song['wav'].shape[1] for song in song_data_np]
-    user_songs = np.zeros((1, len(songs_list), max(lengths), 3))
-    user_counts = np.zeros((1, len(songs_list), 1))
-
-    for i, song in enumerate(song_data_np):
-        wav = song['wav']
-        user_songs[0, i, :wav.shape[1], :wav.shape[2]] = wav
-        user_counts[0, i, 0] = song['play_count']
-
-    return user_songs, user_counts'''
 
 
 def add_song_embeddings(model, songs):
@@ -499,21 +377,6 @@ def get_all_songs_with_embeddings(model):
         pickle.dump(all_songs, open(embeddings_fnm, 'wb'))
 
     return all_songs
-
-
-'''def get_single_song_embedding(model, song_fnm):
-
-    wav = get_wav(song_fnm)
-    embedding = model.get_song_embedding(wav)
-
-    song = {}
-    song['wav'] = wav
-    song['name'] = 'none'
-    song['artist'] = 'none'
-    song['song_id'] = 'none'
-    song['embedding'] = embedding
-
-    return [song]'''
 
 
 def get_user_preds(model, user, all_songs):
