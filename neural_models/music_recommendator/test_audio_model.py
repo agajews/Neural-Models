@@ -534,7 +534,7 @@ def display_preds(preds):
 
 def get_user_recs(user, model):
 
-    if user.prefs is not None:
+    if user.prefs is None:
         user.prefs = gen_user_prefs(model, user)
 
     all_songs = get_all_songs_with_embeddings(model)
