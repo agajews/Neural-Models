@@ -313,7 +313,7 @@ def add_wav(song):
     rate, wav = wavfile.read(song.fnm)
     downsampled_size = int(wav.shape[0] * 0.01)
 
-    if downsampled_size > 3:
+    if downsampled_size > 10:
         wav = signal.resample(wav, downsampled_size)
 
     else:
