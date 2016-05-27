@@ -279,9 +279,10 @@ class Song(object):
 
 class User(object):
 
-    def __init__(self, songs_list):
+    def __init__(self, user_id, songs=None):
 
-        self.hist = create_songs(songs_list)
+        self.user_id = user_id
+        self.hist = songs
 
     def add_wavs(self):
 
@@ -493,9 +494,10 @@ def display_preds(preds):
         # print('Embedding: %s' % song.embedding)
 
 
-def get_all_preds(model, songs_list):
+def get_all_preds(model, user_id, songs_list):
 
-    user = User(songs_list)
+    user = User(user_id)
+    user.hist = create_songs(songs_list)
     user.add_filenames()
     user.add_wavs()
     user.add_embeddings(model)
@@ -531,7 +533,7 @@ def test_pref_embedding():
     # get_all_preds(model, alex_songs_list)
     # get_all_preds(model, sam_songs_list)
     # get_all_preds(model, marisa_songs_list)
-    get_all_preds(model, wanqi_songs_list)
+    get_all_preds(model, 'u4', wanqi_songs_list)
 
 
 def main():
