@@ -418,8 +418,6 @@ def create_all_songs():
     all_song_fnms = [base_fnm + fnm for fnm in all_song_fnms]
     all_song_fnms = [fnm for fnm in all_song_fnms if fnm[-4:] == '.wav']
 
-    print(all_song_fnms)
-
     song_meta_fnm = 'saved_data/music_recommendator/song_meta.p'
     song_meta = pickle.load(open(song_meta_fnm, 'rb'))
 
@@ -481,7 +479,7 @@ def get_user_preds(model, user_prefs, all_songs):
 
     for song in all_songs:
         song.exp_play_count = model.get_preds(
-            all_songs, user_prefs)
+            song.embedding, user_prefs)
 
 
 def display_preds(preds):
