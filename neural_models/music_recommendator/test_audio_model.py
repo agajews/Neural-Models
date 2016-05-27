@@ -535,9 +535,13 @@ def display_preds(preds):
 def get_user_recs(user, model):
 
     if user.prefs is None:
+        print('Generating prefs')
         gen_user_prefs(model, user)
 
+    print('Getting embeddings')
     all_songs = get_all_songs_with_embeddings(model)
+
+    print('Getting preds')
     get_user_preds(model, user, all_songs)
 
     def exp_count_key(s):

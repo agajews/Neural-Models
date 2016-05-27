@@ -63,3 +63,33 @@ alex_songs_list = [
             'song_id': 'u1s12'
         }
 ]
+
+
+user_id = '5'
+
+data = [('user_id', user_id)]
+
+adduser_url = 'http://52.38.71.139:8000/adduser'
+users_url = 'http://52.38.71.139:8000/users'
+recs_url = 'http://52.38.71.139:8000/recs/%s' % user_id
+
+for song in alex_songs_list:
+
+    song_name = ('song_name', song['name'])
+    song_artist = ('song_artist', '')
+    song_id = ('song_id', song['song_id'])
+    play_count = ('play_count', song['play_count'])
+
+    data.append(song_name)
+    data.append(song_artist)
+    data.append(song_id)
+    data.append(play_count)
+
+res = post(adduser_url, data)
+print(res.json())
+
+res = get(users_url)
+print(res.json())
+
+res = get(recs_url)
+print(res.json())
