@@ -284,6 +284,10 @@ class User(object):
         self.user_id = user_id
         self.hist = songs
 
+    def __repr__(self):
+
+        return 'User(%d)' % self.user_id
+
     def add_wavs(self):
 
         create_wavs(self.hist)
