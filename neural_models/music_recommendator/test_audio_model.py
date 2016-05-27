@@ -514,11 +514,11 @@ def get_all_songs_with_embeddings(model):
     return [song]'''
 
 
-def get_user_preds(model, user_prefs, all_songs):
+def get_user_preds(model, user, all_songs):
 
     for song in all_songs:
         song.exp_play_count = model.get_preds(
-            song.embedding, user_prefs)
+            song.embedding, user.prefs)
 
 
 def display_preds(preds):
