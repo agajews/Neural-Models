@@ -488,8 +488,8 @@ def display_preds(preds):
     for song in preds:
         print(
             'Name: %s | Artist: %s | Exp Play Count: %f' %
-            (song['name'], song['artist'], song['exp_play_count']))
-        # print('Embedding: %s' % song['embedding'])
+            (song.name, song.artist, song.exp_play_count))
+        # print('Embedding: %s' % song.embedding)
 
 
 def get_all_preds(model, songs_list):
