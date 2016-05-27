@@ -283,6 +283,7 @@ class User(object):
 
         self.user_id = user_id
         self.hist = songs
+        self.prefs = None
 
     def __repr__(self):
 
@@ -410,16 +411,14 @@ def gen_user_prefs(model, user):
         song_embeddings_np[:, i, :] = song.embedding
         song_counts_np[:, i, :] = song.play_count
 
-    user_prefs = model.get_user_prefs(song_embeddings_np, song_counts_np)
-
-    return user_prefs
+    user.prefs = model.get_user_prefs(song_embeddings_np, song_counts_np)
 
 
 def create_all_songs():
 
     base_fnm = 'raw_data/music_recommendator/audio/'
 
-    all_song_fnms = listdir(base_fnm)[:20]
+    all_song_fnms = listdir(base_fnm)  # [:20]
     all_song_fnms = [base_fnm + fnm for fnm in all_song_fnms]
     all_song_fnms = [fnm for fnm in all_song_fnms if fnm[-4:] == '.wav']
 
@@ -498,6 +497,22 @@ def display_preds(preds):
         # print('Embedding: %s' % song.embedding)
 
 
+def get_user_recs(user, model):
+
+    if user.prefs is not None:
+        user_prefs = gen_user_prefs(model, user)
+
+    all_songs = get_all_songs_with_embeddings(model)
+    get_user_preds(model, user_prefs, all_songs)
+
+    def exp_count_key(s):
+        return s.exp_play_count
+
+    all_songs = sorted(all_songs, key=exp_count_key, reverse=True)
+
+    return all_songs[:10]
+
+
 def get_all_preds(model, user_id, songs_list):
 
     user = User(user_id)
@@ -506,22 +521,12 @@ def get_all_preds(model, user_id, songs_list):
     user.add_wavs()
     user.add_embeddings(model)
 
-    user_prefs = gen_user_prefs(model, user)
-    # print(user_prefs)
+    recs = get_user_recs(user, model)
 
-    all_songs = get_all_songs_with_embeddings(model)
-
-    get_user_preds(model, user_prefs, all_songs)
-
-    def exp_count_key(s):
-        return s.exp_play_count
-
-    all_songs = sorted(all_songs, key=exp_count_key, reverse=True)
-
-    display_preds(all_songs[:10])
+    display_preds(recs)
 
 
-def test_pref_embedding():
+def setup_test_model():
 
     param_fnm = 'params/music_recommendator/audio_model_strict_' + \
         'n3500,l0.015,t3.p'
@@ -533,6 +538,13 @@ def test_pref_embedding():
     model.build_pred_fn()
     model.build_std_pred_fn()
     model.load_params()
+
+    return model
+
+
+def test_pref_embedding():
+
+    model = setup_test_model()
 
     # get_all_preds(model, alex_songs_list)
     # get_all_preds(model, sam_songs_list)
