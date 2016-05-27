@@ -436,12 +436,16 @@ def create_all_songs():
         song_id = fnm[:-8]
         song_id = song_id[-18:]
 
-        song_name = song_meta[song_id]['name']
-        artist = song_meta[song_id]['artist']
+        try:
+            song_name = song_meta[song_id]['name']
+            artist = song_meta[song_id]['artist']
 
-        song = Song(song_id, song_name, artist)
-        song.fnm = fnm
-        add_wav(song)
+            song = Song(song_id, song_name, artist)
+            song.fnm = fnm
+            add_wav(song)
+
+        except:
+            song.wav = None
 
         if song.wav is not None:
 
