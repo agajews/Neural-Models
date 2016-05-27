@@ -5,10 +5,10 @@ import numpy as np
 
 import pickle
 
-from os import listdir, kill, getpid
+from os import listdir  # , kill, getpid
 from os.path import isfile
 
-import signal
+# import signal
 
 from subprocess import call
 
@@ -16,13 +16,13 @@ from neural_models.data.music_recommendator.user_data import download
 from neural_models.music_recommendator.audio_model import AudioModel
 
 
-def sig_handler(signum, frame):
+'''def sig_handler(signum, frame):
     print('Segfault')
 
 
 signal.signal(signal.SIGSEGV, sig_handler)
 
-kill(getpid(), signal.SIGSEGV)
+kill(getpid(), signal.SIGSEGV)'''
 
 
 alex_songs_list = [
