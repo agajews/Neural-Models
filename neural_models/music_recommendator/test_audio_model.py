@@ -417,8 +417,8 @@ def create_all_songs():
     all_song_fnms = listdir(base_fnm)[:20]
     all_song_fnms = [base_fnm + fnm for fnm in all_song_fnms]
     all_song_fnms = [fnm for fnm in all_song_fnms if fnm[-4:] == '.wav']
-    all_song_fnms = [fnm for fnm in all_song_fnms if 'temp' not in fnm]
-    all_song_fnms = [fnm for fnm in all_song_fnms if 'part' not in fnm]
+
+    print(all_song_fnms)
 
     song_meta_fnm = 'saved_data/music_recommendator/song_meta.p'
     song_meta = pickle.load(open(song_meta_fnm, 'rb'))
