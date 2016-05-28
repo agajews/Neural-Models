@@ -355,13 +355,9 @@ def filter_songs_by_embedding(all_songs):
 
 def get_all_songs_with_embeddings(model):
 
-    print('Getting song embeddings')
-
     embeddings_fnm = 'saved_data/music_recommendator/all_song_embeddings.p'
     if isfile(embeddings_fnm):
-        print('Loading pickled file')
         all_songs = pickle.load(open(embeddings_fnm, 'rb'))
-        print('Loaded saved file')
 
     else:
         all_songs = create_all_songs()
@@ -393,13 +389,10 @@ def display_preds(preds):
 def get_user_recs(user, model):
 
     if user.prefs is None:
-        print('Generating prefs')
         gen_user_prefs(model, user)
 
-    print('Getting embeddings')
     all_songs = get_all_songs_with_embeddings(model)
 
-    print('Getting preds')
     get_user_preds(model, user, all_songs)
 
     def exp_count_key(s):
