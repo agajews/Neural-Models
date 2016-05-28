@@ -1,5 +1,7 @@
 from requests import get, post
 
+from time import sleep
+
 
 alex_songs_list = [
         {
@@ -91,5 +93,12 @@ print(res.json())
 res = get(users_url)
 print(res.json())
 
-res = get(recs_url)
-print(res.json())
+success = False
+while not success:
+    res = get(recs_url).json()
+
+    if res['message'] == 'success':
+        success = True
+
+    print(res)
+    sleep(1)
