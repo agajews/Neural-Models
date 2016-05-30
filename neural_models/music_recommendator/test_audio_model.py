@@ -10,7 +10,7 @@ from os.path import isfile
 
 import neural_models
 from neural_models.music_recommendator.audio_model import AudioModel
-from neural_models.data.music_recommendator.lib import add_wav
+from neural_models.data.music_recommendator.lib import add_wav, add_song_embeddings
 
 
 alex_songs_list = [
@@ -73,7 +73,27 @@ alex_songs_list = [
             'name': 'jackson black or white',
             'play_count': 4,
             'song_id': 'u1s12'
-        }
+        },
+        {
+            'name': 'superstition stevie wonder',
+            'play_count': 7,
+            'song_id': 'u1s13'
+        },
+        {
+            'name': 'play that funky music wild cherry',
+            'play_count': 4,
+            'song_id': 'u1s14'
+        },
+        {
+            'name': 'blue eiffel 65',
+            'play_count': 4,
+            'song_id': 'u1s15'
+        },
+        {
+            'name': 'chopin revolutionary etude',
+            'play_count': 6,
+            'song_id': 'u1s16'
+        },
 ]
 
 sam_songs_list = [
@@ -281,22 +301,18 @@ def create_songs(songs_list):
     return songs
 
 
-def add_song_embeddings(model, songs):
+def filter_songs_for_embedding(songs):
 
-    for i, song in enumerate(songs):
-        if i % 100 == 0:
-            print(song.song_id)
-        if song.wav is not None:
-            try:
-                song.embedding = model.get_song_embedding(song.wav)
-            except:
-                print(song.wav.shape)
-                song.embedding = None
-        else:
-            song.embedding = None
+    for song in songs:
+        if song.embedding is None:
+            songs.remove(song)
 
 
 def gen_user_prefs(model, user):
+
+    filter_songs_for_embedding(user.hist)
+
+    print(len(user.hist))
 
     song_embeddings_np = np.zeros((1, len(user.hist), model.embedding))
     song_counts_np = np.zeros((1, len(user.hist), 1))
@@ -391,6 +407,8 @@ def get_user_recs(user, model):
     if user.prefs is None:
         gen_user_prefs(model, user)
 
+    print(user.prefs)
+
     all_songs = get_all_songs_with_embeddings(model)
 
     get_user_preds(model, user, all_songs)
@@ -400,7 +418,7 @@ def get_user_recs(user, model):
 
     all_songs = sorted(all_songs, key=exp_count_key, reverse=True)
 
-    return all_songs[:10]
+    return all_songs[:10] + all_songs[-10:]
 
 
 def get_all_preds(model, user_id, songs_list):
@@ -419,8 +437,10 @@ def get_all_preds(model, user_id, songs_list):
 def setup_test_model():
 
     param_fnm = 'params/music_recommendator/audio_model_strict_' + \
-        'n3500,l0.015,t3.p'
+        'n3500,l0.015,t4.p'
     model = AudioModel(param_filename=param_fnm)
+
+    model.verbose = True
 
     model.compile_net_notrain()
     model.build_song_embedding_fn()
@@ -439,7 +459,8 @@ def test_pref_embedding():
     # get_all_preds(model, alex_songs_list)
     # get_all_preds(model, sam_songs_list)
     # get_all_preds(model, marisa_songs_list)
-    get_all_preds(model, 'u4', wanqi_songs_list)
+    get_all_preds(model, 'u1', alex_songs_list)
+    get_all_preds(model, 'u2', sam_songs_list)
 
 
 def main():

@@ -1,15 +1,16 @@
 from lasagne import init
 from lasagne.layers import InputLayer, LSTMLayer, \
-    DropoutLayer, SliceLayer, DenseLayer, ConcatLayer
+    DropoutLayer, SliceLayer, DenseLayer, ConcatLayer, \
+    Conv2DLayer, MaxPool2DLayer
 from lasagne.layers import get_output, get_all_layers
 from lasagne.nonlinearities import tanh
 from lasagne.updates import rmsprop
 
 import theano
 
-from neural_models.data.music_recommendator.user_data import gen_audio_dataset
-
-from neural_models.lib import split_val, net_on_seq
+from neural_models.data.music_recommendator.user_data import \
+    gen_audio_dataset, base_param_fnm
+from neural_models.lib import net_on_seq
 from neural_models.hyper_optim import GridHyperOptim
 
 from neural_models.models import RegressionModel
@@ -52,8 +53,9 @@ class AudioModel(RegressionModel):
 
     def load_default_data_hyperparams(self):
 
-        self.bitwidth = 3
-        self.num_songs = 3000
+        self.num_mels = 6
+        self.song_length = 1000
+        self.num_songs = 800
 
     def load_default_net_hyperparams(self):
 
@@ -65,9 +67,9 @@ class AudioModel(RegressionModel):
 
     def load_default_train_hyperparams(self):
 
-        self.num_epochs = 10
-        self.batch_size = 12
-        self.learning_rate = 0.001
+        self.num_epochs = 5
+        self.batch_size = 2
+        self.learning_rate = 0.0001
 
     def create_lstm_stack(self, net):
 
@@ -80,15 +82,32 @@ class AudioModel(RegressionModel):
 
         return net
 
+    def create_cnn_stack(self, net):
+
+        net = Conv2DLayer(
+            net,
+            num_filters=self.num_filters,
+            filter_size=(5, 5),
+            nonlinearity=tanh,
+            W=init.GlorotUniform())
+
+        net = MaxPool2DLayer(
+            net,
+            pool_size=(2, 2))
+
+        net = DropoutLayer(net, self.dropout_val)
+
+        return net
+
     def create_song_embedding(self):
 
-        # shape=(num_songs, song_length, bitwidth)
-        i_song = InputLayer(shape=(None, None, self.bitwidth))
+        # shape=(num_songs, song_length, num_mels)
+        i_song = InputLayer(shape=(None, self.song_length, self.num_mels))
         self.i_song = i_song
         net = i_song
 
         for _ in range(1):
-            net = self.create_lstm_stack(net)
+            net = self.create_cnn_stack(net)
 
         # output_shape=(num_songs, embedding)
         net = SliceLayer(net, -1, 1)
@@ -102,9 +121,10 @@ class AudioModel(RegressionModel):
 
     def create_song_encoder(self, l_song_embedding):
 
-        # shape=(num_users, num_songs, song_length, bitwidth)
-        i_user_songs = InputLayer(shape=(
-            None, None, None, self.bitwidth))
+        # shape=(num_users, num_songs, song_length, num_mels)
+        i_user_songs = InputLayer(
+            shape=(None, None, None, self.num_mels),
+            name='i_user_songs')
 
         l_song_encoder = net_on_seq(l_song_embedding, i_user_songs)
         # output_shape=(num_users, num_songs, embedding)
@@ -139,20 +159,38 @@ class AudioModel(RegressionModel):
 
         l_song_encoder = InputLayer(
             shape=(None, None, self.embedding),
-            input_var=get_output(l_song_encoder))
+            input_var=get_output(l_song_encoder),
+            name='l_song_encoder')
         self.i_user_song_embeddings = l_song_encoder
 
         # shape=(num_users, num_songs, 1 (value is play_count))
-        i_user_counts = InputLayer(shape=(
-            None, None, 1))
+        i_user_counts = InputLayer(
+            shape=(None, None, 1),
+            name='i_user_counts')
 
         # shape=(num_users, num_songs, embedding + 1 (value is play_count))
-        l_song_vals = ConcatLayer([i_user_counts, l_song_encoder], axis=2)
+        l_song_vals = ConcatLayer(
+            [i_user_counts, l_song_encoder],
+            axis=2,
+            name='l_song_vals')
 
         # output_shape=(num_users, embedding)
         l_user_prefs = self.create_pref_embedding(l_song_vals)
 
         return l_user_prefs, i_user_songs, i_user_counts
+
+    def dense_stack(self, net, num_units=None, nonlinearity=tanh):
+
+        if num_units is None:
+            num_units = self.num_hidden
+
+        net = DenseLayer(
+                net,
+                num_units=num_units,
+                W=init.Uniform(1),
+                nonlinearity=nonlinearity)
+
+        return net
 
     def create_model(self):
 
@@ -164,7 +202,8 @@ class AudioModel(RegressionModel):
 
         i_input_song_embedding = InputLayer(
             (None, self.embedding),
-            input_var=get_output(l_song_embedding))
+            input_var=get_output(l_song_embedding),
+            name='i_input_song_embedding')
         self.i_input_song_embedding = i_input_song_embedding
 
         # shape=(num_users, embedding)
@@ -174,47 +213,25 @@ class AudioModel(RegressionModel):
         self.i_user_counts = i_user_counts
         self.layers += get_all_layers(l_user_prefs)
 
-        l_user_prefs = InputLayer((None, self.embedding), input_var=get_output(l_user_prefs))
+        l_user_prefs = InputLayer(
+            (None, self.embedding),
+            input_var=get_output(l_user_prefs),
+            name='l_user_prefs')
         self.i_prefs = l_user_prefs
 
         # shape=(num_users, 2*embedding)
-        net = ConcatLayer([i_input_song_embedding, l_user_prefs], axis=1)
+        net = ConcatLayer(
+            [i_input_song_embedding, l_user_prefs],
+            axis=1,
+            name='concat')
 
-        net = DenseLayer(
-                net,
-                num_units=self.num_hidden,
-                W=init.Uniform(1),
-                nonlinearity=tanh)
+        for _ in range(3):
+            net = self.dense_stack(net)
 
-        net = DenseLayer(
-                net,
-                num_units=self.num_hidden,
-                W=init.Uniform(1),
-                nonlinearity=tanh)
+        net = self.dense_stack(net, nonlinearity=None)
 
-        net = DenseLayer(
-                net,
-                num_units=self.num_hidden,
-                W=init.Uniform(1),
-                nonlinearity=tanh)
+        net = self.dense_stack(net, nonlinearity=None, num_units=1)
 
-        net = DenseLayer(
-                net,
-                num_units=self.num_hidden,
-                W=init.Uniform(1),
-                nonlinearity=tanh)
-
-        net = DenseLayer(
-                net,
-                num_units=self.num_hidden,
-                W=init.Uniform(1),
-                nonlinearity=None)
-
-        net = DenseLayer(
-                net,
-                num_units=1,
-                W=init.Uniform(1),
-                nonlinearity=None)
         net = SliceLayer(net, 0, 1)
 
         self.net = net
@@ -277,21 +294,34 @@ class AudioModel(RegressionModel):
 
         return rmsprop(loss, all_params, self.learning_rate)
 
-    def train_with_data(self):
+    def load_train_with_data_config(self):
 
-        data = self.get_data()
+        self.verbose = True
+        self.save = True
+        self.epoch_save = True
 
-        self.train_model(
-                *data,
-                save=True, epoch_save=True,
-                verbose=True, val=True)
+    def load_train_with_megabatches_config(self):
+
+        self.verbose = True
+        self.save = True
+        self.epoch_save = True
+
+    def get_megabatches(self):
+
+        for i in range(100):
+            print('-' * 10 + 'Megabatch %d' % i + '-' * 10)
+            yield self.get_data(verbose=False)
 
     def test_hyperparams(self, **hyperparams):
+
+        self.load_test_hyperparams_config()
 
         self.set_hyperparams(hyperparams)
 
         try:
             data = self.get_data()
+
+            self.pretrain_compile(*data)
 
             val_loss, val_acc = self.train_model(
                     *data,
@@ -301,23 +331,24 @@ class AudioModel(RegressionModel):
 
         return -val_acc
 
-    def get_data(self):
+    def get_data(self, verbose=True):
 
         [
                 train_user_songs_X, train_user_count_X,
-                train_song_X, train_y,
-                unused_test, unused_test, unused_test, unused_test
-        ] = gen_audio_dataset(num_truncated_songs=self.num_songs)
+                train_song_X, train_y
+        ] = gen_audio_dataset(
+            mode='train',
+            num_truncated_songs=self.num_songs,
+            verbose=verbose)
 
         [
-                train_user_songs_X, val_user_songs_X,
-                train_user_count_X, val_user_count_X,
-                train_song_X, val_song_X,
-                train_y, val_y
-        ] = split_val(
-                train_user_songs_X, train_user_count_X,
-                train_song_X, train_y,
-                split=0.25)
+                val_user_songs_X, val_user_count_X,
+                val_song_X, val_y
+        ] = gen_audio_dataset(
+            mode='val',
+            num_truncated_songs=int(self.num_songs * 1.50),
+            shuffle=False,
+            verbose=verbose)
 
         train_Xs = [
                 train_user_songs_X,
@@ -334,9 +365,16 @@ class AudioModel(RegressionModel):
 
 def train_default():
 
-    param_fnm = 'params/music_recommendator/audio_model_strict_n3500,l0.015,t3.p'
+    param_fnm = base_param_fnm + 'audio_model_strict_n3500,l0.015,t5.p'
     model = AudioModel(param_filename=param_fnm)
     model.train_with_data()
+
+
+def train_megabatches():
+
+    param_fnm = base_param_fnm + 'audio_model_strict_n3500,l0.015,t5.p'
+    model = AudioModel(param_filename=param_fnm)
+    model.train_with_megabatches()
 
 
 def grid_hp_search():
@@ -351,7 +389,7 @@ def grid_hp_search():
         'batch_size': (12, ),
         'learning_rate': (0.00001, 0.0001, 0.001)}
 
-    param_fnm = 'params/music_recommendator/audio_model_strict_n3500,l0.015,hp1.p'
+    param_fnm = base_param_fnm + 'audio_model_strict_n3500,l0.015,hp4.p'
     model = AudioModel(param_filename=param_fnm)
 
     optim = GridHyperOptim(model, hp_choices)
@@ -360,8 +398,9 @@ def grid_hp_search():
 
 def main():
 
-    grid_hp_search()
+    # grid_hp_search()
     # train_default()
+    train_megabatches()
 
 
 if __name__ == '__main__':

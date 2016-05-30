@@ -17,6 +17,7 @@ from neural_models.lib import iterate_minibatches
 
 
 class Model(object):
+
     def __init__(self, hyperparams=None, param_filename=None):
 
         self.set_hyperparams(hyperparams)
@@ -139,21 +140,21 @@ class Model(object):
 
         return test_fn
 
-    def compute_train_metrics(self, train_fn, train_Xs, train_y):
+    def compute_train_metrics(self, train_Xs, train_y):
 
         train_loss = 0
         train_batches = 0
 
         for batch in iterate_minibatches(
                 *train_Xs, train_y, batch_size=self.batch_size):
-            train_loss += train_fn(*batch)
+            train_loss += self.train_fn(*batch)
             train_batches += 1
 
         train_loss /= train_batches
 
         return train_loss
 
-    def compute_val_metrics(self, test_fn, val_Xs, val_y):
+    def compute_val_metrics(self, val_Xs, val_y):
 
         val_loss = 0
         val_acc = 0
@@ -161,7 +162,7 @@ class Model(object):
 
         for batch in iterate_minibatches(
                 *val_Xs, val_y, batch_size=self.batch_size):
-            [loss, acc] = test_fn(*batch)
+            [loss, acc] = self.test_fn(*batch)
             val_loss += loss
             val_acc += acc
             val_batches += 1
@@ -198,23 +199,23 @@ class Model(object):
         params = pickle.load(open(self.param_filename, 'rb'))
         set_all_param_values(self.layers, params)
 
-    def perform_epoch(self, train_fn, test_fn,
+    def perform_epoch(self,
             train_Xs, train_y, val_Xs, val_y,
-            val=True, save=False, verbose=False,
+            val=True,
             epoch=None):
 
-        train_metrics = self.compute_train_metrics(train_fn, train_Xs, train_y)
+        train_metrics = self.compute_train_metrics(train_Xs, train_y)
 
-        if verbose:
+        if self.verbose:
             self.display_train_metrics(train_metrics, epoch=epoch)
 
-        if save:
+        if self.save:
             self.save_params()
 
         if val:
-            val_metrics = self.compute_val_metrics(test_fn, val_Xs, val_y)
+            val_metrics = self.compute_val_metrics(val_Xs, val_y)
 
-            if verbose:
+            if self.verbose:
                 self.display_val_metrics(val_metrics)
 
         return train_metrics, val_metrics
@@ -232,8 +233,11 @@ class Model(object):
             train_Xs, val_Xs,
             train_y, val_y):
 
-        print('Input shapes:')
+        print('Train Input shapes:')
         self.print_shapes(train_Xs)
+
+        print('Val Input shapes:')
+        self.print_shapes(val_Xs)
 
         num_params = count_params(self.layers)
         print('Num params: %d' % num_params)
@@ -244,6 +248,9 @@ class Model(object):
             print(array.shape)
 
     def compile_net(self, train_Xs, val_Xs, train_y, val_y):
+
+        if self.verbose:
+            print('Compiling net')
 
         self.layers = []
 
@@ -259,58 +266,93 @@ class Model(object):
         self.compile_net(None, None, None, None)
 
     def train_model(self, train_Xs, val_Xs, train_y, val_y,
-            val=True,
-            save=True, epoch_save=False,
-            verbose=False):
+            val=True):
 
-        if verbose:
-            print('Compiling functions')
-
-        self.compile_net(train_Xs, val_Xs, train_y, val_y)
-
-        train_fn = self.build_train_fn()
-
-        test_fn = self.build_test_fn()
-
-        if verbose:
+        if self.verbose:
             self.display_info(train_Xs, val_Xs, train_y, val_y)
 
-        if verbose:
+        if self.verbose:
             print('Beginning training')
 
         for epoch in range(self.num_epochs):
             train_metrics, val_metrics = self.perform_epoch(
-                    train_fn, test_fn, train_Xs, train_y, val_Xs, val_y,
-                    val, epoch_save, verbose, epoch)
+                    train_Xs, train_y, val_Xs, val_y,
+                    val, epoch)
 
-        if save:
+        if self.save:
             self.save_params()
 
         if val:
             return val_metrics
 
+    def pretrain_compile(self, *data):
+
+        self.compile_net(*data)
+
+        self.train_fn = self.build_train_fn()
+
+        self.test_fn = self.build_test_fn()
+
     def get_data(self):
 
         raise NotImplementedError()
 
+    def load_train_with_data_config(self):
+
+        self.verbose = True
+        self.save = True
+        self.epoch_save = False
+
     def train_with_data(self):
+
+        self.load_train_with_data_config()
 
         data = self.get_data()
 
-        self.train_model(
-                *data,
-                save=True, epoch_save=False,
-                verbose=True, val=True)
+        self.pretrain_compile(*data)
+
+        self.train_model(*data, val=True)
+
+    def get_megabatches(self):
+
+        raise NotImplementedError()
+
+    def load_train_with_megabatches_config(self):
+
+        self.verbose = False
+        self.save = True
+        self.epoch_save = False
+
+    def train_with_megabatches(self):
+
+        self.load_train_with_megabatches_config()
+
+        data = self.get_data()
+
+        self.pretrain_compile(*data)
+
+        for megabatch in self.get_megabatches():
+
+            self.train_model(*megabatch, val=True)
+
+    def load_test_hyperparams_config(self):
+
+        self.verbose = False
+        self.save = False
+        self.epoch_save = False
 
     def test_hyperparams(self, **hyperparams):
+
+        self.load_test_hyperparams_config()
 
         self.set_hyperparams(hyperparams)
 
         data = self.get_data()
 
+        self.pretrain_compile(*data)
+
         val_loss, val_acc = self.train_model(
-                *data,
-                save=False, verbose=False, val=True)
+                *data, val=True)
 
         return val_acc
 
