@@ -72,7 +72,7 @@ class AudioModel(RegressionModel):
 
         self.num_epochs = 10
         self.batch_size = 64
-        self.learning_rate = 0.0001
+        self.learning_rate = 0.001
 
     def create_lstm_stack(self, net):
 
@@ -196,7 +196,7 @@ class AudioModel(RegressionModel):
         net = DenseLayer(
                 net,
                 num_units=num_units,
-                W=init.Uniform(),
+                W=init.Uniform(1),
                 nonlinearity=nonlinearity)
 
         return net
