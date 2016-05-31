@@ -67,7 +67,7 @@ alex_songs_list = [
 ]
 
 
-user_id = '5'
+user_id = 'u5'
 
 data = [('user_id', user_id)]
 
