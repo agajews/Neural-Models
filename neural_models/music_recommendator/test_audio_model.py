@@ -355,7 +355,8 @@ def create_all_songs():
 
             song.wav = all_wavfiles[song_id]
 
-        except:
+        except Exception as e:
+            print(e)
             song.wav = None
 
         if song.wav is not None:
@@ -364,6 +365,8 @@ def create_all_songs():
                 print(song_id)
 
             all_songs.append(song)
+        else:
+            print('Didn\'t work')
 
     return all_songs
 
