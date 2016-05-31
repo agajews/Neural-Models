@@ -1,4 +1,3 @@
-
 import numpy as np
 
 import pickle
@@ -355,7 +354,10 @@ def create_all_songs():
                 song_id, song_name, artist)
             song.fnm = fnm
 
-            song.wav = all_wavfiles[song_id]
+            wav = all_wavfiles[song_id]
+            song.wav = np.reshape(
+                wav,
+                (wav.shape[0], wav.shape[2], wav.shape[1]))
 
         except Exception as e:
             print(e)
