@@ -349,7 +349,8 @@ def create_all_songs():
             song_name = song_meta[song_id]['name']
             artist = song_meta[song_id]['artist']
 
-            song = neural_models.data.music_recommendator.lib.Song(song_id, song_name, artist)
+            song = neural_models.data.music_recommendator.lib.Song(
+                song_id, song_name, artist)
             song.fnm = fnm
 
             song.wav = all_wavfiles[song_id]

@@ -162,7 +162,8 @@ class AudioModel(RegressionModel):
     def create_user_pref_encoder(self, l_song_embedding):
 
         # shape=(num_users, num_songs, embedding)
-        l_song_encoder, i_user_songs = self.create_song_encoder(l_song_embedding)
+        l_song_encoder, i_user_songs = self.create_song_encoder(
+            l_song_embedding)
         self.layers += get_all_layers(l_song_encoder)
 
         l_song_encoder = InputLayer(

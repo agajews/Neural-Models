@@ -66,7 +66,9 @@ def create_wavs(songs):
         song_wav_fnm = song.fnm[:-4] + '.wav'
         if not isfile(song_wav_fnm):
             download(song.name, song.artist, song.song_id)
-            call('ffmpeg -i %s -acodec pcm_u8 -ar 22050 %s -y' % (song.fnm, song_wav_fnm), shell=True)
+            sh = 'ffmpeg -i %s -acodec pcm_u8 -ar 22050 %s -y' % \
+                (song.fnm, song_wav_fnm)
+            call(sh, shell=True)
         song.fnm = song_wav_fnm
 
 
@@ -84,12 +86,12 @@ def add_song_embeddings(model, songs):
             print(song.song_id)
         if song.wav is not None:
             try:
+                print(song.wav.shape)
                 song.embedding = model.get_song_embedding(song.wav)
                 del song.wav
             except Exception as e:
                 print(e)
                 # print(song.wav)
-                print(song.wav.shape)
                 song.embedding = None
         else:
             song.embedding = None
