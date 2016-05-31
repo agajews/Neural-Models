@@ -88,12 +88,12 @@ def add_song_embeddings(model, songs):
             print(song.song_id)
         if song.wav is not None:
             try:
-                print(song.wav.shape)
                 song.embedding = model.get_song_embedding(song.wav)
                 del song.wav
             except Exception as e:
                 if i % 1000 == 0:
                     print(e)
+                    print(song.wav.shape)
                 # print(song.wav)
                 song.embedding = None
         else:
