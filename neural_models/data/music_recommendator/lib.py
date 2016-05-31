@@ -3,6 +3,8 @@ from subprocess import call
 from neural_models.data.music_recommendator.user_data import \
     download, create_wav
 
+import numpy as np
+
 from os.path import isfile
 
 
@@ -54,7 +56,8 @@ def add_wavs(songs):
 
 def add_wav(song):
 
-    song.wav = create_wav(song.fnm)
+    wav = create_wav(song.fnm)
+    song.wav = np.reshape(wav, (wav.shape[0], wav.shape[2], wav.shape[1]))
 
 
 def create_wavs(songs):
@@ -82,7 +85,10 @@ def add_song_embeddings(model, songs):
         if song.wav is not None:
             try:
                 song.embedding = model.get_song_embedding(song.wav)
-            except:
+                del song.wav
+            except Exception as e:
+                # print(e)
+                print(song.wav)
                 print(song.wav.shape)
                 song.embedding = None
         else:

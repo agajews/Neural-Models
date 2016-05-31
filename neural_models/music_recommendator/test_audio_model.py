@@ -10,7 +10,8 @@ from os.path import isfile
 
 import neural_models
 from neural_models.music_recommendator.audio_model import AudioModel
-from neural_models.data.music_recommendator.lib import add_wav, add_song_embeddings
+from neural_models.data.music_recommendator.lib import add_song_embeddings
+from neural_models.data.music_recommendator.user_data import load_all_wavfiles
 
 
 alex_songs_list = [
@@ -337,9 +338,12 @@ def create_all_songs():
 
     all_songs = []
 
-    for i, fnm in enumerate(sorted(all_song_fnms)):
-        song_id = fnm[:-8]
-        song_id = song_id[-18:]
+    all_wavfiles = load_all_wavfiles(mode='train')
+    # all_wavfiles.update(load_all_wavfiles(mode='val'))
+    print('Loaded all wavfiles')
+
+    for i, song_id in enumerate(sorted(all_wavfiles)):
+        fnm = base_fnm + '%s.wav' % song_id
 
         try:
             song_name = song_meta[song_id]['name']
@@ -347,7 +351,8 @@ def create_all_songs():
 
             song = neural_models.data.music_recommendator.lib.Song(song_id, song_name, artist)
             song.fnm = fnm
-            add_wav(song)
+
+            song.wav = all_wavfiles[song_id]
 
         except:
             song.wav = None
@@ -437,7 +442,7 @@ def get_all_preds(model, user_id, songs_list):
 def setup_test_model():
 
     param_fnm = 'params/music_recommendator/audio_model_strict_' + \
-        'n3500,l0.015,t4.p'
+        'n3500,l0.015,t5.p'
     model = AudioModel(param_filename=param_fnm)
 
     model.verbose = True

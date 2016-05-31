@@ -1,7 +1,8 @@
 from lasagne import init
 from lasagne.layers import InputLayer, LSTMLayer, \
     DropoutLayer, SliceLayer, DenseLayer, ConcatLayer, \
-    Conv2DLayer, MaxPool2DLayer
+    Conv1DLayer, MaxPool1DLayer  # , ReshapeLayer
+# from lasagne.layers.dnn import Conv2DDNNLayer
 from lasagne.layers import get_output, get_all_layers
 from lasagne.nonlinearities import tanh
 from lasagne.updates import rmsprop
@@ -54,8 +55,8 @@ class AudioModel(RegressionModel):
     def load_default_data_hyperparams(self):
 
         self.num_mels = 6
-        self.song_length = 1000
-        self.num_songs = 800
+        self.song_length = 2000
+        self.num_songs = 1500
 
     def load_default_net_hyperparams(self):
 
@@ -65,10 +66,12 @@ class AudioModel(RegressionModel):
         self.l2_reg_weight = 0.0007
         self.embedding = 100
 
+        self.num_filters = 32
+
     def load_default_train_hyperparams(self):
 
-        self.num_epochs = 5
-        self.batch_size = 2
+        self.num_epochs = 10
+        self.batch_size = 64
         self.learning_rate = 0.0001
 
     def create_lstm_stack(self, net):
@@ -84,16 +87,17 @@ class AudioModel(RegressionModel):
 
     def create_cnn_stack(self, net):
 
-        net = Conv2DLayer(
+        net = Conv1DLayer(
             net,
             num_filters=self.num_filters,
-            filter_size=(5, 5),
+            filter_size=3,
+            stride=1,
             nonlinearity=tanh,
             W=init.GlorotUniform())
 
-        net = MaxPool2DLayer(
+        net = MaxPool1DLayer(
             net,
-            pool_size=(2, 2))
+            pool_size=2)
 
         net = DropoutLayer(net, self.dropout_val)
 
@@ -102,7 +106,11 @@ class AudioModel(RegressionModel):
     def create_song_embedding(self):
 
         # shape=(num_songs, song_length, num_mels)
-        i_song = InputLayer(shape=(None, self.song_length, self.num_mels))
+        i_song = InputLayer(
+            shape=(None, self.num_mels, self.song_length),
+            name='i_song')
+        # i_song = ReshapeLayer(i_song, ([0], 1, [1], [2]))
+
         self.i_song = i_song
         net = i_song
 
@@ -110,7 +118,7 @@ class AudioModel(RegressionModel):
             net = self.create_cnn_stack(net)
 
         # output_shape=(num_songs, embedding)
-        net = SliceLayer(net, -1, 1)
+        # net = SliceLayer(net, -1, 1)
         net = DenseLayer(
                 net,
                 num_units=self.embedding,
@@ -123,7 +131,7 @@ class AudioModel(RegressionModel):
 
         # shape=(num_users, num_songs, song_length, num_mels)
         i_user_songs = InputLayer(
-            shape=(None, None, None, self.num_mels),
+            shape=(None, None, self.num_mels, self.song_length),
             name='i_user_songs')
 
         l_song_encoder = net_on_seq(l_song_embedding, i_user_songs)
@@ -187,7 +195,7 @@ class AudioModel(RegressionModel):
         net = DenseLayer(
                 net,
                 num_units=num_units,
-                W=init.Uniform(1),
+                W=init.Uniform(),
                 nonlinearity=nonlinearity)
 
         return net
@@ -298,19 +306,23 @@ class AudioModel(RegressionModel):
 
         self.verbose = True
         self.save = True
-        self.epoch_save = True
+        self.epoch_save = False
 
     def load_train_with_megabatches_config(self):
 
         self.verbose = True
         self.save = True
-        self.epoch_save = True
+        self.epoch_save = False
 
     def get_megabatches(self):
 
+        data = None
+
         for i in range(100):
             print('-' * 10 + 'Megabatch %d' % i + '-' * 10)
-            yield self.get_data(verbose=False)
+            del data
+            data = self.get_data(verbose=False)
+            yield data
 
     def test_hyperparams(self, **hyperparams):
 
@@ -346,7 +358,7 @@ class AudioModel(RegressionModel):
                 val_song_X, val_y
         ] = gen_audio_dataset(
             mode='val',
-            num_truncated_songs=int(self.num_songs * 1.50),
+            num_truncated_songs=int(self.num_songs * 0.70),
             shuffle=False,
             verbose=verbose)
 

@@ -331,6 +331,8 @@ class Model(object):
 
         self.pretrain_compile(*data)
 
+        del data
+
         for megabatch in self.get_megabatches():
 
             self.train_model(*megabatch, val=True)

@@ -25,7 +25,7 @@ base_save_fnm = 'saved_data/music_recommendator/'
 
 def download(song_name, artist, song_id):
 
-    with cd('raw_data/music_recommendator/audio'):
+    with cd(base_audio_fnm):
         ydl_opts = {
             'format': 'worstaudio',
             'outtmpl': shlex.quote(song_id + '.mp3'),
@@ -43,7 +43,7 @@ def download(song_name, artist, song_id):
                 return False
 
 
-def create_wav(song_fnm, num_mels=12, song_length=2000):
+def create_wav(song_fnm, num_mels=6, song_length=2000):
 
     rate, wav = wavfile.read(song_fnm)
     mels = mfcc(wav, rate, numcep=num_mels, winstep=0.1)[:song_length, :]
@@ -65,7 +65,7 @@ def gen_song_meta(trunc_start, trunc_end):
         txt = f.read()
 
     song_meta = {}
-    for line in txt.split('\n'):
+    for line in txt.split('\n')[trunc_start:trunc_end]:
 
         if len(line) > 5:
 
@@ -98,7 +98,7 @@ def load_song_meta(mode='train', verbose=True):
         if mode == 'train':
             song_meta = gen_song_meta(0, 750000)
         elif mode == 'val':
-            song_meta = gen_song_meta(750000, 940000)
+            song_meta = gen_song_meta(750000, 800000)
 
         pickle.dump(song_meta, open(song_meta_fnm, 'wb'))
 
@@ -170,7 +170,7 @@ def gen_filtered_hist(song_meta, user_hist, users_ordered):
         user_data = []
         for song in user_hist[user]:
             song_id = song['song_id']
-            song_fnm = 'raw_data/music_recommendator/audio/%s.mp3.wav' \
+            song_fnm = base_audio_fnm + '%s.wav' \
                 % song_id
             if song_id in song_meta and isfile(song_fnm):
                 user_data.append(song)
@@ -370,15 +370,23 @@ def gen_data_list(truncated_hist):
     return data_list
 
 
-def load_all_wavfiles(mode='train', num_mels=12, song_length=2000):
+def load_all_wavfiles(mode='train', num_mels=6, song_length=2000):
 
-    all_wavfiles_fnm = base_save_fnm + 'all_wavfiles.p'
+    all_wavfiles_fnm = base_save_fnm + 'all_%s_wavfiles.p' % mode
 
     if isfile(all_wavfiles_fnm):
         all_wavfiles = pickle.load(open(all_wavfiles_fnm, 'rb'))
+        # all_wavfiles_new = {}
+        # song_meta = load_song_meta(mode=mode)
+        # for song in all_wavfiles:
+        #     if song in song_meta and all_wavfiles[song] is not None:
+        #         all_wavfiles_new[song] = all_wavfiles[song]
+        # all_wavfiles = all_wavfiles_new
+        # pickle.dump(all_wavfiles, open(all_wavfiles_fnm, 'wb'))
+        # del song_meta
 
     else:
-        filtered_songs = load_filtered_songs(mode='train')  # [:20]
+        filtered_songs = load_filtered_songs(mode=mode)  # [:20]
         all_wavfiles = gen_wavfiles_from_song_ids(filtered_songs, num_mels, song_length)
         pickle.dump(all_wavfiles, open(all_wavfiles_fnm, 'wb'))
 
@@ -470,28 +478,33 @@ def get_max_song_length(wavfiles):
     return max_length
 
 
-def gen_data(wav_data_list, wavfiles, num_songs_cap, num_mels, song_length):
+def gen_data(
+        wav_data_list, wavfiles,
+        num_songs_cap, num_mels, song_length,
+        max_num_examples,
+        verbose=True):
 
-    num_examples = len(wav_data_list)
+    num_examples = min(max_num_examples, len(wav_data_list))
     max_num_songs = get_max_num_songs(wav_data_list, num_songs_cap)
     # max_song_length = get_max_song_length(wavfiles)
 
-    print(num_examples)
-    print(max_num_songs)
+    if verbose:
+        print('Num examples: %d' % num_examples)
+        print('Max num songs: %d' % max_num_songs)
     # print(max_song_length)
 
-    user_songs_X = np.zeros((num_examples, max_num_songs, song_length, num_mels))
+    user_songs_X = np.zeros((num_examples, max_num_songs, num_mels, song_length))
     user_count_X = np.zeros((num_examples, max_num_songs, 1))
-    song_X = np.zeros((num_examples, song_length, num_mels))
+    song_X = np.zeros((num_examples, num_mels, song_length))
     song_y = np.zeros((num_examples))
 
-    for i, entry in enumerate(wav_data_list):
+    for i, entry in enumerate(wav_data_list[:num_examples]):
         for j, song_entry in enumerate(entry['user_songs_X'][:max_num_songs]):
             wav = song_entry['wav']
-            user_songs_X[i, j, :, :] = wav
+            user_songs_X[i, j, :, :] = np.reshape(wav, (wav.shape[0], wav.shape[2], wav.shape[1]))
             user_count_X[i, j] = song_entry['play_count']
         wav = entry['song_X']
-        song_X[i, :, :] = wav
+        song_X[i, :, :] = np.reshape(wav, (wav.shape[0], wav.shape[2], wav.shape[1]))
         song_y[i] = entry['song_y']
 
     return user_songs_X, user_count_X, song_X, song_y
@@ -503,6 +516,7 @@ def gen_audio_dataset(
         num_mels=6,
         song_length=2000,
         num_songs_cap=25,
+        max_num_examples=3500,
         shuffle=True,
         verbose=True):
 
@@ -528,7 +542,10 @@ def gen_audio_dataset(
     del truncated_songs, truncated_hist
 
     data = gen_data(
-        wav_data_list, wavfiles, num_songs_cap, num_mels, song_length)
+        wav_data_list, wavfiles,
+        num_songs_cap, num_mels,
+        song_length, max_num_examples,
+        verbose)
 
     del wavfiles, wav_data_list
 
