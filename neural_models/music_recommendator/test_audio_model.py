@@ -383,6 +383,7 @@ def get_all_songs_with_embeddings(model):
 
     else:
         all_songs = create_all_songs()
+        print('Got all songs')
         add_song_embeddings(model, all_songs)
         filter_songs_by_embedding(all_songs)
         pickle.dump(all_songs, open(embeddings_fnm, 'wb'))
