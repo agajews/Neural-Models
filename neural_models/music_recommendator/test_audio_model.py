@@ -327,6 +327,8 @@ def gen_user_prefs(model, user):
 
 def create_all_songs():
 
+    print('Creating all songs')
+
     base_fnm = 'raw_data/music_recommendator/audio/'
 
     all_song_fnms = listdir(base_fnm)  # [:20]
