@@ -81,6 +81,8 @@ def add_filenames(songs):
 
 def add_song_embeddings(model, songs):
 
+    print('Adding song embeddings')
+
     for i, song in enumerate(songs):
         if i % 100 == 0:
             print(song.song_id)
